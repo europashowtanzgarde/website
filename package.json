@@ -1,0 +1,30 @@
+{
+  "name": "europashowtanzgarde-website",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Website der Europa-Show-Tanzgarde e.V. – Showtanz, Gardetanz und Vereinsleben aus Wassertrüdingen. Statische Astro-Site für Cloudflare Pages.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "logo": "node scripts/prepare-logo.mjs"
+  },
+  "engines": {
+    "node": ">=20.10.0"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "@fontsource-variable/big-shoulders": "^5.2.6",
+    "@fontsource-variable/hanken-grotesk": "^5.2.8",
+    "@fontsource/kaushan-script": "^5.2.8",
+    "astro": "^7.0.6",
+    "sharp": "^0.35.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "typescript": "^6.0.3"
+  }
+}

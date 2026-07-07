@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Seite nicht gefunden" noindex>
+  <section class="notfound">
+    <div class="notfound__dots formation-dots" aria-hidden="true"></div>
+    <div class="wrap notfound__inner">
+      <p class="eyebrow">Vorhang zu</p>
+      <p class="notfound__code" aria-hidden="true">404</p>
+      <h1 class="display">Diese Seite ist nicht auf der Bühne</h1>
+      <p class="notfound__text">
+        Der gesuchte Auftritt wurde verschoben oder gibt es nicht (mehr). Zurück ins
+        Rampenlicht:
+      </p>
+      <div class="notfound__cta">
+        <a class="btn" href="/">Zur Startseite</a>
+        <a class="btn btn--ghost" href="/termine">Zu den Terminen</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .notfound {
+    position: relative;
+    min-height: 62vh;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding-block: var(--space-8);
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .notfound__dots {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    -webkit-mask-image: radial-gradient(60% 60% at 50% 45%, #000, transparent 75%);
+    mask-image: radial-gradient(60% 60% at 50% 45%, #000, transparent 75%);
+  }
+
+  .notfound__inner {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-3);
+  }
+
+  .notfound .eyebrow {
+    transform-origin: center;
+    font-size: var(--step-2);
+  }
+
+  .notfound__code {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(6rem, 22vw, 13rem);
+    line-height: 0.85;
+    color: transparent;
+    -webkit-text-stroke: 2px var(--hairline-strong);
+    text-shadow: var(--glow-blue-soft);
+  }
+
+  .notfound h1 {
+    font-size: var(--step-3);
+    max-width: 18ch;
+  }
+
+  .notfound__text {
+    color: var(--text-muted);
+    max-width: 34rem;
+  }
+
+  .notfound__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    justify-content: center;
+    margin-top: var(--space-4);
+  }
+</style>

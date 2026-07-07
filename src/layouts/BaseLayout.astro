@@ -1,0 +1,72 @@
+---
+import '@fontsource-variable/big-shoulders';
+import '@fontsource-variable/hanken-grotesk';
+import '@fontsource/kaushan-script';
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/motion.css';
+
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../lib/settings';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  noindex?: boolean;
+  article?: boolean;
+}
+
+const {
+  title,
+  description = site.claim,
+  ogImage = '/og-default.png',
+  noindex = false,
+  article = false,
+} = Astro.props;
+
+const pageTitle = title ? `${title} · ${site.shortName}` : `${site.name} – ${site.claim}`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://example.com').href;
+const ogImageUrl = new URL(ogImage, Astro.site ?? 'https://example.com').href;
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <meta name="theme-color" content="#0c1024" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:title" content={title ?? site.name} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title ?? site.name} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
+    <Header />
+    <main id="inhalt">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

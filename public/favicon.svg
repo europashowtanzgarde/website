@@ -1,0 +1,18 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Europa-Show-Tanzgarde">
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1c2247"/>
+      <stop offset="1" stop-color="#0c1024"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#tile)"/>
+  <!-- Blockiges „E" im kantigen Logo-Stil, Bühnenblau -->
+  <g fill="#5b72f0">
+    <rect x="17" y="15" width="9" height="34"/>
+    <rect x="17" y="15" width="27" height="9"/>
+    <rect x="17" y="28" width="21" height="8"/>
+    <rect x="17" y="40" width="27" height="9"/>
+  </g>
+  <!-- Diagonaler roter Akzent – Anklang an das rote „Show" -->
+  <rect x="12" y="50" width="40" height="5" rx="2.5" fill="#e2242c" transform="rotate(-24 32 52)"/>
+</svg>

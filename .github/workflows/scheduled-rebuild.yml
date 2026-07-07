@@ -1,0 +1,28 @@
+# Optionaler Zeitplan-Rebuild.
+#
+# Statische Seiten "frieren" die Terminliste zum Build-Zeitpunkt ein. Jede
+# Redaktions-Änderung baut die Seite ohnehin neu. Dieser Workflow stößt
+# zusätzlich einmal pro Woche einen Neubau an, damit abgelaufene Termine
+# zuverlässig aus "Kommende Termine" verschwinden.
+#
+# EINRICHTUNG (optional):
+#   1. In Cloudflare Pages einen "Deploy Hook" anlegen (Settings -> Builds &
+#      deployments -> Deploy hooks) und die URL kopieren.
+#   2. Im GitHub-Repo unter Settings -> Secrets -> Actions ein Secret
+#      CF_DEPLOY_HOOK mit dieser URL anlegen.
+# Ohne dieses Secret tut der Workflow nichts (er überspringt den Schritt).
+
+name: Wöchentlicher Rebuild
+
+on:
+  schedule:
+    - cron: '0 4 * * 1' # jeden Montag 04:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cloudflare Pages Deploy Hook auslösen
+        if: ${{ secrets.CF_DEPLOY_HOOK != '' }}
+        run: curl -fsS -X POST "${{ secrets.CF_DEPLOY_HOOK }}"

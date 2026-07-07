@@ -1,0 +1,117 @@
+/* =========================================================================
+   Design-Tokens – Europa-Show-Tanzgarde
+   Konzept „Formation & Bühnenplakat": dominantes Bühnenblau, scharfer roter
+   Akzent, warmes Bühnen-Bodenlicht, Cremeweiß als heller Kontrapunkt.
+   Farben aus dem Vereinslogo gesampelt.
+   ========================================================================= */
+
+:root {
+  /* --- Primitive Farben ------------------------------------------------- */
+  --blue-700: #182a9c;
+  --blue-600: #2438b8;
+  --blue-500: #3a52d8;
+  --blue-400: #4b63e6;
+  --blue-300: #7d90f2;
+  --blue-200: #aab6f8;
+
+  --red-600: #c31820;
+  --red-500: #e2242c;
+  --red-400: #f0454c;
+  --red-300: #ff7078;
+
+  --night-950: #090c1d;
+  --night-900: #0c1024;
+  --night-850: #111632;
+  --night-800: #1a2044;
+  --night-700: #232c5c;
+  --night-600: #303a72;
+
+  --amber-400: #f5b942; /* warmes Bühnen-Bodenlicht */
+  --amber-300: #ffd27a;
+
+  --cream-50: #fdfbf6;
+  --cream-100: #faf6ef;
+  --cream-200: #f1ead9;
+  --cream-300: #e4dac4;
+  --cream-500: #b8ad95;
+  --cream-700: #6f6752;
+
+  /* --- Semantische Rollen ---------------------------------------------- */
+  --bg: var(--night-900);
+  --bg-deep: var(--night-950);
+  --bg-raised: var(--night-850);
+  --bg-card: var(--night-800);
+  --bg-card-hover: var(--night-700);
+  --hairline: rgb(255 255 255 / 0.09);
+  --hairline-strong: rgb(255 255 255 / 0.16);
+
+  --text: var(--cream-100);
+  --text-muted: #a7adc9;
+  --text-dim: #7079a0;
+
+  --accent: var(--blue-400);
+  --accent-bright: var(--blue-300);
+  --accent-deep: var(--blue-600);
+  --hot: var(--red-500);
+  --hot-bright: var(--red-400);
+  --link: var(--blue-300);
+  --link-hover: var(--cream-100);
+
+  /* Helle „Bühnenlicht"-Sektionen (Kontrapunkt zum Dunkel) */
+  --cream-bg: var(--cream-100);
+  --cream-ink: #1a1e33;
+  --cream-ink-muted: #55506a;
+  --cream-hairline: rgb(26 30 51 / 0.12);
+
+  /* --- Glow / Schatten (Signatur) -------------------------------------- */
+  --glow-blue: 0 0 28px rgb(75 99 230 / 0.5);
+  --glow-blue-soft: 0 0 40px rgb(75 99 230 / 0.28);
+  --glow-red: 0 0 22px rgb(226 36 44 / 0.55);
+  --glow-red-soft: 0 0 34px rgb(226 36 44 / 0.3);
+  --shadow-card: 0 18px 40px -24px rgb(0 0 0 / 0.7);
+  --shadow-lift: 0 26px 60px -28px rgb(4 6 20 / 0.85);
+
+  /* --- Typografie ------------------------------------------------------- */
+  --font-display: 'Big Shoulders Variable', 'Arial Narrow', system-ui, sans-serif;
+  --font-body: 'Hanken Grotesk Variable', system-ui, -apple-system, sans-serif;
+  --font-script: 'Kaushan Script', cursive;
+
+  /* Fluid-Skala (clamp: min .. max) */
+  --step--1: clamp(0.82rem, 0.79rem + 0.15vw, 0.9rem);
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.12rem);
+  --step-1: clamp(1.2rem, 1.12rem + 0.4vw, 1.45rem);
+  --step-2: clamp(1.5rem, 1.36rem + 0.7vw, 2rem);
+  --step-3: clamp(2rem, 1.7rem + 1.5vw, 3rem);
+  --step-4: clamp(2.6rem, 2rem + 3vw, 4.5rem);
+  --step-5: clamp(3.4rem, 2.3rem + 5.5vw, 7rem);
+
+  --leading-tight: 1.05;
+  --leading-snug: 1.25;
+  --leading-normal: 1.65;
+  --tracking-display: 0.01em;
+  --tracking-wide: 0.18em;
+
+  /* --- Layout / Abstände ------------------------------------------------ */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4.5rem;
+  --space-9: 6.5rem;
+
+  --container: 74rem;
+  --container-narrow: 52rem;
+  --radius-s: 8px;
+  --radius-m: 14px;
+  --radius-l: 22px;
+
+  /* Signatur-Diagonale (Anklang an das schräge „Show" im Logo) */
+  --skew: -4deg;
+  --diagonal-cut: 3.2vw;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}

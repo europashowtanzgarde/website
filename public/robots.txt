@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+# TODO: Bei abweichender Domain hier die echte Sitemap-URL eintragen.
+Sitemap: https://www.europa-showtanzgarde.de/sitemap-index.xml

@@ -1,0 +1,298 @@
+# =============================================================================
+# Redaktionssystem (Sveltia CMS) – Konfiguration
+#
+# Diese Datei beschreibt, welche Inhalte im Adminbereich (/admin) bearbeitet
+# werden können. Die Beschriftungen sind bewusst auf Deutsch gehalten.
+#
+# WICHTIG (für Entwickler:innen):
+#   Die `folder`- und `file`-Pfade hier MÜSSEN mit den Pfaden in
+#   `src/content.config.ts` (Feld `base`) bzw. `src/data/*.json` übereinstimmen.
+#   Wird das eine geändert, muss das andere mitgezogen werden.
+# =============================================================================
+
+backend:
+  name: github
+  repo: europashowtanzgarde/website # TODO: bei anderem Repo-Namen anpassen
+  branch: main
+  # OAuth-Anmeldung über die Cloudflare Pages Function (functions/api/auth.ts).
+  # base_url = die live geschaltete Produktions-Domain (siehe docs/cloudflare-setup.md).
+  base_url: https://www.europa-showtanzgarde.de
+  auth_endpoint: /api/auth
+
+# Lokales Arbeiten ohne Anmeldung: `npm run dev`, dann /admin öffnen und
+# „Arbeiten mit lokalem Repository" wählen (Chrome/Edge). Kein Proxy nötig.
+# local_backend: true
+
+site_url: https://www.europa-showtanzgarde.de
+display_url: https://www.europa-showtanzgarde.de
+logo_url: /apple-touch-icon.png
+
+# Hochgeladene Bilder landen unter public/uploads und sind auf der Website
+# über den Pfad /uploads/... erreichbar.
+media_folder: public/uploads
+public_folder: /uploads
+
+# Bilder beim Hochladen automatisch verkleinern/optimieren (spart Speicher und
+# hält die Seite schnell). Wird von aktuellen Sveltia-Versionen unterstützt.
+media_libraries:
+  default:
+    config:
+      transformations:
+        raster_image:
+          format: webp
+          quality: 85
+          width: 2048
+          height: 2048
+
+# Dateinamen (Slugs) klein, ohne Umlaute/Sonderzeichen.
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  # ---------------------------------------------------------------------------
+  - name: posts
+    label: Beiträge
+    label_singular: Beitrag
+    description: Neuigkeiten und Berichte für die Seite „Aktuelles".
+    folder: src/content/posts
+    create: true
+    slug: '{{slug}}'
+    identifier_field: title
+    sortable_fields: [date, title]
+    fields:
+      - { name: title, label: Titel, widget: string }
+      - {
+          name: date,
+          label: Datum,
+          widget: datetime,
+          time_format: false,
+          format: 'YYYY-MM-DD',
+          date_format: 'DD.MM.YYYY',
+        }
+      - {
+          name: description,
+          label: Kurzbeschreibung,
+          widget: text,
+          hint: 'Kurz halten (max. ca. 200 Zeichen). Erscheint in der Übersicht und bei Google.',
+        }
+      - {
+          name: cover,
+          label: Titelbild,
+          widget: image,
+          required: false,
+          hint: 'Optional. Ohne Bild wird automatisch eine Bühnen-Grafik angezeigt.',
+        }
+      - {
+          name: coverAlt,
+          label: Bildbeschreibung (Titelbild),
+          widget: string,
+          required: false,
+          default: '',
+          hint: 'Beschreibt das Bild für blinde Menschen und Suchmaschinen.',
+        }
+      - name: gallery
+        label: Bildergalerie (optional)
+        widget: list
+        required: false
+        label_singular: Bild
+        summary: '{{fields.alt}}'
+        fields:
+          - { name: image, label: Bild, widget: image }
+          - { name: alt, label: Bildbeschreibung, widget: string, required: false, default: '' }
+          - { name: caption, label: Bildunterschrift, widget: string, required: false }
+      - {
+          name: draft,
+          label: Entwurf,
+          widget: boolean,
+          default: false,
+          hint: 'Wenn aktiviert, erscheint der Beitrag NICHT auf der Website.',
+        }
+      - { name: body, label: Inhalt, widget: markdown }
+
+  # ---------------------------------------------------------------------------
+  - name: events
+    label: Termine
+    label_singular: Termin
+    description: Auftritte, Veranstaltungen und andere Termine.
+    folder: src/content/events
+    create: true
+    slug: '{{fields.date}}-{{slug}}'
+    identifier_field: title
+    sortable_fields: [date, title]
+    fields:
+      - { name: title, label: Titel, widget: string }
+      - {
+          name: date,
+          label: Datum,
+          widget: datetime,
+          time_format: false,
+          format: 'YYYY-MM-DD',
+          date_format: 'DD.MM.YYYY',
+        }
+      - {
+          name: time,
+          label: Uhrzeit,
+          widget: string,
+          required: false,
+          pattern: ['^([01][0-9]|2[0-3]):[0-5][0-9]$', 'Bitte im Format HH:MM angeben, z. B. 19:30'],
+          hint: 'Optional. Format: 19:30',
+        }
+      - { name: location, label: Ort, widget: string }
+      - { name: description, label: Beschreibung, widget: text, required: false }
+      - {
+          name: public,
+          label: Öffentlich sichtbar,
+          widget: boolean,
+          default: true,
+          hint: 'Nur öffentliche Termine erscheinen auf der Website.',
+        }
+      - name: category
+        label: Kategorie
+        widget: select
+        default: auftritt
+        options:
+          - { label: Auftritt, value: auftritt }
+          - { label: Training, value: training }
+          - { label: Veranstaltung, value: veranstaltung }
+          - { label: Vereinsintern, value: vereinsintern }
+          - { label: Sonstiges, value: sonstiges }
+
+  # ---------------------------------------------------------------------------
+  - name: groups
+    label: Garden
+    label_singular: Garde
+    description: Die Tanzgruppen des Vereins.
+    folder: src/content/groups
+    create: true
+    slug: '{{slug}}'
+    identifier_field: name
+    sortable_fields: [order, name]
+    fields:
+      - { name: name, label: Name, widget: string }
+      - {
+          name: description,
+          label: Kurzbeschreibung,
+          widget: text,
+          hint: 'Zwei, drei Sätze über die Garde.',
+        }
+      - { name: ageGroup, label: Altersgruppe, widget: string, required: false, hint: 'z. B. „ab 16 Jahren" (optional)' }
+      - { name: trainingTime, label: Trainingszeit, widget: string, required: false, hint: 'z. B. „Mittwoch, 19 Uhr" (optional)' }
+      - { name: contact, label: Ansprechpartner:in, widget: string, required: false }
+      - { name: image, label: Bild, widget: image, required: false, hint: 'Optional. Ohne Bild wird eine Bühnen-Grafik angezeigt.' }
+      - { name: imageAlt, label: Bildbeschreibung, widget: string, required: false, default: '' }
+      - {
+          name: order,
+          label: Reihenfolge,
+          widget: number,
+          default: 99,
+          value_type: int,
+          hint: 'Kleinere Zahl = weiter vorne (1, 2, 3 …).',
+        }
+
+  # ---------------------------------------------------------------------------
+  - name: gallery
+    label: Galerie-Alben
+    label_singular: Album
+    description: Fotoalben für die Galerie-Seite.
+    folder: src/content/gallery
+    create: true
+    slug: '{{slug}}'
+    identifier_field: title
+    sortable_fields: [date, title]
+    fields:
+      - { name: title, label: Titel, widget: string }
+      - {
+          name: date,
+          label: Datum,
+          widget: datetime,
+          time_format: false,
+          format: 'YYYY-MM-DD',
+          date_format: 'DD.MM.YYYY',
+        }
+      - { name: description, label: Beschreibung, widget: text, required: false }
+      - { name: credit, label: Fotohinweis / Quelle, widget: string, required: false, hint: 'z. B. „Fotos: Max Mustermann"' }
+      - name: images
+        label: Bilder
+        widget: list
+        label_singular: Bild
+        summary: '{{fields.alt}}'
+        fields:
+          - { name: image, label: Bild, widget: image }
+          - { name: alt, label: Bildbeschreibung, widget: string, required: false, default: '' }
+          - { name: caption, label: Bildunterschrift, widget: string, required: false }
+
+  # ---------------------------------------------------------------------------
+  - name: settings
+    label: Einstellungen
+    description: Grundlegende Texte und Angaben der Website.
+    files:
+      - name: site
+        label: Website-Einstellungen
+        file: src/data/site.json
+        description: Vereinsname, Kontakt, Social Media und Impressumsdaten.
+        fields:
+          - { name: name, label: Vereinsname (vollständig), widget: string }
+          - { name: shortName, label: Kurzname, widget: string }
+          - { name: claim, label: Claim / Slogan, widget: string }
+          - { name: email, label: Kontakt-E-Mail, widget: string }
+          - { name: location, label: Ort, widget: string }
+          - name: social
+            label: Social Media
+            widget: object
+            fields:
+              - { name: facebook, label: Facebook-Link, widget: string, required: false }
+              - { name: instagram, label: Instagram-Link, widget: string, required: false }
+              - { name: youtube, label: YouTube-Link, widget: string, required: false }
+          - name: impressum
+            label: Impressumsdaten
+            widget: object
+            hint: 'Rechtlich vorgeschriebene Angaben – bitte sorgfältig ausfüllen.'
+            fields:
+              - { name: verein, label: Vereinsname, widget: string }
+              - { name: vertretenDurch, label: Vertreten durch (Vorstand), widget: string, required: false }
+              - { name: strasse, label: Straße und Hausnummer, widget: string }
+              - { name: plzOrt, label: PLZ und Ort, widget: string }
+              - { name: register, label: Vereinsregister (Gericht & Nummer), widget: string, required: false }
+              - { name: registerHinweis, label: Interner Hinweis, widget: text, required: false }
+          - { name: footerText, label: Fußzeilen-Text, widget: string, required: false }
+
+      - name: homepage
+        label: Startseite
+        file: src/data/homepage.json
+        description: Texte und Elemente der Startseite.
+        fields:
+          - { name: heroKicker, label: Hero – kleine Überschrift, widget: string }
+          - { name: heroTitle, label: Hero – Titel (Zeile 1), widget: string }
+          - { name: heroHighlight, label: Hero – Titel (Zeile 2, hervorgehoben), widget: string }
+          - { name: heroText, label: Hero – Einleitungstext, widget: text }
+          - { name: ctaLabel, label: Button 1 – Text, widget: string }
+          - { name: ctaLink, label: Button 1 – Link, widget: string, hint: 'z. B. /garden' }
+          - { name: ctaSecondaryLabel, label: Button 2 – Text, widget: string, required: false }
+          - { name: ctaSecondaryLink, label: Button 2 – Link, widget: string, required: false }
+          - name: marqueeWords
+            label: Laufband-Schlagwörter
+            widget: list
+            required: false
+            hint: 'Wörter, die im Laufband über die Startseite laufen.'
+            field: { name: wort, label: Wort, widget: string }
+          - name: notice
+            label: Aktueller Hinweis (Banner)
+            widget: object
+            fields:
+              - { name: enabled, label: Hinweis anzeigen, widget: boolean, default: false }
+              - { name: text, label: Text, widget: string, required: false }
+              - { name: link, label: Link (optional), widget: string, required: false }
+              - { name: linkLabel, label: Link-Beschriftung (optional), widget: string, required: false }
+          - name: highlights
+            label: Hervorgehobene Bereiche
+            widget: list
+            label_singular: Bereich
+            summary: '{{fields.title}}'
+            fields:
+              - { name: title, label: Titel, widget: string }
+              - { name: text, label: Text, widget: text }
+              - { name: link, label: Link, widget: string }
+              - { name: linkLabel, label: Link-Beschriftung, widget: string }
+          - { name: vereinTeaserTitle, label: Verein-Teaser – Titel, widget: string }
+          - { name: vereinTeaserText, label: Verein-Teaser – Text, widget: text }

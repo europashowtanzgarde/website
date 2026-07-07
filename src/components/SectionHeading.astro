@@ -1,0 +1,73 @@
+---
+interface Props {
+  number?: string;
+  eyebrow?: string;
+  title: string;
+  intro?: string;
+  align?: 'left' | 'center';
+}
+
+const { number, eyebrow, title, intro, align = 'left' } = Astro.props;
+---
+
+<header class:list={['section-heading', `is-${align}`]}>
+  {number && <span class="ghost-number" aria-hidden="true">{number}</span>}
+  <div class="section-heading__text">
+    {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+    <h2 class="display">{title}</h2>
+    {intro && <p class="section-heading__intro">{intro}</p>}
+  </div>
+</header>
+
+<style>
+  .section-heading {
+    position: relative;
+    margin-bottom: var(--space-7);
+  }
+
+  .ghost-number {
+    display: block;
+    position: absolute;
+    top: -0.35em;
+    left: -0.04em;
+    z-index: 0;
+  }
+
+  .section-heading__text {
+    position: relative;
+    z-index: 1;
+  }
+
+  .eyebrow {
+    margin-bottom: 0.3rem;
+  }
+
+  .section-heading h2 {
+    font-size: var(--step-3);
+  }
+
+  .section-heading__intro {
+    margin-top: var(--space-3);
+    max-width: 42rem;
+    color: var(--text-muted);
+    font-size: var(--step-1);
+  }
+
+  .is-center {
+    text-align: center;
+  }
+
+  .is-center .section-heading__text {
+    display: grid;
+    justify-items: center;
+  }
+
+  .is-center .ghost-number {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .is-center .eyebrow {
+    transform-origin: center;
+  }
+</style>

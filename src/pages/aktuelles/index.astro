@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getPublishedPosts } from '../../lib/collections';
+
+const posts = await getPublishedPosts();
+const [featured, ...rest] = posts;
+---
+
+<BaseLayout
+  title="Aktuelles"
+  description="Neuigkeiten, Berichte und Einblicke aus dem Vereinsleben der Europa-Show-Tanzgarde aus Wassertrüdingen."
+>
+  <PageIntro
+    eyebrow="frisch aus dem Verein"
+    title="Aktuelles"
+    intro="Berichte, Ankündigungen und Einblicke – kurz und ohne Umwege."
+  />
+
+  <section class="section section--tight">
+    <div class="wrap">
+      {
+        posts.length === 0 ? (
+          <p class="empty">Noch keine Beiträge veröffentlicht. Schaut bald wieder vorbei.</p>
+        ) : (
+          <div class="posts">
+            {featured && <PostCard post={featured} featured />}
+            {rest.length > 0 && (
+              <div class="grid grid--2 reveal-group">
+                {rest.map((post) => <PostCard post={post} />)}
+              </div>
+            )}
+          </div>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .posts {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .empty {
+    padding: var(--space-7);
+    text-align: center;
+    color: var(--text-muted);
+    border: 1px dashed var(--hairline-strong);
+    border-radius: var(--radius-l);
+  }
+</style>

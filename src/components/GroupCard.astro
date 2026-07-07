@@ -1,0 +1,125 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import CmsImage from './CmsImage.astro';
+
+interface Props {
+  group: CollectionEntry<'groups'>;
+  index?: number;
+}
+
+const { group, index = 0 } = Astro.props;
+const { name, description, ageGroup, trainingTime, contact, image, imageAlt } = group.data;
+---
+
+<article class="group-card reveal" style={`--reveal-index:${index}`}>
+  <div class="group-card__media">
+    <CmsImage src={image} alt={imageAlt || name} seed={group.id} ratio="4 / 3" />
+    {ageGroup && <span class="group-card__age">{ageGroup}</span>}
+  </div>
+  <div class="group-card__body">
+    <h3 class="group-card__name">{name}</h3>
+    <p class="group-card__desc">{description}</p>
+    {
+      (trainingTime || contact) && (
+        <dl class="group-card__facts">
+          {trainingTime && (
+            <div>
+              <dt>Training</dt>
+              <dd>{trainingTime}</dd>
+            </div>
+          )}
+          {contact && (
+            <div>
+              <dt>Ansprechpartner:in</dt>
+              <dd>{contact}</dd>
+            </div>
+          )}
+        </dl>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .group-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-card);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-l);
+    overflow: hidden;
+    transition: transform 0.28s var(--ease-out), box-shadow 0.3s var(--ease-out);
+  }
+
+  .group-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lift);
+  }
+
+  .group-card__media {
+    position: relative;
+  }
+
+  .group-card__media :global(img),
+  .group-card__media :global(.ph) {
+    border-radius: 0;
+  }
+
+  .group-card__age {
+    position: absolute;
+    top: 0.9rem;
+    left: 0.9rem;
+    padding: 0.3em 0.8em;
+    font-size: var(--step--1);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--cream-50);
+    background: var(--hot);
+    border-radius: 999px;
+    box-shadow: var(--glow-red-soft);
+  }
+
+  .group-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    padding: var(--space-5);
+  }
+
+  .group-card__name {
+    font-size: var(--step-2);
+    color: var(--accent-bright);
+  }
+
+  .group-card__desc {
+    color: var(--text-muted);
+  }
+
+  .group-card__facts {
+    display: grid;
+    gap: 0.5rem;
+    margin-top: 0.3rem;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--hairline);
+  }
+
+  .group-card__facts div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: var(--step--1);
+  }
+
+  .group-card__facts dt {
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .group-card__facts dd {
+    margin: 0;
+    color: var(--text);
+    text-align: right;
+  }
+</style>

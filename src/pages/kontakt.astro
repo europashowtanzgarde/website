@@ -1,0 +1,126 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import { site } from '../lib/settings';
+
+const hasFacebook = Boolean(site.social.facebook);
+const hasInstagram = Boolean(site.social.instagram);
+---
+
+<BaseLayout
+  title="Kontakt"
+  description="So erreichst du die Europa-Show-Tanzgarde aus Wassertrüdingen – per E-Mail oder über unsere Social-Media-Kanäle."
+>
+  <PageIntro
+    eyebrow="schreib uns"
+    title="Kontakt"
+    intro="Fragen zum Mitmachen, zu Auftritten oder zum Verein? Wir freuen uns über deine Nachricht."
+  />
+
+  <section class="section section--tight">
+    <div class="wrap kontakt">
+      <div class="kontakt__card kontakt__card--main">
+        <span class="label">E-Mail</span>
+        <a class="kontakt__mail" href={`mailto:${site.email}`}>{site.email}</a>
+        <p class="kontakt__hint">
+          Am schnellsten erreichst du uns per E-Mail. Schreib uns kurz dein Anliegen –
+          bei Interesse am Tanzen gern mit Alter, damit wir dich der passenden Garde
+          zuordnen können.
+        </p>
+      </div>
+
+      <div class="kontakt__side">
+        {
+          (hasFacebook || hasInstagram) && (
+            <div class="kontakt__card">
+              <span class="label">Social Media</span>
+              <p class="kontakt__hint">Aktuelle Bilder und kurzfristige Infos gibt es hier:</p>
+              <div class="kontakt__socials">
+                {hasFacebook && (
+                  <a class="btn btn--ghost" href={site.social.facebook} target="_blank" rel="noopener">Facebook</a>
+                )}
+                {hasInstagram && (
+                  <a class="btn btn--ghost" href={site.social.instagram} target="_blank" rel="noopener">Instagram</a>
+                )}
+              </div>
+            </div>
+          )
+        }
+
+        <div class="kontakt__card">
+          <span class="label">Wo wir zuhause sind</span>
+          <p class="kontakt__place">{site.location}</p>
+          <p class="kontakt__hint">
+            Unsere Garden treten vor allem in Wassertrüdingen und im Landkreis Ansbach auf.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .kontakt {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  @media (min-width: 820px) {
+    .kontakt {
+      grid-template-columns: 1.4fr 1fr;
+      align-items: start;
+    }
+  }
+
+  .kontakt__card {
+    padding: var(--space-6);
+    background: var(--bg-card);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-l);
+  }
+
+  .kontakt__card--main {
+    background:
+      radial-gradient(80% 130% at 0% 0%, rgb(75 99 230 / 0.16), transparent 55%),
+      var(--bg-card);
+  }
+
+  .kontakt__mail {
+    display: inline-block;
+    margin-block: 0.5rem 1rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.3rem, 1rem + 2vw, 2rem);
+    color: var(--accent-bright);
+    word-break: break-word;
+  }
+
+  .kontakt__mail:hover {
+    color: var(--cream-50);
+    text-shadow: var(--glow-blue-soft);
+  }
+
+  .kontakt__hint {
+    color: var(--text-muted);
+    max-width: 40rem;
+  }
+
+  .kontakt__side {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .kontakt__socials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+  }
+
+  .kontakt__place {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-2);
+    margin-block: 0.4rem;
+  }
+</style>

@@ -1,0 +1,103 @@
+/* =========================================================================
+   Bewegung: gestaffelter Page-Load, scrollgetriebene Reveals, Marquee.
+   Grundsatz: Inhalte sind IMMER sichtbar, wenn Animationen nicht laufen
+   (kein `opacity:0` als Default außerhalb der Motion-Media-Query). Damit
+   bleibt die Seite ohne JS, ohne Timeline-Support und bei
+   `prefers-reduced-motion` vollständig lesbar.
+   ========================================================================= */
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes marquee-slide {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgb(226 36 44 / 0);
+  }
+  50% {
+    box-shadow: var(--glow-red-soft);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Orchestrierter Page-Load: Elemente „steigen" gestaffelt auf. */
+  .rise {
+    animation: rise-in 0.7s var(--ease-out) both;
+    animation-delay: calc(var(--rise-index, 0) * 90ms);
+  }
+
+  /* Scrollgetriebene Reveals – nur wo View-Timelines unterstützt werden.
+     Ohne Support bleibt der Inhalt einfach sichtbar. */
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal-in linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 22%;
+    }
+
+    .reveal-group > * {
+      animation: reveal-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 25%;
+    }
+  }
+
+  /* Laufendes Marquee-Band (diagonal). */
+  .marquee__track {
+    animation: marquee-slide 34s linear infinite;
+  }
+
+  .marquee:hover .marquee__track {
+    animation-play-state: paused;
+  }
+
+  .pulse {
+    animation: glow-pulse 3.4s ease-in-out infinite;
+  }
+}
+
+/* Diagonales Laufband (Signatur-Diagonale). */
+.marquee {
+  position: relative;
+  overflow: hidden;
+  transform: rotate(var(--skew));
+}
+
+.marquee__track {
+  display: inline-flex;
+  gap: 2.5rem;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+.marquee__track > * {
+  flex: none;
+}

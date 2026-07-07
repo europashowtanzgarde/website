@@ -1,0 +1,48 @@
+{
+  "heroKicker": "seit 1981 in Wassertrüdingen",
+  "heroTitle": "Auf der Bühne zählt Präzision.",
+  "heroHighlight": "Im Verein zählt Zusammenhalt.",
+  "heroText": "Drei Garden von den Jüngsten bis zu den Aktiven, ein gemeinsames Ziel: Bewegung, Rhythmus und Freude am Tanzen. Wir tanzen auf Festen, Umzügen und Bühnen rund um Wassertrüdingen.",
+  "ctaLabel": "Unsere Garden",
+  "ctaLink": "/garden",
+  "ctaSecondaryLabel": "Termine & Auftritte",
+  "ctaSecondaryLink": "/termine",
+  "marqueeWords": [
+    "Showtanz",
+    "Gardetanz",
+    "Formation",
+    "Bühne",
+    "Rhythmus",
+    "Zusammenhalt",
+    "seit 1981",
+    "Wassertrüdingen"
+  ],
+  "notice": {
+    "enabled": false,
+    "text": "Hier steht ein aktueller Hinweis – zum Beispiel der nächste große Auftritt oder ein Aufruf zum Mitmachen.",
+    "link": "",
+    "linkLabel": ""
+  },
+  "highlights": [
+    {
+      "title": "Drei Garden",
+      "text": "Von der Kindergarde über die Jugend bis zu den Aktiven – für jedes Alter die passende Gruppe.",
+      "link": "/garden",
+      "linkLabel": "Garden ansehen"
+    },
+    {
+      "title": "Auftritte & Termine",
+      "text": "Faschingsumzüge, Feste und Showabende: Hier steht, wo wir als Nächstes auf der Bühne stehen.",
+      "link": "/termine",
+      "linkLabel": "Zu den Terminen"
+    },
+    {
+      "title": "Einblicke",
+      "text": "Fotos aus Training, Auftritten und dem Vereinsleben – Schritt für Schritt gepflegt.",
+      "link": "/galerie",
+      "linkLabel": "Galerie öffnen"
+    }
+  ],
+  "vereinTeaserTitle": "Ein Stück Wassertrüdingen",
+  "vereinTeaserText": "Was 1981 als kleine Tanzgruppe begann, ist heute ein fester Teil des örtlichen Vereinslebens. Bei uns zählt nicht nur die saubere Choreografie – sondern genauso das Miteinander hinter der Bühne."
+}

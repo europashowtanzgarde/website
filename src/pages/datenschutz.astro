@@ -1,0 +1,156 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import { site } from '../lib/settings';
+
+const imp = site.impressum;
+---
+
+<BaseLayout title="Datenschutz" description="Datenschutzerklärung der Europa-Show-Tanzgarde e.V." noindex>
+  <PageIntro title="Datenschutz" />
+
+  <section class="section section--tight">
+    <div class="wrap wrap--narrow legal">
+      <div class="info-box" role="note">
+        Diese Website ist bewusst datensparsam: <strong>keine Cookies, keine
+        Tracking- oder Analysedienste, keine Werbung</strong>. Es ist deshalb auch
+        kein Cookie-Banner nötig. Schriftarten werden lokal ausgeliefert – es
+        werden keine Daten an Dritte (etwa Google Fonts) übertragen.
+      </div>
+
+      <h2>1. Verantwortlicher</h2>
+      <p>
+        Verantwortlich für die Datenverarbeitung auf dieser Website ist:<br />
+        {imp.verein}<br />
+        {imp.strasse}, {imp.plzOrt}<br />
+        E-Mail: <a href={`mailto:${site.email}`}>{site.email}</a>
+      </p>
+      {
+        !imp.vertretenDurch && (
+          <p class="todo-inline">[Bitte ergänzen: vertretungsberechtigte Person – siehe Impressum]</p>
+        )
+      }
+
+      <h2>2. Hosting bei Cloudflare Pages</h2>
+      <p>
+        Diese Website wird bei Cloudflare (Cloudflare, Inc., 101 Townsend St, San
+        Francisco, CA 94107, USA) als statische Seite gehostet. Beim Aufruf der Seite
+        verarbeitet Cloudflare technisch notwendige Verbindungsdaten (z. B. IP-Adresse,
+        Datum und Uhrzeit des Zugriffs, aufgerufene Seite, übertragene Datenmenge,
+        Browsertyp), um die Auslieferung der Seite und die Sicherheit des Angebots zu
+        gewährleisten. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes
+        Interesse an einem sicheren, funktionierenden Webauftritt). Die Übermittlung in
+        die USA ist durch Standardvertragsklauseln bzw. das EU-US Data Privacy Framework
+        abgesichert. Details:
+        <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Datenschutzerklärung von Cloudflare</a>.
+      </p>
+
+      <h2>3. Server-Logfiles</h2>
+      <p>
+        Die oben genannten Zugriffsdaten werden ausschließlich zum Betrieb und zur
+        Absicherung der Website verarbeitet und nicht mit anderen Datenquellen
+        zusammengeführt. Eine Auswertung zu Werbe- oder Analysezwecken findet nicht
+        statt.
+      </p>
+
+      <h2>4. Keine Cookies, kein Tracking</h2>
+      <p>
+        Die öffentliche Website setzt keine Cookies und bindet keine Analyse-,
+        Tracking- oder Marketingdienste ein. Es werden keine Profile über Ihr
+        Verhalten erstellt.
+      </p>
+
+      <h2>5. Kontaktaufnahme per E-Mail</h2>
+      <p>
+        Wenn Sie uns per E-Mail kontaktieren, verarbeiten wir die von Ihnen
+        übermittelten Angaben (z. B. Name, E-Mail-Adresse, Inhalt der Nachricht)
+        ausschließlich zur Bearbeitung Ihres Anliegens. Rechtsgrundlage ist Art. 6
+        Abs. 1 lit. b bzw. f DSGVO. Die Daten werden gelöscht, sobald sie für den
+        Zweck nicht mehr erforderlich sind und keine gesetzlichen
+        Aufbewahrungspflichten entgegenstehen. Ein Kontaktformular wird bewusst nicht
+        angeboten.
+      </p>
+
+      <h2>6. Links zu sozialen Netzwerken</h2>
+      <p>
+        Auf unserer Website verlinken wir auf unsere Profile bei Facebook und
+        Instagram. Es handelt sich um einfache Links – es werden <strong>keine
+        Inhalte dieser Netzwerke eingebettet</strong> und beim bloßen Besuch unserer
+        Seite keine Daten an diese Dienste übertragen. Erst wenn Sie einen solchen
+        Link anklicken, gelangen Sie auf die Seiten des jeweiligen Anbieters, für
+        deren Datenverarbeitung dessen Datenschutzbestimmungen gelten.
+      </p>
+
+      <h2>7. Redaktionsbereich (/admin)</h2>
+      <p>
+        Der nicht öffentliche Redaktionsbereich unter <code>/admin</code> dient
+        ausschließlich der Pflege der Website durch berechtigte Vereinsmitglieder.
+        Die Anmeldung erfolgt über GitHub; der Zugang ist zusätzlich über Cloudflare
+        Zugriffskontrolle geschützt. Für normale Besucherinnen und Besucher ist dieser
+        Bereich ohne Bedeutung.
+      </p>
+
+      <h2>8. Ihre Rechte</h2>
+      <p>
+        Sie haben im Rahmen der gesetzlichen Vorgaben das Recht auf Auskunft (Art. 15
+        DSGVO), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der
+        Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) sowie ein
+        Widerspruchsrecht (Art. 21). Wenden Sie sich dazu an die oben genannte
+        Kontaktadresse. Zudem steht Ihnen ein Beschwerderecht bei einer
+        Datenschutz-Aufsichtsbehörde zu – für Bayern beim Bayerischen Landesamt für
+        Datenschutzaufsicht (BayLDA).
+      </p>
+
+      <p class="legal__meta">Stand: Diese Erklärung gilt für die aktuelle, technisch datensparsame Version der Website.</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .legal h2 {
+    font-size: var(--step-1);
+    margin-top: var(--space-6);
+    margin-bottom: 0.4rem;
+  }
+
+  .legal h2:first-of-type {
+    margin-top: var(--space-4);
+  }
+
+  .legal p {
+    color: var(--text-muted);
+    max-width: 46rem;
+  }
+
+  .legal code {
+    background: var(--night-800);
+    padding: 0.1em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+
+  .info-box {
+    padding: var(--space-5);
+    margin-bottom: var(--space-5);
+    background: color-mix(in srgb, var(--blue-500) 14%, var(--night-850));
+    border: 1px solid color-mix(in srgb, var(--blue-400) 45%, transparent);
+    border-radius: var(--radius-m);
+    color: var(--cream-100);
+  }
+
+  .todo-inline {
+    color: var(--night-950);
+    background: var(--amber-300);
+    padding: 0.05em 0.4em;
+    border-radius: 4px;
+    font-weight: 600;
+    display: inline-block;
+  }
+
+  .legal__meta {
+    margin-top: var(--space-6);
+    font-size: var(--step--1);
+    color: var(--text-dim);
+    font-style: italic;
+  }
+</style>

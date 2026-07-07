@@ -1,0 +1,150 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDay, formatMonthShort, formatWeekday, formatTime, isoDate } from '../lib/date';
+
+interface Props {
+  event: CollectionEntry<'events'>;
+  showDescription?: boolean;
+  past?: boolean;
+}
+
+const CATEGORY_LABELS: Record<string, string> = {
+  auftritt: 'Auftritt',
+  training: 'Training',
+  veranstaltung: 'Veranstaltung',
+  vereinsintern: 'Vereinsintern',
+  sonstiges: 'Sonstiges',
+};
+
+const { event, showDescription = false, past = false } = Astro.props;
+const { title, date, time, location, description, category } = event.data;
+const timeLabel = formatTime(time);
+---
+
+<article class:list={['event', { 'is-past': past }]}>
+  <div class="event__date" aria-hidden="true">
+    <span class="event__day">{formatDay(date)}</span>
+    <span class="event__month">{formatMonthShort(date)}</span>
+  </div>
+  <div class="event__body">
+    <div class="event__top">
+      <span class="badge" data-cat={category}>{CATEGORY_LABELS[category]}</span>
+      <span class="event__meta">
+        <time datetime={isoDate(date)}>{formatWeekday(date)}, {formatDay(date)}. {formatMonthShort(date)}</time>
+        {timeLabel && <span>· {timeLabel}</span>}
+      </span>
+    </div>
+    <h3 class="event__title">{title}</h3>
+    <p class="event__location">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11Z" stroke-linejoin="round" />
+        <circle cx="12" cy="10" r="2.5" />
+      </svg>
+      {location}
+    </p>
+    {showDescription && description && <p class="event__desc">{description}</p>}
+  </div>
+</article>
+
+<style>
+  .event {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-4);
+    padding: var(--space-5) 0;
+    border-top: 1px solid var(--hairline);
+  }
+
+  .event.is-past {
+    opacity: 0.62;
+  }
+
+  .event__date {
+    display: grid;
+    place-content: center;
+    text-align: center;
+    width: 4.6rem;
+    height: 4.6rem;
+    border-radius: var(--radius-m);
+    background: linear-gradient(160deg, var(--night-700), var(--night-850));
+    border: 1px solid var(--hairline-strong);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06);
+  }
+
+  .event__day {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.9rem;
+    line-height: 1;
+    color: var(--accent-bright);
+  }
+
+  .event__month {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .event__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .event__top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem 0.9rem;
+  }
+
+  .event__meta {
+    display: inline-flex;
+    gap: 0.4ch;
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+
+  .event__title {
+    font-size: var(--step-2);
+    line-height: var(--leading-snug);
+    color: var(--text);
+  }
+
+  .event__location {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45ch;
+    color: var(--text-muted);
+    font-size: var(--step-0);
+  }
+
+  .event__location svg {
+    color: var(--hot-bright);
+    flex: none;
+  }
+
+  .event__desc {
+    margin-top: 0.3rem;
+    color: var(--text-muted);
+    max-width: 46rem;
+  }
+
+  @media (min-width: 640px) {
+    .event {
+      gap: var(--space-5);
+      padding: var(--space-6) 0;
+    }
+
+    .event__date {
+      width: 5.4rem;
+      height: 5.4rem;
+    }
+
+    .event__day {
+      font-size: 2.3rem;
+    }
+  }
+</style>

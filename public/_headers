@@ -1,0 +1,16 @@
+# Cloudflare Pages – HTTP-Header
+# https://developers.cloudflare.com/pages/configuration/headers/
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+
+# Von Astro gehashte Assets dürfen dauerhaft gecacht werden.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Redaktionell hochgeladene Bilder moderat cachen.
+/uploads/*
+  Cache-Control: public, max-age=86400

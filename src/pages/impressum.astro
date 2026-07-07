@@ -1,0 +1,135 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import { site } from '../lib/settings';
+
+const imp = site.impressum;
+// Leere Pflichtfelder werden als deutlich sichtbarer Platzhalter dargestellt.
+const missing = !imp.vertretenDurch || !imp.register;
+---
+
+<BaseLayout title="Impressum" description="Impressum der Europa-Show-Tanzgarde e.V." noindex>
+  <PageIntro title="Impressum" />
+
+  <section class="section section--tight">
+    <div class="wrap wrap--narrow legal">
+      {
+        missing && (
+          <div class="todo-box" role="note">
+            <strong>Hinweis für den Verein:</strong>
+            Einige rechtlich vorgeschriebene Angaben fehlen noch und sind unten
+            <span class="todo-inline">gelb markiert</span>. Bitte vor der
+            Veröffentlichung im Redaktionsbereich unter „Einstellungen →
+            Website-Einstellungen" ergänzen. {imp.registerHinweis}
+          </div>
+        )
+      }
+
+      <h2>Angaben gemäß § 5 DDG (Digitale-Dienste-Gesetz)</h2>
+      <p>
+        {imp.verein}<br />
+        {imp.strasse}<br />
+        {imp.plzOrt}
+      </p>
+
+      <h2>Vertreten durch</h2>
+      {
+        imp.vertretenDurch ? (
+          <p>{imp.vertretenDurch}</p>
+        ) : (
+          <p class="todo-inline">[Bitte ergänzen: vertretungsberechtigter Vorstand nach § 26 BGB, mit Name und Funktion]</p>
+        )
+      }
+
+      <h2>Kontakt</h2>
+      <p>
+        E-Mail: <a href={`mailto:${site.email}`}>{site.email}</a>
+      </p>
+
+      <h2>Registereintrag</h2>
+      {
+        imp.register ? (
+          <p>{imp.register}</p>
+        ) : (
+          <p class="todo-inline">
+            [Bitte ergänzen: Eintragung im Vereinsregister, Registergericht und
+            Registernummer, z. B. „Amtsgericht Ansbach, VR&nbsp;xxxx"]
+          </p>
+        )
+      }
+
+      <h2>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
+      {
+        imp.vertretenDurch ? (
+          <p>{imp.vertretenDurch}<br />{imp.strasse}, {imp.plzOrt}</p>
+        ) : (
+          <p class="todo-inline">[Bitte ergänzen: verantwortliche Person mit Anschrift]</p>
+        )
+      }
+
+      <h2>Haftung für Inhalte</h2>
+      <p>
+        Als Diensteanbieter sind wir für eigene Inhalte auf diesen Seiten nach den
+        allgemeinen Gesetzen verantwortlich. Wir sind jedoch nicht verpflichtet,
+        übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach
+        Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen.
+        Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen
+        nach den allgemeinen Gesetzen bleiben hiervon unberührt.
+      </p>
+
+      <h2>Haftung für Links</h2>
+      <p>
+        Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte
+        wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch
+        keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der
+        jeweilige Anbieter oder Betreiber der Seiten verantwortlich.
+      </p>
+
+      <h2>Urheberrecht</h2>
+      <p>
+        Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten
+        unterliegen dem deutschen Urheberrecht. Beiträge Dritter sind als solche
+        gekennzeichnet. Downloads und Kopien dieser Seite sind nur für den privaten,
+        nicht kommerziellen Gebrauch gestattet.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .legal h2 {
+    font-size: var(--step-1);
+    margin-top: var(--space-6);
+    margin-bottom: 0.4rem;
+  }
+
+  .legal h2:first-of-type {
+    margin-top: var(--space-4);
+  }
+
+  .legal p {
+    color: var(--text-muted);
+    max-width: 44rem;
+  }
+
+  .todo-box {
+    padding: var(--space-5);
+    margin-bottom: var(--space-6);
+    background: color-mix(in srgb, var(--amber-400) 14%, var(--night-850));
+    border: 1px solid color-mix(in srgb, var(--amber-400) 55%, transparent);
+    border-radius: var(--radius-m);
+    color: var(--cream-100);
+  }
+
+  .todo-box strong {
+    color: var(--amber-300);
+  }
+
+  .todo-inline {
+    color: var(--night-950);
+    background: var(--amber-300);
+    padding: 0.05em 0.4em;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+</style>

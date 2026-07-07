@@ -1,0 +1,110 @@
+---
+import { render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CmsImage from '../../components/CmsImage.astro';
+import { getPublishedPosts } from '../../lib/collections';
+import { formatDate, isoDate } from '../../lib/date';
+
+export const getStaticPaths = (async () => {
+  const posts = await getPublishedPosts();
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}) satisfies GetStaticPaths;
+
+const { post } = Astro.props;
+const { title, date, description, cover, coverAlt, gallery } = post.data;
+const { Content } = await render(post);
+---
+
+<BaseLayout title={title} description={description} ogImage={cover ?? '/og-default.png'} article>
+  <article class="post">
+    <div class="wrap wrap--narrow post__head">
+      <a class="post__back" href="/aktuelles">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M11 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        Alle Beiträge
+      </a>
+      <time class="label" datetime={isoDate(date)}>{formatDate(date)}</time>
+      <h1 class="display post__title">{title}</h1>
+      <p class="post__lead">{description}</p>
+    </div>
+
+    {
+      cover && (
+        <div class="wrap post__cover">
+          <CmsImage src={cover} alt={coverAlt} ratio="16 / 9" loading="eager" />
+        </div>
+      )
+    }
+
+    <div class="wrap wrap--narrow">
+      <div class="prose">
+        <Content />
+      </div>
+
+      {
+        gallery.length > 0 && (
+          <div class="post__gallery">
+            <h2 class="label">Bilder</h2>
+            <div class="post__gallery-grid">
+              {gallery.map((img, i) => (
+                <CmsImage src={img.image} alt={img.alt} seed={`${post.id}-${i}`} ratio="1 / 1" />
+              ))}
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .post__head {
+    padding-top: clamp(2rem, 5vw, 3.5rem);
+    display: grid;
+    gap: 0.7rem;
+  }
+
+  .post__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5ch;
+    color: var(--text-muted);
+    font-weight: 600;
+    width: fit-content;
+  }
+
+  .post__back:hover {
+    color: var(--accent-bright);
+  }
+
+  .post__title {
+    font-size: var(--step-4);
+    margin-top: 0.3rem;
+  }
+
+  .post__lead {
+    font-size: var(--step-1);
+    color: var(--text-muted);
+    max-width: 42rem;
+  }
+
+  .post__cover {
+    margin-block: var(--space-6);
+  }
+
+  .post__gallery {
+    margin-top: var(--space-7);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--hairline);
+  }
+
+  .post__gallery-grid {
+    margin-top: var(--space-4);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: var(--space-3);
+  }
+</style>

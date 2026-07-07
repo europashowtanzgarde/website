@@ -1,0 +1,88 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import EventItem from '../components/EventItem.astro';
+import { getUpcomingEvents, getPastEvents } from '../lib/collections';
+import { isoDate } from '../lib/date';
+import { site } from '../lib/settings';
+
+const upcoming = await getUpcomingEvents();
+const past = await getPastEvents(8);
+
+// JSON-LD für kommende Auftritte/Veranstaltungen (lokale Suche).
+const eventsLd = upcoming.map((e) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: e.data.title,
+  startDate: e.data.time ? `${isoDate(e.data.date)}T${e.data.time}` : isoDate(e.data.date),
+  eventStatus: 'https://schema.org/EventScheduled',
+  location: { '@type': 'Place', name: e.data.location },
+  organizer: { '@type': 'Organization', name: site.name },
+  ...(e.data.description ? { description: e.data.description } : {}),
+}));
+---
+
+<BaseLayout
+  title="Termine & Auftritte"
+  description="Kommende Auftritte, Feste und Veranstaltungen der Europa-Show-Tanzgarde aus Wassertrüdingen."
+>
+  <Fragment slot="head">
+    {eventsLd.map((ld) => <script type="application/ld+json" is:inline set:html={JSON.stringify(ld)} />)}
+  </Fragment>
+
+  <PageIntro
+    eyebrow="Bühne frei"
+    title="Termine & Auftritte"
+    intro="Wo und wann unsere Garden als Nächstes auf der Bühne stehen."
+  />
+
+  <section class="section section--tight">
+    <div class="wrap">
+      {
+        upcoming.length === 0 ? (
+          <p class="empty">Aktuell sind keine öffentlichen Termine eingetragen. Folgt uns auf Social Media, um nichts zu verpassen.</p>
+        ) : (
+          <div class="events-list reveal-group">
+            {upcoming.map((event) => <EventItem event={event} showDescription />)}
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  {
+    past.length > 0 && (
+      <section class="section section--tight">
+        <div class="wrap">
+          <h2 class="rueckblick-title">Rückblick</h2>
+          <div class="events-list">
+            {past.map((event) => <EventItem event={event} past />)}
+          </div>
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .events-list {
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .rueckblick-title {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: var(--space-2);
+  }
+
+  .empty {
+    padding: var(--space-7);
+    text-align: center;
+    color: var(--text-muted);
+    border: 1px dashed var(--hairline-strong);
+    border-radius: var(--radius-l);
+  }
+</style>

@@ -1,0 +1,52 @@
+---
+/**
+ * Bild aus dem Redaktionssystem (Pfad unter /uploads). Diese Bilder werden
+ * von Sveltia bereits beim Upload optimiert (WebP, begrenzte Größe) und
+ * können daher nicht mehr durch astro:assets laufen. Fehlt eine Quelle,
+ * wird ein gekennzeichneter Platzhalter angezeigt.
+ */
+import Placeholder from './Placeholder.astro';
+
+interface Props {
+  src?: string;
+  alt?: string;
+  ratio?: string;
+  seed?: string;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+}
+
+const {
+  src,
+  alt = '',
+  ratio = '4 / 3',
+  seed = 'bild',
+  class: klass,
+  loading = 'lazy',
+} = Astro.props;
+---
+
+{
+  src ? (
+    <img
+      src={src}
+      alt={alt}
+      loading={loading}
+      decoding="async"
+      class:list={['cms-image', klass]}
+      style={`aspect-ratio:${ratio};`}
+    />
+  ) : (
+    <Placeholder seed={seed} ratio={ratio} class={klass} />
+  )
+}
+
+<style>
+  .cms-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: var(--radius-m);
+    background: var(--night-800);
+  }
+</style>
