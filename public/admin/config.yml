@@ -16,15 +16,15 @@ backend:
   branch: main
   # OAuth-Anmeldung über die Cloudflare Pages Function (functions/api/auth.ts).
   # base_url = die live geschaltete Produktions-Domain (siehe docs/cloudflare-setup.md).
-  base_url: https://www.europa-showtanzgarde.de
+  base_url: https://www.europashowtanzgarde.de
   auth_endpoint: /api/auth
 
 # Lokales Arbeiten ohne Anmeldung: `npm run dev`, dann /admin öffnen und
 # „Arbeiten mit lokalem Repository" wählen (Chrome/Edge). Kein Proxy nötig.
 # local_backend: true
 
-site_url: https://www.europa-showtanzgarde.de
-display_url: https://www.europa-showtanzgarde.de
+site_url: https://www.europashowtanzgarde.de
+display_url: https://www.europashowtanzgarde.de
 logo_url: /apple-touch-icon.png
 
 # Hochgeladene Bilder landen unter public/uploads und sind auf der Website

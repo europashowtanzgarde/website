@@ -2,7 +2,7 @@
   "name": "Europa-Show-Tanzgarde e.V.",
   "shortName": "Europa-Show-Tanzgarde",
   "claim": "Showtanz, Gardetanz und Vereinsleben aus Wassertrüdingen",
-  "email": "vorstandschaft_estg.wtr@yahoo.com",
+  "email": "info@europashowtanzgarde.de",
   "location": "Wassertrüdingen",
   "social": {
     "facebook": "https://www.facebook.com/europashowtanzgarde",
@@ -11,11 +11,11 @@
   },
   "impressum": {
     "verein": "Europa-Show-Tanzgarde e.V.",
-    "vertretenDurch": "",
-    "strasse": "Neue Schulgasse 1",
+    "vertretenDurch": "1. Vorsitzender Thomas Höver, 2. Vorsitzende Ilona Lamp (gemeinschaftlich vertretungsbefugt)",
+    "strasse": "Industriestr. 9",
     "plzOrt": "91717 Wassertrüdingen",
-    "register": "",
-    "registerHinweis": "Angaben zu Anschrift, Vorstand und Vereinsregister müssen vom Verein vor der Veröffentlichung geprüft und ergänzt werden."
+    "register": "Vereinsregister beim Amtsgericht Ansbach, VR 10217",
+    "registerHinweis": "Diese Impressumsdaten stammen aus dem offiziellen Vereinsauftritt (Stand 2020). Bitte vor dem Live-Gang prüfen, ob Vorstand und Anschrift noch aktuell sind."
   },
   "footerText": "Showtanz und Gardetanz aus Wassertrüdingen – gegründet 1981."
 }

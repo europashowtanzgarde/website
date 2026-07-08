@@ -23,13 +23,9 @@ const imp = site.impressum;
         Verantwortlich für die Datenverarbeitung auf dieser Website ist:<br />
         {imp.verein}<br />
         {imp.strasse}, {imp.plzOrt}<br />
+        {imp.vertretenDurch && <>Vertreten durch: {imp.vertretenDurch}<br /></>}
         E-Mail: <a href={`mailto:${site.email}`}>{site.email}</a>
       </p>
-      {
-        !imp.vertretenDurch && (
-          <p class="todo-inline">[Bitte ergänzen: vertretungsberechtigte Person – siehe Impressum]</p>
-        )
-      }
 
       <h2>2. Hosting bei Cloudflare Pages</h2>
       <p>

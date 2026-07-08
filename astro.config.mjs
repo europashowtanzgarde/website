@@ -2,11 +2,12 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-// WICHTIG: `site` muss die spätere echte Produktions-Domain sein.
+// WICHTIG: `site` muss die echte Produktions-Domain sein.
 // Sie steuert Canonical-URLs, Open-Graph-Bilder und die sitemap.
-// TODO (Verein): Vor dem Live-Gang die tatsächliche Domain eintragen.
-// Aktueller Platzhalter = die historische Vereinsdomain.
-const SITE_URL = 'https://www.europa-showtanzgarde.de';
+// Die Domain europashowtanzgarde.de liegt bereits bei Cloudflare.
+// TODO (Verein): Prüfen, ob als Hauptadresse "www" oder die nackte Domain
+// (ohne www) verwendet werden soll, und ggf. hier anpassen.
+const SITE_URL = 'https://www.europashowtanzgarde.de';
 
 // https://astro.build/config
 export default defineConfig({

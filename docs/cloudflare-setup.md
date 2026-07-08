@@ -38,7 +38,7 @@ Die Pages Functions in `functions/api/` (GitHub-OAuth) werden dabei
 ## 2. Domain verbinden
 
 1. Im Pages-Projekt → **Custom domains** → **Set up a custom domain** → die
-   gewünschte Domain eintragen (z. B. `www.europa-showtanzgarde.de`).
+   gewünschte Domain eintragen (z. B. `www.europashowtanzgarde.de`).
 2. Liegt die Domain bereits in Cloudflare, wird der DNS-Eintrag automatisch
    gesetzt. Andernfalls den angezeigten `CNAME` beim bisherigen DNS-Anbieter
    hinterlegen.
@@ -61,9 +61,9 @@ Damit sich Redakteur:innen unter `/admin` mit GitHub anmelden können, wird eine
    (Alternativ persönlich unter <https://github.com/settings/developers>.)
 2. Felder ausfüllen:
    - **Application name:** z. B. `Europa-Show-Tanzgarde CMS`
-   - **Homepage URL:** `https://www.europa-showtanzgarde.de` (echte Domain)
+   - **Homepage URL:** `https://www.europashowtanzgarde.de` (echte Domain)
    - **Authorization callback URL:**
-     `https://www.europa-showtanzgarde.de/api/callback`
+     `https://www.europashowtanzgarde.de/api/callback`
      ⚠️ Exakt diese eine URL mit der echten Domain – ohne Slash am Ende.
 3. **Register application.** Danach **Client ID** notieren und ein
    **Client Secret** erzeugen (einmal sichtbar – sicher aufbewahren).
@@ -78,7 +78,7 @@ Im Pages-Projekt → **Settings → Environment variables → Production**:
 | ---------------------- | ------------------------------------------------ | ------ |
 | `GITHUB_CLIENT_ID`     | Client ID der OAuth App                          | Secret |
 | `GITHUB_CLIENT_SECRET` | Client Secret der OAuth App                      | Secret |
-| `ALLOWED_DOMAINS`      | `www.europa-showtanzgarde.de` (die echte Domain) | Text   |
+| `ALLOWED_DOMAINS`      | `www.europashowtanzgarde.de` (die echte Domain) | Text   |
 | `NODE_VERSION`         | `22`                                             | Text   |
 
 Danach einmal **neu deployen** (Deployments → Retry/neuer Commit), damit die
@@ -99,7 +99,7 @@ Die öffentliche Website bleibt frei erreichbar – nur `/admin*` wird geschütz
 2. **Application configuration:**
    - **Application name:** `Europa-Show-Tanzgarde Admin`
    - **Session Duration:** z. B. `24 hours`
-   - **Domain:** `www.europa-showtanzgarde.de`, **Path:** `admin`
+   - **Domain:** `www.europashowtanzgarde.de`, **Path:** `admin`
      (schützt `/admin` und alles darunter, also `/admin*`).
 3. **Policies** → eine Policy `Redaktion` anlegen:
    - **Action:** Allow

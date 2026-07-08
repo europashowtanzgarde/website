@@ -14,7 +14,7 @@ Alle Änderungen werden gespeichert und lassen sich rückgängig machen.
 ## 1. Im Adminbereich anmelden
 
 1. Öffne im Browser deine Website-Adresse und hänge **`/admin`** an, z. B.
-   `https://www.europa-showtanzgarde.de/admin`.
+   `https://www.europashowtanzgarde.de/admin`.
 2. Zuerst erscheint eventuell eine **Cloudflare-Anmeldung** (Sicherheitsschritt).
    Melde dich mit der E-Mail-Adresse an, die für dich freigeschaltet wurde. Du
    bekommst einen Bestätigungscode per E-Mail.

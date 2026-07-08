@@ -29,6 +29,29 @@ erzeugen. Die Freistellungs-Schwellwerte stehen in `scripts/prepare-logo.mjs`.
 
 ---
 
+## Echte Vereinsfotos (aus dem offiziellen Vereinsauftritt)
+
+Diese Fotos stammen vom **eigenen** früheren Webauftritt des Vereins
+(`europa-showtanzgarde.de`), gesichert über das Internet Archive
+(web.archive.org). Sie wurden lokal heruntergeladen, verkleinert und als WebP
+optimiert – **keine Hotlinks**.
+
+| Datei | Ursprung | Inhalt | Verwendung | Hinweis |
+| --- | --- | --- | --- | --- |
+| `public/uploads/ensemble-buehne.webp` | Vereins-Website `/images/estg.jpg` (via Internet Archive) | Die gesamte Garde auf der Bühne, blau-rote Kostüme | Startseite (Foto-Band), Verein-Seite, Galerie-Album | Trägt das Wasserzeichen „HahGold Fotografie". **TODO:** Nutzungsrecht mit dem Fotografen bestätigen; exakten Namen/Credit prüfen. |
+| `public/uploads/urkunde-1987.webp` | Vereins-Website `/images/Urkunde.jpeg` (via Internet Archive) | Urkunde der Europa-Union Deutschland (11.07.1987): Namensverleihung „Europa-Tanzgarde Wassertrüdingen" | Verein-Seite (Namensgeschichte) | Historisches Vereinsdokument. |
+
+> **TODO (Verein) – wichtig vor dem Live-Gang:**
+> 1. **Bildrechte** am Ensemble-Foto mit dem Fotografen („HahGold Fotografie")
+>    klären und den Credit korrekt schreiben.
+> 2. **Einwilligung der abgebildeten Personen** (Recht am eigenen Bild, DSGVO)
+>    sicherstellen – insbesondere bei Minderjährigen über die
+>    Erziehungsberechtigten. Falls eine Einwilligung fehlt, das Foto ersetzen
+>    oder entfernen.
+> Solange dies nicht geklärt ist, gelten diese Fotos als vorläufige Platzhalter.
+
+---
+
 ## Rechtlicher Hinweis zum Logo
 
 Das Logo wurde vom Verein bereitgestellt. Es wird davon ausgegangen, dass der

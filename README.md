@@ -149,7 +149,7 @@ Adminbereich steht in [`docs/cloudflare-setup.md`](docs/cloudflare-setup.md).
   werden, damit Canonical-URLs, Sitemap und Social-Vorschau stimmen:
   - `astro.config.mjs` → Konstante `SITE_URL`
   - `public/admin/config.yml` → `base_url`, `site_url`, `display_url`
-  - Aktuell steht dort der Platzhalter `https://www.europa-showtanzgarde.de`.
+  - Aktuell steht dort der Platzhalter `https://www.europashowtanzgarde.de`.
 
 ---
 
@@ -190,10 +190,17 @@ liegen. Die genaue Schritt-für-Schritt-Anleitung steht in
 
 ## Offene TODOs
 
-- [ ] **Impressum vervollständigen:** vertretungsberechtigter Vorstand,
-      Vereinsregister/Registernummer und Anschrift bestätigen (aktuell als
-      Platzhalter markiert) – über `/admin → Einstellungen → Website-Einstellungen`.
-- [ ] **Echte Domain eintragen** (siehe [Domain & DNS](#domain--dns)).
+- [ ] **Impressum-Aktualität prüfen:** Die Angaben (Anschrift, Vorstand,
+      Vereinsregister VR 10217) stammen aus dem offiziellen Vereinsauftritt
+      (Stand 2020). Bitte prüfen, ob Vorstand und Anschrift noch aktuell sind –
+      maßgeblich ist das aktuelle Vereinsregister. Bearbeitung über
+      `/admin → Einstellungen → Website-Einstellungen`.
+- [ ] **Bildrechte & Einwilligungen klären:** Das Ensemble-Foto trägt ein
+      Fotografen-Wasserzeichen; Nutzungsrecht und Einwilligung der abgebildeten
+      Personen (v. a. Minderjährige) bestätigen – siehe `docs/image-sources.md`.
+- [ ] **Domain final schalten:** `europashowtanzgarde.de` liegt bereits bei
+      Cloudflare. Prüfen, ob „www" oder die nackte Domain Hauptadresse ist, und
+      in `astro.config.mjs` sowie `public/admin/config.yml` bestätigen.
 - [ ] **GitHub OAuth App anlegen** und Secrets in Cloudflare setzen
       (`docs/cloudflare-setup.md`).
 - [ ] **Cloudflare Access** für `/admin*` einrichten.
@@ -201,5 +208,5 @@ liegen. Die genaue Schritt-für-Schritt-Anleitung steht in
       „Beispieltermin" gekennzeichnet und durch echte Daten zu ersetzen.
 - [ ] **Trainingszeiten & Ansprechpartner:innen** bei den Garden ergänzen
       (bewusst leer gelassen, um keine veralteten Angaben zu zeigen).
-- [ ] **Fotos einpflegen** (Galerie, Beiträge, Garden) – aus offiziellen
-      Vereinsquellen, siehe `docs/image-sources.md`.
+- [ ] **Weitere Fotos einpflegen** (Beiträge, Garden, mehr Galerie-Alben) – aus
+      offiziellen Vereinsquellen, siehe `docs/image-sources.md`.

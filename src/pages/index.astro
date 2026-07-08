@@ -5,6 +5,7 @@ import SectionHeading from '../components/SectionHeading.astro';
 import PostCard from '../components/PostCard.astro';
 import EventItem from '../components/EventItem.astro';
 import GroupCard from '../components/GroupCard.astro';
+import CmsImage from '../components/CmsImage.astro';
 import { getPublishedPosts, getUpcomingEvents, getGroups } from '../lib/collections';
 import { homepage, site } from '../lib/settings';
 
@@ -76,6 +77,20 @@ const { highlights, notice, vereinTeaserTitle, vereinTeaserText } = homepage;
       <div class="grid grid--3">
         {groups.map((group, i) => <GroupCard group={group} index={i} />)}
       </div>
+    </div>
+  </section>
+
+  <!-- Vollbild-Foto: das ganze Ensemble -->
+  <section class="photo-band" aria-label="Die Europa-Show-Tanzgarde auf der Bühne">
+    <CmsImage
+      src="/uploads/ensemble-buehne.webp"
+      alt="Die gesamte Europa-Show-Tanzgarde auf der Bühne, in blau-roten Kostümen unter farbigem Bühnenlicht."
+      ratio="2000 / 940"
+      class="photo-band__img"
+    />
+    <div class="photo-band__caption">
+      <p class="eyebrow">gemeinsam auf der Bühne</p>
+      <p class="photo-band__text">Drei Garden, ein Auftritt.</p>
     </div>
   </section>
 
@@ -215,6 +230,49 @@ const { highlights, notice, vereinTeaserTitle, vereinTeaserText } = homepage;
 
   .more-btn {
     margin-top: var(--space-6);
+  }
+
+  /* Vollbild-Foto-Band */
+  .photo-band {
+    position: relative;
+    margin-block: var(--space-7);
+    isolation: isolate;
+  }
+
+  .photo-band :global(.photo-band__img) {
+    width: 100%;
+    max-height: 68vh;
+    object-fit: cover;
+    border-radius: 0;
+  }
+
+  .photo-band::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 45%, rgb(9 12 29 / 0.85));
+    pointer-events: none;
+  }
+
+  .photo-band__caption {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 1;
+    padding: clamp(1.2rem, 4vw, 2.5rem);
+  }
+
+  .photo-band__caption .eyebrow {
+    transform-origin: left center;
+  }
+
+  .photo-band__text {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--step-3);
+    text-transform: uppercase;
+    line-height: 1;
+    text-shadow: 0 2px 20px rgb(0 0 0 / 0.6);
   }
 
   /* Verein-Teaser (helle Sektion) */
