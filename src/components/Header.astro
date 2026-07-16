@@ -109,11 +109,11 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
     left: 0;
     bottom: -1px;
     width: 100%;
-    height: 3px;
-    background: var(--hot);
-    transform: scaleX(0) skewX(-20deg);
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
     transform-origin: left;
-    transition: transform 0.28s var(--ease-out);
+    transition: transform 0.25s var(--ease-out);
   }
 
   .site-nav a:hover,
@@ -123,7 +123,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
 
   .site-nav a:hover::after,
   .site-nav a[aria-current='page']::after {
-    transform: scaleX(1) skewX(-20deg);
+    transform: scaleX(1);
   }
 
   /* --- Burger (nur mobil sichtbar) --- */

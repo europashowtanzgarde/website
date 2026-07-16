@@ -4,7 +4,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout title="Seite nicht gefunden" noindex>
   <section class="notfound">
-    <div class="notfound__dots formation-dots" aria-hidden="true"></div>
     <div class="wrap notfound__inner">
       <p class="eyebrow">Vorhang zu</p>
       <p class="notfound__code" aria-hidden="true">404</p>
@@ -33,23 +32,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     isolation: isolate;
   }
 
-  .notfound__dots {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    -webkit-mask-image: radial-gradient(60% 60% at 50% 45%, #000, transparent 75%);
-    mask-image: radial-gradient(60% 60% at 50% 45%, #000, transparent 75%);
-  }
-
   .notfound__inner {
     display: grid;
     justify-items: center;
     gap: var(--space-3);
-  }
-
-  .notfound .eyebrow {
-    transform-origin: center;
-    font-size: var(--step-2);
   }
 
   .notfound__code {

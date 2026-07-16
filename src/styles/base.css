@@ -132,7 +132,7 @@ li {
   position: relative;
   background: var(--cream-bg);
   color: var(--cream-ink);
-  clip-path: polygon(0 var(--diagonal-cut), 100% 0, 100% calc(100% - var(--diagonal-cut)), 0 100%);
+  border-block: 1px solid var(--hairline);
   padding-block: clamp(1.75rem, 3.5vw, 2.75rem);
 }
 
@@ -152,21 +152,16 @@ li {
    Typografische Bausteine
    ------------------------------------------------------------------------- */
 
-/* Handschrift-Akzent – greift das rote „Show" auf. Sparsam einsetzen! */
+/* Ruhiges, gesperrtes Kicker-Label über Überschriften. */
 .eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5ch;
-  font-family: var(--font-script);
-  font-size: var(--step-1);
+  display: inline-block;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: var(--step--1);
   line-height: 1;
-  color: var(--hot-bright);
-  transform: rotate(var(--skew));
-  transform-origin: left center;
-}
-
-.surface-cream .eyebrow {
-  color: var(--red-500);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
 /* Kleines, gesperrtes Label (Kategorien, Meta). */

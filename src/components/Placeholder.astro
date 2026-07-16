@@ -29,7 +29,6 @@ const hot = variant === 1;
   role="img"
   aria-label={label}
 >
-  <div class="ph__dots formation-dots" aria-hidden="true"></div>
   <span class="ph__tag">{label}</span>
 </div>
 
@@ -62,13 +61,6 @@ const hot = variant === 1;
         transparent 40deg
       ),
       linear-gradient(160deg, #eef1f8, #f7f9fe);
-  }
-
-  .ph__dots {
-    position: absolute;
-    inset: 0;
-    -webkit-mask-image: radial-gradient(80% 80% at 50% 120%, #000, transparent);
-    mask-image: radial-gradient(80% 80% at 50% 120%, #000, transparent);
   }
 
   .ph__tag {

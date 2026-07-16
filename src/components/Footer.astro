@@ -30,7 +30,6 @@ const hasTiktok = Boolean(site.social.tiktok);
 ---
 
 <footer class="site-footer">
-  <div class="footglow formation-dots" aria-hidden="true"></div>
   <div class="wrap footer-grid">
     <div class="footer-brand">
       <p class="footer-wordmark">
@@ -109,15 +108,6 @@ const hasTiktok = Boolean(site.social.tiktok);
     background: linear-gradient(180deg, transparent, var(--bg-deep) 55%);
     border-top: 1px solid var(--hairline);
     overflow: hidden;
-  }
-
-  .footglow {
-    position: absolute;
-    inset: auto 0 0 0;
-    height: 60%;
-    -webkit-mask-image: linear-gradient(180deg, transparent, #000);
-    mask-image: linear-gradient(180deg, transparent, #000);
-    pointer-events: none;
   }
 
   .footer-grid {
