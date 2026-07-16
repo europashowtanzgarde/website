@@ -7,39 +7,50 @@ interface Props {
   align?: 'left' | 'center';
 }
 
-const { number, eyebrow, title, intro, align = 'left' } = Astro.props;
+const { number, eyebrow, title, intro } = Astro.props;
 ---
 
-<header class:list={['section-heading', `is-${align}`]}>
-  {number && <span class="ghost-number" aria-hidden="true">{number}</span>}
-  <div class="section-heading__text">
-    {eyebrow && <span class="eyebrow">{eyebrow}</span>}
-    <h2 class="display">{title}</h2>
-    {intro && <p class="section-heading__intro">{intro}</p>}
+<header class="section-heading">
+  <div class="section-heading__title">
+    {number && <span class="section-heading__number" aria-hidden="true">{number}</span>}
+    {eyebrow && <p class="section-heading__context">{eyebrow}</p>}
+    <h2>{title}</h2>
   </div>
+  {intro && <p class="section-heading__intro">{intro}</p>}
 </header>
 
 <style>
   .section-heading {
-    position: relative;
-    margin-bottom: var(--space-7);
+    display: grid;
+    gap: var(--space-4) clamp(2rem, 6vw, 6rem);
+    align-items: end;
+    margin-bottom: clamp(2rem, 4vw, 3.5rem);
   }
 
-  .ghost-number {
-    display: block;
-    position: absolute;
-    top: -0.35em;
-    left: -0.04em;
-    z-index: 0;
+  @media (min-width: 760px) {
+    .section-heading:has(.section-heading__intro) {
+      grid-template-columns: minmax(0, 1fr) minmax(17rem, 0.65fr);
+    }
   }
 
-  .section-heading__text {
-    position: relative;
-    z-index: 1;
+  .section-heading__title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-4);
   }
 
-  .eyebrow {
-    margin-bottom: 0.3rem;
+  .section-heading__number {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-weight: 750;
+    color: var(--red-600);
+  }
+
+  .section-heading__context {
+    width: 100%;
+    font-weight: 700;
+    color: var(--red-600);
   }
 
   .section-heading h2 {
@@ -47,27 +58,8 @@ const { number, eyebrow, title, intro, align = 'left' } = Astro.props;
   }
 
   .section-heading__intro {
-    margin-top: var(--space-3);
-    max-width: 42rem;
+    max-width: 40rem;
     color: var(--text-muted);
     font-size: var(--step-1);
-  }
-
-  .is-center {
-    text-align: center;
-  }
-
-  .is-center .section-heading__text {
-    display: grid;
-    justify-items: center;
-  }
-
-  .is-center .ghost-number {
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .is-center .eyebrow {
-    transform-origin: center;
   }
 </style>

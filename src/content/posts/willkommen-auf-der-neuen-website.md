@@ -2,7 +2,8 @@
 title: Unsere neue Website ist online
 date: 2026-07-07
 description: Ab sofort findet ihr Aktuelles, Termine und Einblicke aus dem Vereinsleben gebündelt an einem Ort. Ein kurzer Rundgang durch die neue Seite.
-coverAlt: ''
+cover: /uploads/aktuelles-neue-website.webp
+coverAlt: Laptop mit Vereinswebsite, Smartphone, Kalender und Tanzfotos auf einem Holztisch.
 gallery: []
 draft: false
 ---

@@ -103,23 +103,31 @@ const imp = site.impressum;
 </BaseLayout>
 
 <style>
+  .legal {
+    max-width: 52rem;
+  }
+
   .legal h2 {
+    max-width: 36ch;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--hairline-strong);
     font-size: var(--step-1);
-    margin-top: var(--space-6);
-    margin-bottom: 0.4rem;
+    margin-top: var(--space-7);
   }
 
   .legal h2:first-of-type {
-    margin-top: var(--space-4);
+    margin-top: var(--space-6);
   }
 
   .legal p {
+    max-width: var(--measure);
+    margin-top: var(--space-2);
     color: var(--text-muted);
-    max-width: 46rem;
   }
 
   .legal code {
-    background: var(--night-800);
+    background: var(--bg-raised);
+    border: 1px solid var(--hairline);
     padding: 0.1em 0.4em;
     border-radius: 4px;
     font-size: 0.9em;
@@ -128,10 +136,14 @@ const imp = site.impressum;
   .info-box {
     padding: var(--space-5);
     margin-bottom: var(--space-5);
-    background: color-mix(in srgb, var(--blue-500) 14%, var(--night-850));
-    border: 1px solid color-mix(in srgb, var(--blue-400) 45%, transparent);
+    background: var(--surface-soft-blue);
+    border: 1px solid var(--border-strong);
     border-radius: var(--radius-m);
-    color: var(--cream-100);
+    color: var(--text);
+  }
+
+  .info-box strong {
+    color: var(--blue-700);
   }
 
   .todo-inline {
@@ -147,6 +159,5 @@ const imp = site.impressum;
     margin-top: var(--space-6);
     font-size: var(--step--1);
     color: var(--text-dim);
-    font-style: italic;
   }
 </style>

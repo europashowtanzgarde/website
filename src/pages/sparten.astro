@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import GroupCard from '../components/GroupCard.astro';
+import { getGroups } from '../lib/collections';
+
+const groups = await getGroups();
+---
+
+<BaseLayout title="Unsere Sparten" description="Kindergarde, Jugend-Tanzgarde und die Aktiven: die drei Garden der Europa-Show-Tanzgarde aus Wassertrüdingen.">
+  <PageIntro title="Unsere Sparten" intro="Von den ersten Schritten in der Kindergarde bis zur großen Bühne mit den Aktiven – bei uns findet jedes Alter seine Gruppe." />
+
+  <section class="section section--tight">
+    <div class="wrap groups-stack">
+      {groups.map((group) => <GroupCard group={group} variant="detail" />)}
+    </div>
+  </section>
+
+  <section class="join">
+    <div class="wrap join__inner">
+      <div>
+        <h2>Lust, mitzutanzen?</h2>
+        <p>Neue Tänzerinnen und Tänzer sind in allen Garden willkommen. Schreib uns einfach – wir sagen dir, wann und wo das nächste Training stattfindet.</p>
+      </div>
+      <a class="btn" href="/kontakt">Kontakt aufnehmen</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .groups-stack {
+    display: grid;
+  }
+
+  .join {
+    padding-block: clamp(2.75rem, 6vw, 5rem);
+    color: var(--text-on-color);
+    background: var(--surface-blue);
+  }
+
+  .join__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-6);
+  }
+
+  .join h2 {
+    font-size: var(--step-3);
+    color: var(--text-on-color);
+  }
+
+  .join p {
+    max-width: 44rem;
+    margin-top: var(--space-3);
+    color: var(--text-on-color-muted);
+    font-size: var(--step-1);
+  }
+
+  .join .btn {
+    color: var(--blue-700);
+    background: #ffffff;
+    border-color: #ffffff;
+  }
+
+  .join .btn:hover {
+    color: var(--blue-700);
+    background: var(--surface-soft-blue);
+    border-color: var(--surface-soft-blue);
+  }
+</style>

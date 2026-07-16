@@ -1,157 +1,90 @@
 ---
-import { Image } from 'astro:assets';
-import logo from '../assets/logo.png';
-import { homepage, site } from '../lib/settings';
+import { homepage } from '../lib/settings';
 
-const {
-  heroKicker,
-  heroTitle,
-  heroHighlight,
-  heroText,
-  ctaLabel,
-  ctaLink,
-  ctaSecondaryLabel,
-  ctaSecondaryLink,
-  marqueeWords,
-} = homepage;
-
-// Marquee-Wörter verdoppeln für nahtlose Endlosschleife.
-const marquee = marqueeWords.length ? [...marqueeWords, ...marqueeWords] : [];
+const { heroKicker } = homepage;
 ---
 
-<section class="hero">
-  <div class="hero__dots formation-dots" aria-hidden="true"></div>
-  <div class="wrap hero__inner">
-    <p class="eyebrow rise" style="--rise-index:0">{heroKicker}</p>
+<section class="photo-hero" aria-label="Die Europa-Show-Tanzgarde auf der Bühne">
+  <img
+    class="photo-hero__img"
+    src="/uploads/ensemble-buehne.webp"
+    alt="Die gesamte Europa-Show-Tanzgarde auf der Bühne, in blau-roten Kostümen unter farbigem Bühnenlicht."
+    fetchpriority="high"
+    decoding="async"
+  />
 
-    <div class="hero__logo rise" style="--rise-index:1">
-      <Image src={logo} alt={site.name} widths={[420, 640, 840]} sizes="(min-width: 700px) 640px, 88vw" loading="eager" />
-    </div>
-
-    <h1 class="hero__title rise" style="--rise-index:2">
-      <span>{heroTitle}</span>
-      <span class="hero__title-accent">{heroHighlight}</span>
-    </h1>
-
-    <p class="hero__text rise" style="--rise-index:3">{heroText}</p>
-
-    <div class="hero__cta rise" style="--rise-index:4">
-      <a class="btn pulse" href={ctaLink}>{ctaLabel}</a>
-      {ctaSecondaryLabel && ctaSecondaryLink && (
-        <a class="btn btn--ghost" href={ctaSecondaryLink}>{ctaSecondaryLabel}</a>
-      )}
-    </div>
+  <div class="photo-hero__overlay">
+    {heroKicker && <p class="photo-hero__kicker">{heroKicker}</p>}
+    <p class="photo-hero__showtime">It&rsquo;s&nbsp;Showtime</p>
   </div>
-
-  {
-    marquee.length > 0 && (
-      <div class="hero__marquee marquee rise" style="--rise-index:5" aria-hidden="true">
-        <div class="marquee__track">
-          {marquee.map((word) => (
-            <span class="marquee__word">
-              {word}
-              <span class="marquee__sep">✦</span>
-            </span>
-          ))}
-        </div>
-      </div>
-    )
-  }
 </section>
 
 <style>
-  .hero {
+  .photo-hero {
     position: relative;
-    padding-top: clamp(2.5rem, 7vw, 5.5rem);
-    padding-bottom: clamp(3rem, 7vw, 5rem);
-    overflow: hidden;
-    isolation: isolate;
-  }
-
-  .hero__dots {
-    position: absolute;
-    inset: -20% 0 auto 0;
-    height: 90%;
-    z-index: -1;
-    -webkit-mask-image: radial-gradient(70% 60% at 50% 20%, #000, transparent 75%);
-    mask-image: radial-gradient(70% 60% at 50% 20%, #000, transparent 75%);
-  }
-
-  .hero__inner {
-    display: grid;
-    justify-items: center;
-    text-align: center;
-    gap: var(--space-4);
-  }
-
-  .hero .eyebrow {
-    font-size: var(--step-2);
-    transform-origin: center;
-  }
-
-  .hero__logo {
-    width: min(640px, 88vw);
-  }
-
-  .hero__logo :global(img) {
     width: 100%;
-    height: auto;
-    filter: drop-shadow(0 0 32px rgb(75 99 230 / 0.55))
-      drop-shadow(0 6px 20px rgb(0 0 0 / 0.5));
+    height: clamp(26rem, 80svh, 50rem);
+    isolation: isolate;
+    overflow: hidden;
   }
 
-  .hero__title {
-    font-size: clamp(1.8rem, 1.2rem + 3vw, 3.4rem);
-    line-height: 1.02;
-    text-transform: uppercase;
+  .photo-hero__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 28%;
+  }
+
+  /* Weicher Verlaufs-Scrim: unten + links dunkler, damit die weiße
+     Schrift sicher lesbar auf dem Foto sitzt. */
+  .photo-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      linear-gradient(to top, rgb(9 12 29 / 0.8), rgb(9 12 29 / 0.15) 42%, transparent 68%),
+      linear-gradient(to right, rgb(9 12 29 / 0.55), transparent 55%);
+  }
+
+  .photo-hero__overlay {
+    position: absolute;
+    inset: auto auto 0 0;
+    z-index: 2;
+    padding: clamp(1.4rem, 5vw, 3.5rem);
+    max-width: min(94%, 52rem);
     display: grid;
-    gap: 0.1em;
-    max-width: 18ch;
-  }
-
-  .hero__title-accent {
-    color: var(--accent-bright);
-    text-shadow: var(--glow-blue-soft);
-  }
-
-  .hero__text {
-    max-width: 46rem;
-    font-size: var(--step-1);
-    color: var(--text-muted);
-  }
-
-  .hero__cta {
-    display: flex;
-    flex-wrap: wrap;
     gap: var(--space-4);
-    justify-content: center;
-    margin-top: var(--space-3);
   }
 
-  /* Diagonales Laufband der Vereinsschlagworte. */
-  .hero__marquee {
-    margin-top: clamp(2.5rem, 6vw, 4rem);
-    width: 120%;
-    margin-left: -10%;
-    padding-block: 0.7rem;
-    background: linear-gradient(90deg, transparent, var(--night-800) 12%, var(--night-800) 88%, transparent);
-    border-block: 1px solid var(--hairline);
+  .photo-hero__kicker {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: var(--step--1);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    line-height: 1;
+    color: rgb(255 255 255 / 0.92);
+    text-shadow: 0 1px 10px rgb(0 0 0 / 0.45);
+    margin: 0;
   }
 
-  .marquee__word {
-    display: inline-flex;
-    align-items: center;
-    gap: 2.5rem;
+  .photo-hero__showtime {
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 1.5rem;
-    letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: #ffffff;
+    line-height: 0.9;
+    font-size: clamp(2.8rem, 10vw, 6.5rem);
+    letter-spacing: 0.01em;
+    text-shadow: 0 6px 34px rgb(0 0 0 / 0.55);
+    margin: 0;
   }
 
-  .marquee__sep {
-    color: var(--hot);
-    font-size: 0.9rem;
+  @media (max-width: 560px) {
+    .photo-hero__img {
+      object-position: center 22%;
+    }
   }
 </style>

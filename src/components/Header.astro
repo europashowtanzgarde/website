@@ -1,12 +1,14 @@
 ---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.png';
 import { site } from '../lib/settings';
 
 const nav = [
   { href: '/aktuelles', label: 'Aktuelles' },
   { href: '/termine', label: 'Termine' },
-  { href: '/garden', label: 'Garden' },
-  { href: '/galerie', label: 'Galerie' },
+  { href: '/sparten', label: 'Sparten' },
   { href: '/verein', label: 'Verein' },
+  { href: '/galerie', label: 'Galerie' },
   { href: '/kontakt', label: 'Kontakt' },
 ];
 
@@ -14,21 +16,24 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isActive = (href: string) => path === href || path.startsWith(href + '/');
 ---
 
-<header class="site-header">
+<header class="site-header" data-site-header>
   <div class="wrap header-inner">
     <a class="brand" href="/" aria-label={`${site.name} – Startseite`}>
-      <img src="/favicon.svg" width="40" height="40" alt="" class="brand__mark" />
-      <span class="brand__text">
-        <span class="brand__line1">Europa-Show-</span><span class="brand__line2">Tanzgarde</span>
-      </span>
+      <Image src={logo} alt={site.name} width={240} class="brand__logo" loading="eager" />
     </a>
 
-    <input type="checkbox" id="nav-toggle" class="nav-toggle visually-hidden" />
-    <label for="nav-toggle" class="nav-burger" aria-label="Menü ein- und ausblenden">
+    <button
+      class="nav-burger"
+      type="button"
+      aria-controls="site-navigation"
+      aria-expanded="false"
+      aria-label="Hauptmenü öffnen"
+      data-nav-button
+    >
       <span></span><span></span><span></span>
-    </label>
+    </button>
 
-    <nav class="site-nav" aria-label="Hauptnavigation">
+    <nav id="site-navigation" class="site-nav" aria-label="Hauptnavigation" data-site-nav>
       <ul>
         {
           nav.map((item) => (
@@ -44,12 +49,42 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
   </div>
 </header>
 
+<script is:inline>
+  (() => {
+    const header = document.querySelector('[data-site-header]');
+    const button = header?.querySelector('[data-nav-button]');
+    const nav = header?.querySelector('[data-site-nav]');
+    if (!(header instanceof HTMLElement) || !(button instanceof HTMLButtonElement) || !(nav instanceof HTMLElement)) return;
+
+    const setOpen = (open) => {
+      header.classList.toggle('is-open', open);
+      button.setAttribute('aria-expanded', String(open));
+      button.setAttribute('aria-label', open ? 'Hauptmenü schließen' : 'Hauptmenü öffnen');
+    };
+
+    button.addEventListener('click', () => setOpen(button.getAttribute('aria-expanded') !== 'true'));
+    nav.addEventListener('click', (event) => {
+      if (event.target instanceof HTMLAnchorElement) setOpen(false);
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && button.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        button.focus();
+      }
+    });
+    document.addEventListener('pointerdown', (event) => {
+      if (button.getAttribute('aria-expanded') === 'true' && event.target instanceof Node && !header.contains(event.target)) setOpen(false);
+    });
+    window.matchMedia('(min-width: 900px)').addEventListener('change', () => setOpen(false));
+  })();
+</script>
+
 <style>
   .site-header {
     position: sticky;
     top: 0;
-    z-index: 100;
-    background: color-mix(in srgb, var(--night-900) 82%, transparent);
+    z-index: var(--z-sticky);
+    background: color-mix(in srgb, #ffffff 82%, transparent);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border-bottom: 1px solid var(--hairline);
@@ -62,47 +97,32 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
     gap: var(--space-4);
     min-height: 4.4rem;
     padding-block: 0.6rem;
+    max-width: 74rem;
+    padding-inline: clamp(1.1rem, 4vw, 2.5rem);
   }
 
-  /* --- Wortmarke --- */
   .brand {
     display: inline-flex;
     align-items: center;
-    gap: 0.7rem;
-    color: var(--text);
     line-height: 1;
   }
 
-  .brand__mark {
-    filter: drop-shadow(0 0 10px rgb(75 99 230 / 0.35));
+  .brand__logo {
+    height: clamp(34px, 4.5vw, 46px);
+    width: auto;
     transition: transform 0.3s var(--ease-out);
   }
 
-  .brand:hover .brand__mark {
-    transform: rotate(-6deg) scale(1.05);
+  .brand:hover .brand__logo {
+    transform: scale(1.03);
   }
 
-  .brand__text {
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: 1.18rem;
-    letter-spacing: 0.01em;
-    text-transform: uppercase;
-    display: grid;
-  }
-
-  .brand__line2 {
-    color: var(--accent-bright);
-  }
-
-  /* --- Navigation (Desktop) --- */
   .site-nav ul {
     display: flex;
     align-items: center;
     gap: clamp(1rem, 2.5vw, 2rem);
     list-style: none;
     padding: 0;
-    margin: 0;
   }
 
   .site-nav a {
@@ -114,36 +134,31 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
     font-size: 1.05rem;
     letter-spacing: 0.03em;
     text-transform: uppercase;
+    text-decoration: none;
     color: var(--text);
   }
 
-  /* Diagonale „Wisch"-Unterstreichung (Signatur). */
   .site-nav a::after {
     content: '';
     position: absolute;
     left: 0;
     bottom: -1px;
     width: 100%;
-    height: 3px;
-    background: var(--hot);
-    transform: scaleX(0) skewX(-20deg);
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
     transform-origin: left;
-    transition: transform 0.28s var(--ease-out);
+    transition: transform 0.25s var(--ease-out);
   }
 
   .site-nav a:hover,
   .site-nav a[aria-current='page'] {
-    color: var(--cream-50);
+    color: var(--accent);
   }
 
   .site-nav a:hover::after,
   .site-nav a[aria-current='page']::after {
-    transform: scaleX(1) skewX(-20deg);
-  }
-
-  /* --- Burger (nur mobil sichtbar) --- */
-  .nav-toggle {
-    position: absolute;
+    transform: scaleX(1);
   }
 
   .nav-burger {
@@ -154,8 +169,10 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
     width: 44px;
     height: 44px;
     padding: 10px;
-    cursor: pointer;
+    border: 0;
     border-radius: var(--radius-s);
+    background: transparent;
+    cursor: pointer;
   }
 
   .nav-burger span {
@@ -165,11 +182,6 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
     background: var(--text);
     border-radius: 2px;
     transition: transform 0.25s var(--ease-out), opacity 0.2s var(--ease-out);
-  }
-
-  .nav-toggle:focus-visible + .nav-burger {
-    outline: 3px solid var(--hot-bright);
-    outline-offset: 2px;
   }
 
   @media (max-width: 899px) {
@@ -182,11 +194,13 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
       left: 0;
       right: 0;
       top: 100%;
-      background: var(--night-850);
-      border-bottom: 1px solid var(--hairline-strong);
-      overflow: hidden;
       max-height: 0;
-      transition: max-height 0.32s var(--ease-out);
+      overflow: hidden;
+      visibility: hidden;
+      background: #ffffff;
+      border-bottom: 1px solid var(--hairline-strong);
+      box-shadow: var(--shadow-s);
+      transition: max-height 0.32s var(--ease-out), visibility 0s linear 0.32s;
     }
 
     .site-nav ul {
@@ -201,7 +215,8 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
 
     .site-nav a {
       display: block;
-      padding: 1rem clamp(1.1rem, 4vw, 2.5rem);
+      min-height: 52px;
+      padding: 0.85rem clamp(1.1rem, 4vw, 2.5rem);
       font-size: 1.3rem;
     }
 
@@ -214,28 +229,23 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
       box-shadow: inset 4px 0 0 var(--hot);
     }
 
-    /* Aufklappen via max-height (animierbar, kein JS). */
-    .nav-toggle:checked ~ .site-nav {
-      max-height: 80vh;
+    .site-header.is-open .site-nav {
+      max-height: min(80vh, 28rem);
       overflow-y: auto;
+      visibility: visible;
+      transition-delay: 0s;
     }
 
-    .nav-toggle:checked + .nav-burger span:nth-child(1) {
+    .site-header.is-open .nav-burger span:nth-child(1) {
       transform: translateY(7.5px) rotate(45deg);
     }
 
-    .nav-toggle:checked + .nav-burger span:nth-child(2) {
+    .site-header.is-open .nav-burger span:nth-child(2) {
       opacity: 0;
     }
 
-    .nav-toggle:checked + .nav-burger span:nth-child(3) {
+    .site-header.is-open .nav-burger span:nth-child(3) {
       transform: translateY(-7.5px) rotate(-45deg);
-    }
-  }
-
-  @media (max-width: 400px) {
-    .brand__text {
-      font-size: 1rem;
     }
   }
 </style>

@@ -97,38 +97,45 @@ const missing = !imp.vertretenDurch || !imp.register;
 </BaseLayout>
 
 <style>
+  .legal {
+    max-width: 52rem;
+  }
+
   .legal h2 {
+    max-width: 36ch;
+    margin-top: var(--space-7);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--hairline-strong);
     font-size: var(--step-1);
-    margin-top: var(--space-6);
-    margin-bottom: 0.4rem;
   }
 
   .legal h2:first-of-type {
-    margin-top: var(--space-4);
+    margin-top: var(--space-6);
   }
 
   .legal p {
+    max-width: var(--measure);
+    margin-top: var(--space-2);
     color: var(--text-muted);
-    max-width: 44rem;
   }
 
   .todo-box {
     padding: var(--space-5);
     margin-bottom: var(--space-6);
-    background: color-mix(in srgb, var(--amber-400) 14%, var(--night-850));
-    border: 1px solid color-mix(in srgb, var(--amber-400) 55%, transparent);
+    background: #fff6d9;
+    border: 1px solid #c6a34f;
     border-radius: var(--radius-m);
-    color: var(--cream-100);
+    color: var(--text);
   }
 
   .todo-box strong {
-    color: var(--amber-300);
+    color: #8a6400;
   }
 
   .todo-inline {
     color: var(--night-950);
     background: var(--amber-300);
-    padding: 0.05em 0.4em;
+    padding: 0.08em 0.35em;
     border-radius: 4px;
     font-weight: 600;
   }

@@ -1,15 +1,18 @@
 /**
  * Logo-Aufbereitung für die Europa-Show-Tanzgarde.
  *
- * Das Original (input/Logo_Europashowtanzgarde.png) zeigt den royalblauen
- * Leucht-Schriftzug und das rote „Show" auf einem VOLLFLÄCHIG GRAUEN,
- * nicht transparenten Hintergrund. Für eine Bühnen-Optik brauchen wir das
- * Logo freigestellt (transparent), damit es auf dunklem Grund „leuchtet".
+ * Die Quelle (input/Logo_Europashowtanzgarde.jpg) zeigt den royalblauen
+ * Schriftzug „EUROPA / TANZGARDE" und das rote „Show" auf einem
+ * VOLLFLÄCHIG GRAUEN, nicht transparenten Hintergrund. Für den hellen,
+ * professionellen Auftritt brauchen wir das Logo sauber freigestellt
+ * (transparent), damit es randlos auf Weiß sitzt.
  *
- * Trick: Der Hintergrund ist UNBUNT (Grau, R≈G≈B), Schrift und Glow sind
- * stark GESÄTTIGT (Blau/Rot). Wir leiten die Transparenz also aus der
- * „Buntheit" (Chroma = max(R,G,B) − min(R,G,B)) ab – mit weicher Rampe,
- * damit der Glow-Verlauf erhalten bleibt.
+ * Verfahren: Der Hintergrund ist ein gleichmäßiges Grau. Wir leiten die
+ * Transparenz aus der FARBDISTANZ zum gemessenen Hintergrundgrau ab
+ * (euklidisch im RGB). Das trennt sowohl das dunkle Navy als auch das
+ * gesättigte Rot sauber vom Grau – zuverlässiger als ein reiner
+ * Sättigungs-Key, weil das Blau nur mäßig gesättigt ist. Weiche Rampe
+ * (LO→HI) erhält die Anti-Aliasing-Kanten.
  *
  * Ausführen mit:  npm run logo
  */
@@ -22,33 +25,47 @@ import { mkdir } from 'node:fs/promises';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
 
-const INPUT = resolve(root, 'input/Logo_Europashowtanzgarde.png');
+const INPUT = resolve(root, 'input/Logo_Europashowtanzgarde.jpg');
 const ASSETS = resolve(root, 'src/assets');
 const PUBLIC = resolve(root, 'public');
 
-// Schwellwerte für den Sättigungs-Key (0–255 Chroma).
-// Bewusst AGGRESSIV gewählt: Wir behalten nur die stark gesättigten
-// Buchstaben-Kerne und schneiden den grau-verunreinigten Original-Glow weg
-// (sonst milchig-grauer Schleier auf dunklem Grund). Der eigentliche
-// Neon-Glow wird sauber und farbrein per CSS (`filter: drop-shadow`) ergänzt.
-const LO = 100;
-const HI = 128;
+// Schwellwerte für den Distanz-Key (0–441 RGB-Distanz zum Hintergrundgrau).
+// LO: darunter gilt Pixel als Hintergrund (transparent). HI: darüber voll
+// deckend. Dazwischen weiche Rampe für saubere Kanten. Werte auf Weiß
+// visuell abgestimmt: kräftige Buchstaben, kein grauer Schleier.
+const LO = 50;
+const HI = 120;
 
 async function keyOutBackground() {
   const src = sharp(INPUT).ensureAlpha();
   const { data, info } = await src.raw().toBuffer({ resolveWithObject: true });
   const { width, height, channels } = info;
 
+  // Hintergrundgrau aus den vier Ecken mitteln (robust gegen Rauschen).
+  const corner = (x, y) => {
+    const i = (y * width + x) * channels;
+    return [data[i], data[i + 1], data[i + 2]];
+  };
+  const pts = [
+    corner(1, 1),
+    corner(width - 2, 1),
+    corner(1, height - 2),
+    corner(width - 2, height - 2),
+  ];
+  const bg = [0, 1, 2].map(
+    (c) => Math.round(pts.reduce((s, p) => s + p[c], 0) / pts.length),
+  );
+
   for (let i = 0; i < data.length; i += channels) {
-    const r = data[i];
-    const g = data[i + 1];
-    const b = data[i + 2];
-    const chroma = Math.max(r, g, b) - Math.min(r, g, b);
+    const dr = data[i] - bg[0];
+    const dg = data[i + 1] - bg[1];
+    const db = data[i + 2] - bg[2];
+    const dist = Math.sqrt(dr * dr + dg * dg + db * db);
 
     let alpha;
-    if (chroma <= LO) alpha = 0;
-    else if (chroma >= HI) alpha = 255;
-    else alpha = Math.round(((chroma - LO) / (HI - LO)) * 255);
+    if (dist <= LO) alpha = 0;
+    else if (dist >= HI) alpha = 255;
+    else alpha = Math.round(((dist - LO) / (HI - LO)) * 255);
 
     data[i + 3] = alpha;
   }
@@ -56,7 +73,7 @@ async function keyOutBackground() {
   // Zurück zu PNG, dann transparente Ränder abschneiden.
   return sharp(data, { raw: { width, height, channels } })
     .png()
-    .trim({ threshold: 10 });
+    .trim({ threshold: 12 });
 }
 
 /** Deckende Variante des freigestellten Logos auf Bühnenblau, zentriert. */

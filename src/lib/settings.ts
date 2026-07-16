@@ -19,6 +19,7 @@ const siteSchema = z.object({
   social: z.object({
     facebook: z.string().optional(),
     instagram: z.string().optional(),
+    tiktok: z.string().optional(),
     youtube: z.string().optional(),
   }),
   impressum: z.object({

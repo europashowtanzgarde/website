@@ -3,8 +3,8 @@
   "heroTitle": "Auf der Bühne zählt Präzision.",
   "heroHighlight": "Im Verein zählt Zusammenhalt.",
   "heroText": "Drei Garden von den Jüngsten bis zu den Aktiven, ein gemeinsames Ziel: Bewegung, Rhythmus und Freude am Tanzen. Wir tanzen auf Festen, Umzügen und Bühnen rund um Wassertrüdingen.",
-  "ctaLabel": "Unsere Garden",
-  "ctaLink": "/garden",
+  "ctaLabel": "Unsere Sparten",
+  "ctaLink": "/sparten",
   "ctaSecondaryLabel": "Termine & Auftritte",
   "ctaSecondaryLink": "/termine",
   "marqueeWords": [
@@ -27,8 +27,8 @@
     {
       "title": "Drei Garden",
       "text": "Von der Kindergarde über die Jugend bis zu den Aktiven – für jedes Alter die passende Gruppe.",
-      "link": "/garden",
-      "linkLabel": "Garden ansehen"
+      "link": "/sparten",
+      "linkLabel": "Sparten ansehen"
     },
     {
       "title": "Auftritte & Termine",

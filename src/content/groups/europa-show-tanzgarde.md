@@ -6,6 +6,7 @@ description: >-
   Bühnen der Region. Präzision, Ausdruck und ein eingespieltes Team – das macht
   die Show-Tanzgarde aus.
 ageGroup: ab 16 Jahren
+image: /uploads/showtanzgarde.webp
 order: 3
-imageAlt: ''
+imageAlt: Mitglieder der Europa-Show-Tanzgarde tanzen in Westernkostümen auf einer grün beleuchteten Bühne.
 ---

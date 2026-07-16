@@ -4,18 +4,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout title="Seite nicht gefunden" noindex>
   <section class="notfound">
-    <div class="notfound__dots formation-dots" aria-hidden="true"></div>
     <div class="wrap notfound__inner">
-      <p class="eyebrow">Vorhang zu</p>
       <p class="notfound__code" aria-hidden="true">404</p>
-      <h1 class="display">Diese Seite ist nicht auf der Bühne</h1>
-      <p class="notfound__text">
-        Der gesuchte Auftritt wurde verschoben oder gibt es nicht (mehr). Zurück ins
-        Rampenlicht:
-      </p>
-      <div class="notfound__cta">
-        <a class="btn" href="/">Zur Startseite</a>
-        <a class="btn btn--ghost" href="/termine">Zu den Terminen</a>
+      <div>
+        <p class="notfound__context">Vorhang zu</p>
+        <h1>Diese Seite ist nicht auf der Bühne</h1>
+        <p class="notfound__text">Der gesuchte Auftritt wurde verschoben oder gibt es nicht mehr. Von hier kommst du schnell zurück:</p>
+        <div class="notfound__actions">
+          <a class="btn" href="/">Zur Startseite</a>
+          <a class="btn btn--ghost" href="/termine">Zu den Terminen</a>
+        </div>
       </div>
     </div>
   </section>
@@ -23,60 +21,54 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <style>
   .notfound {
-    position: relative;
-    min-height: 62vh;
+    min-height: 68svh;
     display: grid;
     place-items: center;
-    text-align: center;
-    padding-block: var(--space-8);
-    overflow: hidden;
-    isolation: isolate;
-  }
-
-  .notfound__dots {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    -webkit-mask-image: radial-gradient(60% 60% at 50% 45%, #000, transparent 75%);
-    mask-image: radial-gradient(60% 60% at 50% 45%, #000, transparent 75%);
+    padding-block: var(--section-space);
   }
 
   .notfound__inner {
     display: grid;
-    justify-items: center;
-    gap: var(--space-3);
+    gap: var(--space-6) clamp(2rem, 8vw, 8rem);
+    align-items: center;
   }
 
-  .notfound .eyebrow {
-    transform-origin: center;
-    font-size: var(--step-2);
+  @media (min-width: 700px) {
+    .notfound__inner {
+      grid-template-columns: minmax(10rem, 0.55fr) minmax(0, 1.45fr);
+    }
   }
 
   .notfound__code {
     font-family: var(--font-display);
+    font-size: clamp(6rem, 18vw, 12rem);
     font-weight: 800;
-    font-size: clamp(6rem, 22vw, 13rem);
-    line-height: 0.85;
-    color: transparent;
-    -webkit-text-stroke: 2px var(--hairline-strong);
-    text-shadow: var(--glow-blue-soft);
+    line-height: 0.75;
+    color: var(--surface-soft-blue);
+    -webkit-text-stroke: 2px var(--blue-700);
+  }
+
+  .notfound__context {
+    margin-bottom: var(--space-2);
+    font-weight: 750;
+    color: var(--red-700);
   }
 
   .notfound h1 {
-    font-size: var(--step-3);
-    max-width: 18ch;
+    font-size: var(--step-4);
   }
 
   .notfound__text {
+    max-width: 38rem;
+    margin-top: var(--space-4);
     color: var(--text-muted);
-    max-width: 34rem;
+    font-size: var(--step-1);
   }
 
-  .notfound__cta {
+  .notfound__actions {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-4);
-    justify-content: center;
-    margin-top: var(--space-4);
+    gap: var(--space-3);
+    margin-top: var(--space-6);
   }
 </style>

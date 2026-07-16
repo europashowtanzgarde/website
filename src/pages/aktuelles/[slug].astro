@@ -8,10 +8,7 @@ import { formatDate, isoDate } from '../../lib/date';
 
 export const getStaticPaths = (async () => {
   const posts = await getPublishedPosts();
-  return posts.map((post) => ({
-    params: { slug: post.id },
-    props: { post },
-  }));
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
 }) satisfies GetStaticPaths;
 
 const { post } = Astro.props;
@@ -21,39 +18,32 @@ const { Content } = await render(post);
 
 <BaseLayout title={title} description={description} ogImage={cover ?? '/og-default.png'} article>
   <article class="post">
-    <div class="wrap wrap--narrow post__head">
-      <a class="post__back" href="/aktuelles">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M11 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round" /></svg>
-        Alle Beiträge
-      </a>
-      <time class="label" datetime={isoDate(date)}>{formatDate(date)}</time>
-      <h1 class="display post__title">{title}</h1>
-      <p class="post__lead">{description}</p>
-    </div>
-
-    {
-      cover && (
-        <div class="wrap post__cover">
-          <CmsImage src={cover} alt={coverAlt} ratio="16 / 9" loading="eager" />
+    <header class="post__head">
+      <div class="wrap post__head-inner">
+        <a class="post__back" href="/aktuelles">
+          <span aria-hidden="true">←</span> Alle Beiträge
+        </a>
+        <div class="post__title-block">
+          <time datetime={isoDate(date)}>{formatDate(date)}</time>
+          <h1>{title}</h1>
+          <p>{description}</p>
         </div>
-      )
-    }
-
-    <div class="wrap wrap--narrow">
-      <div class="prose">
-        <Content />
       </div>
+    </header>
+
+    {cover && <div class="wrap post__cover"><CmsImage src={cover} alt={coverAlt} ratio="16 / 9" loading="eager" /></div>}
+
+    <div class="wrap post__content">
+      <div class="prose"><Content /></div>
 
       {
         gallery.length > 0 && (
-          <div class="post__gallery">
-            <h2 class="label">Bilder</h2>
+          <section class="post__gallery" aria-labelledby="bilder-title">
+            <h2 id="bilder-title">Bilder</h2>
             <div class="post__gallery-grid">
-              {gallery.map((img, i) => (
-                <CmsImage src={img.image} alt={img.alt} seed={`${post.id}-${i}`} ratio="1 / 1" />
-              ))}
+              {gallery.map((img, i) => <CmsImage src={img.image} alt={img.alt} seed={`${post.id}-${i}`} ratio="1 / 1" />)}
             </div>
-          </div>
+          </section>
         )
       }
     </div>
@@ -62,49 +52,78 @@ const { Content } = await render(post);
 
 <style>
   .post__head {
-    padding-top: clamp(2rem, 5vw, 3.5rem);
+    padding-block: clamp(3rem, 8vw, 7rem) clamp(2rem, 5vw, 4rem);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .post__head-inner {
     display: grid;
-    gap: 0.7rem;
+    gap: var(--space-6) clamp(2rem, 7vw, 7rem);
+  }
+
+  @media (min-width: 760px) {
+    .post__head-inner {
+      grid-template-columns: 10rem minmax(0, 1fr);
+    }
   }
 
   .post__back {
     display: inline-flex;
+    min-height: 44px;
     align-items: center;
-    gap: 0.5ch;
+    align-self: start;
+    gap: 0.4ch;
+    font-weight: 700;
     color: var(--text-muted);
-    font-weight: 600;
-    width: fit-content;
   }
 
-  .post__back:hover {
-    color: var(--accent-bright);
+  .post__title-block time {
+    font-size: var(--step--1);
+    font-weight: 750;
+    color: var(--red-700);
   }
 
-  .post__title {
+  .post__title-block h1 {
+    max-width: 16ch;
+    margin-top: var(--space-3);
     font-size: var(--step-4);
-    margin-top: 0.3rem;
+    overflow-wrap: anywhere;
   }
 
-  .post__lead {
+  .post__title-block p {
+    max-width: 46rem;
+    margin-top: var(--space-4);
     font-size: var(--step-1);
     color: var(--text-muted);
-    max-width: 42rem;
   }
 
   .post__cover {
-    margin-block: var(--space-6);
+    max-width: 60rem;
+    margin-block: clamp(2rem, 5vw, 4rem);
+  }
+
+  .post__cover :global(img) {
+    max-height: 42rem;
+  }
+
+  .post__content {
+    padding-bottom: var(--section-space);
   }
 
   .post__gallery {
-    margin-top: var(--space-7);
+    margin-top: var(--section-space);
     padding-top: var(--space-6);
-    border-top: 1px solid var(--hairline);
+    border-top: 1px solid var(--hairline-strong);
+  }
+
+  .post__gallery h2 {
+    font-size: var(--step-2);
   }
 
   .post__gallery-grid {
-    margin-top: var(--space-4);
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: var(--space-3);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-5);
   }
 </style>

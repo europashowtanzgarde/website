@@ -4,72 +4,28 @@ import PageIntro from '../components/PageIntro.astro';
 import CmsImage from '../components/CmsImage.astro';
 
 const timeline = [
-  {
-    year: '1971',
-    title: 'Die Wurzeln',
-    text: 'Zwei Tänzerinnen begeistern bei einer Beat-Party in Wassertrüdingen – der Funke für das Tanzen in der Gruppe ist gelegt.',
-  },
-  {
-    year: '1981',
-    title: 'Die Gründung',
-    text: 'Sechs junge Frauen gründen die „Trüdinger Swinging Girls". Schon wenige Monate später folgt der erste Auftritt beim Altstadtfest.',
-  },
-  {
-    year: '1982',
-    title: 'Erstes Programm & Jugendgarde',
-    text: 'Mit dem Can-Can steht das erste große Programm auf der Bühne. Aus dem Zulauf jüngerer Tänzerinnen entsteht die Jugend-Tanzgarde.',
-  },
-  {
-    year: '1984',
-    title: 'Die Kindergarde',
-    text: 'Für die Jüngsten wird die Kindergarde gegründet – seitdem tanzen bei uns drei Generationen unter einem Dach.',
-  },
-  {
-    year: '1987',
-    title: 'Der Name „Europa"',
-    text: 'Die Europa-Union Deutschland verleiht der Garde den Namen „Europa-Tanzgarde" – im Dienst des europäischen Einigungsgedankens. Daher das „Europa" in unserem Namen.',
-  },
-  {
-    year: '2016',
-    title: '35 Jahre',
-    text: 'Ein Rückblick auf dreieinhalb Jahrzehnte Showtanz, Auftritte und Vereinsleben.',
-  },
-  {
-    year: '2021',
-    title: '„40+1" Jahre',
-    text: 'Das um ein Jahr verschobene Jubiläum wird in der Hesselberghalle gefeiert.',
-  },
+  { year: '1971', title: 'Die Wurzeln', text: 'Zwei Tänzerinnen begeistern bei einer Beat-Party in Wassertrüdingen – der Funke für das Tanzen in der Gruppe ist gelegt.' },
+  { year: '1981', title: 'Die Gründung', text: 'Sechs junge Frauen gründen die „Trüdinger Swinging Girls“. Schon wenige Monate später folgt der erste Auftritt beim Altstadtfest.' },
+  { year: '1982', title: 'Erstes Programm & Jugendgarde', text: 'Mit dem Can-Can steht das erste große Programm auf der Bühne. Aus dem Zulauf jüngerer Tänzerinnen entsteht die Jugend-Tanzgarde.' },
+  { year: '1984', title: 'Die Kindergarde', text: 'Für die Jüngsten wird die Kindergarde gegründet – seitdem tanzen bei uns drei Generationen unter einem Dach.' },
+  { year: '1987', title: 'Der Name „Europa“', text: 'Die Europa-Union Deutschland verleiht der Garde den Namen „Europa-Tanzgarde“ – im Dienst des europäischen Einigungsgedankens. Daher das „Europa“ in unserem Namen.' },
+  { year: '2016', title: '35 Jahre', text: 'Ein Rückblick auf dreieinhalb Jahrzehnte Showtanz, Auftritte und Vereinsleben.' },
+  { year: '2021', title: '„40+1“ Jahre', text: 'Das um ein Jahr verschobene Jubiläum wird in der Hesselberghalle gefeiert.' },
 ];
 
 const werte = [
-  {
-    title: 'Showtanz',
-    text: 'Aufwendige Choreografien mit Ausdruck, Requisiten und wechselnden Themen – die große Bühne für kreative Auftritte.',
-  },
-  {
-    title: 'Gardetanz',
-    text: 'Präzision, Disziplin und Synchronität. Der Gardetanz lebt vom perfekten Zusammenspiel der ganzen Formation.',
-  },
-  {
-    title: 'Zusammenhalt',
-    text: 'Hinter jedem Auftritt steckt ehrenamtliches Engagement: Training, Kostüme, Organisation. Bei uns zählt das Miteinander.',
-  },
+  { title: 'Showtanz', text: 'Aufwendige Choreografien mit Ausdruck, Requisiten und wechselnden Themen – die große Bühne für kreative Auftritte.' },
+  { title: 'Gardetanz', text: 'Präzision, Disziplin und Synchronität. Der Gardetanz lebt vom perfekten Zusammenspiel der ganzen Formation.' },
+  { title: 'Zusammenhalt', text: 'Hinter jedem Auftritt steckt ehrenamtliches Engagement: Training, Kostüme, Organisation. Bei uns zählt das Miteinander.' },
 ];
 ---
 
-<BaseLayout
-  title="Der Verein"
-  description="Seit 1981 steht die Europa-Show-Tanzgarde für Showtanz, Gardetanz und Vereinsleben in Wassertrüdingen. Unsere Geschichte und was uns ausmacht."
->
-  <PageIntro
-    eyebrow="unsere Geschichte"
-    title="Ein Verein aus Wassertrüdingen"
-    intro="Was 1981 als kleine Tanzgruppe begann, ist heute ein fester Teil des örtlichen Vereinslebens."
-  />
+<BaseLayout title="Der Verein" description="Seit 1981 steht die Europa-Show-Tanzgarde für Showtanz, Gardetanz und Vereinsleben in Wassertrüdingen. Unsere Geschichte und was uns ausmacht.">
+  <PageIntro title="Ein Verein aus Wassertrüdingen" intro="Was 1981 als kleine Tanzgruppe begann, ist heute ein fester Teil des örtlichen Vereinslebens." />
 
-  <section class="section--tight">
+  <section class="section section--tight club-photo">
     <div class="wrap">
-      <figure class="ensemble">
+      <figure>
         <CmsImage
           src="/uploads/ensemble-buehne.webp"
           alt="Die gesamte Europa-Show-Tanzgarde auf der Bühne, in blau-roten Kostümen unter farbigem Bühnenlicht."
@@ -81,259 +37,282 @@ const werte = [
     </div>
   </section>
 
-  <section class="section section--tight">
-    <div class="wrap">
-      <ol class="timeline reveal-group">
-        {
-          timeline.map((item, i) => (
-            <li class="timeline__item" style={`--reveal-index:${i}`}>
-              <span class="timeline__year">{item.year}</span>
-              <div class="timeline__content">
-                <h2>{item.title}</h2>
-                <p>{item.text}</p>
-              </div>
-            </li>
-          ))
-        }
+  <section class="section club-history">
+    <div class="wrap club-history__layout">
+      <header>
+        <p>1971–heute</p>
+        <h2>Unsere Geschichte</h2>
+      </header>
+      <ol class="timeline">
+        {timeline.map((item) => (
+          <li>
+            <time>{item.year}</time>
+            <div><h3>{item.title}</h3><p>{item.text}</p></div>
+          </li>
+        ))}
       </ol>
     </div>
   </section>
 
-  <section class="section section--tight">
-    <div class="wrap namensgeschichte">
-      <figure class="urkunde">
+  <section class="section name-story">
+    <div class="wrap name-story__layout">
+      <figure>
         <CmsImage
           src="/uploads/urkunde-1987.webp"
           alt="Urkunde der Europa-Union Deutschland von 1987 mit den Flaggen europäischer Länder und der Verleihung des Namens Europa-Tanzgarde Wassertrüdingen."
           ratio="1500 / 1049"
         />
       </figure>
-      <div class="namensgeschichte__text">
-        <span class="eyebrow">woher der Name kommt</span>
-        <h2 class="display">„Europa" im Namen</h2>
-        <p>
-          Am 11. Juli 1987 verlieh die Europa-Union Deutschland der Garde den Namen
-          <strong>Europa-Tanzgarde Wassertrüdingen</strong> – verbunden mit dem Auftrag,
-          sich für den europäischen Einigungsgedanken einzusetzen. Dieses Stück
-          Vereinsgeschichte tragen wir bis heute im Namen.
-        </p>
+      <div>
+        <p class="name-story__date">11. Juli 1987</p>
+        <h2>„Europa“ im Namen</h2>
+        <p>Die Europa-Union Deutschland verlieh der Garde den Namen <strong>Europa-Tanzgarde Wassertrüdingen</strong> – verbunden mit dem Auftrag, sich für den europäischen Einigungsgedanken einzusetzen. Dieses Stück Vereinsgeschichte tragen wir bis heute im Namen.</p>
       </div>
     </div>
   </section>
 
-  <section class="surface-cream">
+  <section class="section values">
     <div class="wrap">
-      <span class="eyebrow">was uns ausmacht</span>
-      <h2 class="display werte-title">Zwei Tanzstile, ein Team</h2>
-      <div class="werte">
-        {
-          werte.map((w) => (
-            <article class="werte__card">
-              <h3>{w.title}</h3>
-              <p>{w.text}</p>
-            </article>
-          ))
-        }
+      <header class="values__head">
+        <h2>Zwei Tanzstile, ein Team</h2>
+        <p>Was unsere Auftritte und unser Vereinsleben prägt.</p>
+      </header>
+      <div class="values__list">
+        {werte.map((wert) => <article><h3>{wert.title}</h3><p>{wert.text}</p></article>)}
       </div>
     </div>
   </section>
 
-  <section class="section">
-    <div class="wrap">
-      <div class="cta-band">
-        <div>
-          <span class="eyebrow">mitmachen</span>
-          <h2 class="display">Werde Teil der Garde</h2>
-          <p>Ob tanzen, helfen oder unterstützen – im Verein ist Platz für alle.</p>
-        </div>
-        <a class="btn" href="/kontakt">Kontakt aufnehmen</a>
-      </div>
+  <section class="join-club">
+    <div class="wrap join-club__inner">
+      <div><h2>Werde Teil der Garde</h2><p>Ob tanzen, helfen oder unterstützen – im Verein ist Platz für alle.</p></div>
+      <a class="btn" href="/kontakt">Kontakt aufnehmen</a>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .timeline {
-    list-style: none;
-    padding: 0;
+  .club-photo figure {
+    max-width: 42rem;
     margin: 0;
-    display: grid;
-    gap: 0;
-    max-width: 46rem;
   }
 
-  .timeline__item {
-    display: grid;
-    grid-template-columns: 5rem 1fr;
-    gap: var(--space-4);
-    padding-block: var(--space-5);
-    position: relative;
+  .club-photo :global(img) {
+    width: 100%;
+    max-height: 44rem;
   }
 
-  .timeline__item::before {
-    content: '';
-    position: absolute;
-    left: calc(5rem + var(--space-4) / 2);
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: var(--hairline);
-  }
-
-  .timeline__item:first-child::before {
-    top: 50%;
-  }
-
-  .timeline__item:last-child::before {
-    bottom: 50%;
-  }
-
-  .timeline__year {
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: var(--step-2);
-    color: var(--accent-bright);
-    text-align: right;
-  }
-
-  .timeline__content {
-    position: relative;
-    padding-left: var(--space-5);
-  }
-
-  .timeline__content::before {
-    content: '';
-    position: absolute;
-    left: calc(var(--space-4) / -2 - 5px);
-    top: 0.55em;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--hot);
-    box-shadow: var(--glow-red);
-  }
-
-  .timeline__content h2 {
-    font-size: var(--step-1);
-    line-height: var(--leading-snug);
-  }
-
-  .timeline__content p {
-    margin-top: 0.4rem;
-    color: var(--text-muted);
-  }
-
-  .werte-title {
-    font-size: var(--step-3);
-    margin-block: 0.3rem var(--space-6);
-  }
-
-  .werte {
-    display: grid;
-    gap: var(--space-5);
-  }
-
-  @media (min-width: 760px) {
-    .werte {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .werte__card {
-    padding: var(--space-5);
-    background: var(--cream-50);
-    border: 1px solid var(--cream-hairline);
-    border-radius: var(--radius-l);
-    border-top: 4px solid var(--red-500);
-  }
-
-  .werte__card h3 {
-    font-size: var(--step-2);
-    color: var(--blue-600);
-    margin-bottom: 0.5rem;
-  }
-
-  .werte__card p {
-    color: var(--cream-ink-muted);
-  }
-
-  .cta-band {
+  .club-photo figcaption {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-5);
-    align-items: center;
     justify-content: space-between;
-    padding: var(--space-7);
-    border-radius: var(--radius-l);
-    border: 1px solid var(--hairline);
-    background:
-      radial-gradient(90% 140% at 0% 0%, rgb(75 99 230 / 0.16), transparent 55%),
-      var(--bg-card);
-  }
-
-  .cta-band h2 {
-    font-size: var(--step-3);
-    margin-block: 0.3rem 0.5rem;
-  }
-
-  .cta-band p {
-    color: var(--text-muted);
-  }
-
-  /* Ensemble-Foto */
-  .ensemble {
-    margin: 0;
-    position: relative;
-  }
-
-  .ensemble :global(img) {
-    width: 100%;
-    border-radius: var(--radius-l);
-    box-shadow: var(--shadow-lift);
-  }
-
-  .ensemble figcaption {
+    gap: var(--space-2) var(--space-5);
     margin-top: var(--space-3);
     font-size: var(--step--1);
     color: var(--text-muted);
   }
 
-  .ensemble figcaption span {
-    color: var(--text-dim);
+  .club-history {
+    border-top: 1px solid var(--hairline-strong);
   }
 
-  /* Namensgeschichte mit Urkunde */
-  .namensgeschichte {
+  .club-history__layout {
     display: grid;
-    gap: var(--space-6);
+    gap: var(--space-7) clamp(2rem, 8vw, 8rem);
+  }
+
+  @media (min-width: 820px) {
+    .club-history__layout {
+      grid-template-columns: 15rem minmax(0, 46rem);
+      align-items: start;
+    }
+
+    .club-history header {
+      position: sticky;
+      top: 7rem;
+    }
+  }
+
+  .club-history header > p,
+  .name-story__date {
+    margin-bottom: var(--space-2);
+    font-weight: 750;
+    color: var(--red-700);
+  }
+
+  .club-history h2,
+  .name-story h2,
+  .values h2,
+  .join-club h2 {
+    font-size: var(--step-3);
+  }
+
+  .timeline {
+    padding: 0;
+    list-style: none;
+  }
+
+  .timeline li {
+    display: grid;
+    grid-template-columns: 4rem minmax(0, 1fr);
+    gap: var(--space-4);
+    padding-block: var(--space-5);
+    border-top: 1px solid var(--hairline-strong);
+  }
+
+  .timeline li:last-child {
+    border-bottom: 1px solid var(--hairline-strong);
+  }
+
+  .timeline time {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-weight: 800;
+    color: var(--blue-700);
+  }
+
+  .timeline h3 {
+    font-size: var(--step-1);
+    color: var(--text);
+  }
+
+  .timeline p {
+    margin-top: var(--space-2);
+    color: var(--text-muted);
+  }
+
+  .name-story {
+    color: var(--text-on-color);
+    background: var(--night-900);
+  }
+
+  .name-story__layout {
+    display: grid;
+    gap: var(--space-7) clamp(2rem, 7vw, 7rem);
     align-items: center;
   }
 
   @media (min-width: 820px) {
-    .namensgeschichte {
-      grid-template-columns: 0.85fr 1fr;
+    .name-story__layout {
+      grid-template-columns: minmax(18rem, 0.9fr) minmax(0, 1.1fr);
     }
   }
 
-  .urkunde {
+  .name-story figure {
+    width: 100%;
+    max-width: 28rem;
     margin: 0;
   }
 
-  .urkunde :global(img) {
-    width: 100%;
-    border-radius: var(--radius-m);
-    box-shadow: var(--shadow-card);
-    border: 1px solid var(--hairline);
+  .name-story h2 {
+    color: var(--text-on-color);
   }
 
-  .namensgeschichte__text h2 {
-    font-size: var(--step-3);
-    margin-block: 0.3rem 0.7rem;
+  .name-story div > p:last-child {
+    max-width: 42rem;
+    margin-top: var(--space-4);
+    font-size: var(--step-1);
+    color: var(--text-on-color-muted);
   }
 
-  .namensgeschichte__text p {
+  .name-story strong {
+    color: #ffffff;
+  }
+
+  .values {
+    background: var(--surface-soft);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .values__head {
+    display: grid;
+    gap: var(--space-3) var(--space-7);
+    margin-bottom: var(--space-7);
+  }
+
+  @media (min-width: 760px) {
+    .values__head {
+      grid-template-columns: 1fr 1fr;
+      align-items: end;
+    }
+  }
+
+  .values__head p {
     color: var(--text-muted);
     font-size: var(--step-1);
-    max-width: 40rem;
+  }
+
+  .values__list {
+    display: grid;
+  }
+
+  .values__list article {
+    padding-block: var(--space-5);
+    border-top: 1px solid var(--hairline-strong);
+  }
+
+  .values__list article:last-child {
+    border-bottom: 1px solid var(--hairline-strong);
+  }
+
+  @media (min-width: 760px) {
+    .values__list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      border-block: 1px solid var(--hairline-strong);
+    }
+
+    .values__list article {
+      padding: var(--space-5);
+      border-top: 0;
+      border-right: 1px solid var(--hairline-strong);
+    }
+
+    .values__list article:first-child {
+      padding-left: 0;
+    }
+
+    .values__list article:last-child {
+      padding-right: 0;
+      border-right: 0;
+      border-bottom: 0;
+    }
+  }
+
+  .values__list h3 {
+    font-size: var(--step-2);
+  }
+
+  .values__list p {
+    margin-top: var(--space-3);
+    color: var(--text-muted);
+  }
+
+  .join-club {
+    padding-block: clamp(2.75rem, 6vw, 5rem);
+    color: var(--text-on-color);
+    background: var(--surface-blue);
+  }
+
+  .join-club__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-6);
+  }
+
+  .join-club h2 {
+    color: var(--text-on-color);
+  }
+
+  .join-club p {
+    margin-top: var(--space-2);
+    color: var(--text-on-color-muted);
+  }
+
+  .join-club .btn {
+    color: var(--blue-700);
+    background: #ffffff;
+    border-color: #ffffff;
   }
 </style>

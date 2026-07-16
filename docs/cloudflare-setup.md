@@ -120,7 +120,7 @@ Schutz anlegen.
 
 ## 6. Testen
 
-- [ ] Öffentliche Seiten (`/`, `/termine`, `/garden` …) sind **ohne** Anmeldung
+- [ ] Öffentliche Seiten (`/`, `/termine`, `/sparten` …) sind **ohne** Anmeldung
       erreichbar.
 - [ ] Aufruf von `/admin` fordert die **Cloudflare-Access-Anmeldung** an.
 - [ ] Nach der Access-Anmeldung lädt das CMS; **„Sign in with GitHub"** führt

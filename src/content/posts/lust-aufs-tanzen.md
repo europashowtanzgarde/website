@@ -2,7 +2,8 @@
 title: Lust aufs Tanzen? Komm vorbei!
 date: 2026-06-20
 description: Ob Kindergarde, Jugend oder Aktive – bei der Europa-Show-Tanzgarde ist Platz für alle, die gern tanzen. So findest du zu uns.
-coverAlt: ''
+cover: /uploads/aktuelles-lust-aufs-tanzen.webp
+coverAlt: Mehrere Tänzerinnen und Tänzer üben gemeinsam eine Schrittfolge in einer Sporthalle.
 gallery: []
 draft: false
 ---

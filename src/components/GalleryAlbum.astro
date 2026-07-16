@@ -13,77 +13,91 @@ const { title, date, description, credit, images } = album.data;
 
 <section class="album">
   <header class="album__head">
+    <p>{formatMonthYear(date)}</p>
     <div>
-      <span class="label">{formatMonthYear(date)}</span>
-      <h2 class="album__title">{title}</h2>
-      {description && <p class="album__desc">{description}</p>}
+      <h2>{title}</h2>
+      {description && <p class="album__description">{description}</p>}
     </div>
   </header>
 
   <div class="album__grid">
     {
       images.map((img, i) => (
-        <figure class="album__item" style={`--reveal-index:${i % 6}`}>
-          <CmsImage src={img.image} alt={img.alt} seed={`${album.id}-${i}`} ratio="1 / 1" />
+        <figure class:list={['album__item', { 'is-lead': i === 0 }]}>
+          <CmsImage src={img.image} alt={img.alt} seed={`${album.id}-${i}`} ratio={i === 0 ? '4 / 3' : '1 / 1'} />
           {img.caption && <figcaption>{img.caption}</figcaption>}
         </figure>
       ))
     }
   </div>
 
-  {credit && <p class="album__credit">Fotos: {credit}</p>}
+  {credit && <p class="album__credit">{credit}</p>}
 </section>
 
 <style>
   .album + .album {
-    margin-top: var(--space-8);
+    margin-top: var(--section-space);
+    padding-top: var(--section-space);
+    border-top: 1px solid var(--hairline-strong);
   }
 
   .album__head {
-    margin-bottom: var(--space-5);
+    display: grid;
+    gap: var(--space-3) clamp(2rem, 6vw, 6rem);
+    margin-bottom: var(--space-6);
   }
 
-  .album__title {
+  @media (min-width: 720px) {
+    .album__head {
+      grid-template-columns: 9rem minmax(0, 1fr);
+    }
+  }
+
+  .album__head > p {
+    padding-top: 0.4em;
+    font-size: var(--step--1);
+    font-weight: 750;
+    color: var(--red-700);
+  }
+
+  .album h2 {
     font-size: var(--step-3);
-    margin-top: 0.2rem;
   }
 
-  .album__desc {
-    margin-top: 0.5rem;
-    max-width: 44rem;
+  .album__description {
+    max-width: var(--measure);
+    margin-top: var(--space-3);
     color: var(--text-muted);
   }
 
   .album__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: var(--space-3);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    gap: var(--space-5);
+    max-width: 58rem;
   }
 
   .album__item {
-    margin: 0;
-    overflow: hidden;
-    border-radius: var(--radius-m);
-  }
-
-  .album__item :global(img) {
-    transition: transform 0.4s var(--ease-out);
-  }
-
-  .album__item:hover :global(img) {
-    transform: scale(1.05);
+    min-width: 0;
+    max-width: 32rem;
   }
 
   .album__item figcaption {
-    margin-top: 0.4rem;
+    margin-top: var(--space-2);
     font-size: var(--step--1);
-    color: var(--text-dim);
+    color: var(--text-muted);
+  }
+
+  @media (min-width: 760px) {
+    .album__item.is-lead:not(:only-child) {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
   }
 
   .album__credit {
     margin-top: var(--space-4);
     font-size: var(--step--1);
-    color: var(--text-dim);
-    font-style: italic;
+    color: var(--text-muted);
   }
 </style>

@@ -6,6 +6,7 @@ description: >-
   Miteinander in der Gruppe – und vor allem um den Spaß an der Bewegung. Die
   Kindergarde besteht seit 1984.
 ageGroup: unsere Jüngsten
+image: /uploads/kindergarde.webp
 order: 1
-imageAlt: ''
+imageAlt: Kinder der Europa-Kindergarde tanzen auf einer Bühne in weißen Oberteilen, türkis gemusterten Hosen und Hüten.
 ---
