@@ -66,9 +66,8 @@ const timeLabel = formatTime(time);
     width: 4.6rem;
     height: 4.6rem;
     border-radius: var(--radius-m);
-    background: linear-gradient(160deg, var(--night-700), var(--night-850));
-    border: 1px solid var(--hairline-strong);
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06);
+    background: linear-gradient(160deg, var(--blue-600), var(--blue-700));
+    box-shadow: var(--shadow-card);
   }
 
   .event__day {
@@ -76,7 +75,7 @@ const timeLabel = formatTime(time);
     font-weight: 800;
     font-size: 1.9rem;
     line-height: 1;
-    color: var(--accent-bright);
+    color: #ffffff;
   }
 
   .event__month {
@@ -84,7 +83,7 @@ const timeLabel = formatTime(time);
     font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: rgb(255 255 255 / 0.8);
   }
 
   .event__body {

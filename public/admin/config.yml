@@ -243,6 +243,7 @@ collections:
             fields:
               - { name: facebook, label: Facebook-Link, widget: string, required: false }
               - { name: instagram, label: Instagram-Link, widget: string, required: false }
+              - { name: tiktok, label: TikTok-Link, widget: string, required: false }
               - { name: youtube, label: YouTube-Link, widget: string, required: false }
           - name: impressum
             label: Impressumsdaten
@@ -267,7 +268,7 @@ collections:
           - { name: heroHighlight, label: Hero – Titel (Zeile 2, hervorgehoben), widget: string }
           - { name: heroText, label: Hero – Einleitungstext, widget: text }
           - { name: ctaLabel, label: Button 1 – Text, widget: string }
-          - { name: ctaLink, label: Button 1 – Link, widget: string, hint: 'z. B. /garden' }
+          - { name: ctaLink, label: Button 1 – Link, widget: string, hint: 'z. B. /sparten' }
           - { name: ctaSecondaryLabel, label: Button 2 – Text, widget: string, required: false }
           - { name: ctaSecondaryLink, label: Button 2 – Link, widget: string, required: false }
           - name: marqueeWords

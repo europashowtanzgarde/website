@@ -9,7 +9,7 @@ const columns = [
     links: [
       { href: '/aktuelles', label: 'Aktuelles' },
       { href: '/termine', label: 'Termine' },
-      { href: '/garden', label: 'Garden' },
+      { href: '/sparten', label: 'Sparten' },
       { href: '/galerie', label: 'Galerie' },
     ],
   },
@@ -26,6 +26,7 @@ const columns = [
 
 const hasFacebook = Boolean(site.social.facebook);
 const hasInstagram = Boolean(site.social.instagram);
+const hasTiktok = Boolean(site.social.tiktok);
 ---
 
 <footer class="site-footer">
@@ -33,11 +34,11 @@ const hasInstagram = Boolean(site.social.instagram);
   <div class="wrap footer-grid">
     <div class="footer-brand">
       <p class="footer-wordmark">
-        Europa-Show-<span>Tanzgarde</span>
+        Europa Show <span>Tanzgarde</span>
       </p>
       <p class="footer-claim">{site.claim}</p>
       {
-        (hasFacebook || hasInstagram) && (
+        (hasFacebook || hasInstagram || hasTiktok) && (
           <div class="socials">
             {hasFacebook && (
               <a href={site.social.facebook} class="social" aria-label="Facebook" rel="noopener" target="_blank">
@@ -52,6 +53,13 @@ const hasInstagram = Boolean(site.social.instagram);
                   <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
                   <circle cx="12" cy="12" r="4" />
                   <circle cx="17" cy="7" r="1.1" fill="currentColor" stroke="none" />
+                </svg>
+              </a>
+            )}
+            {hasTiktok && (
+              <a href={site.social.tiktok} class="social" aria-label="TikTok" rel="noopener" target="_blank">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+                  <path d="M16.5 3c.3 2 1.5 3.6 3.5 4v2.6c-1.3.05-2.6-.35-3.7-1.05v5.7a5.35 5.35 0 1 1-5.35-5.35c.3 0 .6.03.9.08v2.7a2.65 2.65 0 1 0 1.85 2.52V3h2.8Z" />
                 </svg>
               </a>
             )}
@@ -78,7 +86,6 @@ const hasInstagram = Boolean(site.social.instagram);
     <div class="footer-col">
       <h2>Kontakt</h2>
       <ul>
-        <li>{site.location}</li>
         <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
       </ul>
     </div>
@@ -97,9 +104,10 @@ const hasInstagram = Boolean(site.social.instagram);
 <style>
   .site-footer {
     position: relative;
-    margin-top: var(--space-9);
-    padding-top: var(--space-8);
-    background: linear-gradient(180deg, transparent, var(--night-950) 55%);
+    margin-top: var(--space-6);
+    padding-top: var(--space-7);
+    background: linear-gradient(180deg, transparent, var(--bg-deep) 55%);
+    border-top: 1px solid var(--hairline);
     overflow: hidden;
   }
 
@@ -170,10 +178,10 @@ const hasInstagram = Boolean(site.social.instagram);
   }
 
   .social:hover {
-    color: var(--cream-50);
-    border-color: var(--hot);
+    color: var(--accent);
+    border-color: var(--accent);
     transform: translateY(-3px);
-    box-shadow: var(--glow-red-soft);
+    box-shadow: var(--glow-blue-soft);
   }
 
   .footer-col h2 {
@@ -198,7 +206,7 @@ const hasInstagram = Boolean(site.social.instagram);
   }
 
   .footer-col a:hover {
-    color: var(--cream-50);
+    color: var(--accent);
   }
 
   .footer-bottom {
@@ -226,6 +234,6 @@ const hasInstagram = Boolean(site.social.instagram);
   }
 
   .footer-legal a:hover {
-    color: var(--cream-50);
+    color: var(--accent);
   }
 </style>

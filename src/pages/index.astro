@@ -5,17 +5,17 @@ import SectionHeading from '../components/SectionHeading.astro';
 import PostCard from '../components/PostCard.astro';
 import EventItem from '../components/EventItem.astro';
 import GroupCard from '../components/GroupCard.astro';
-import CmsImage from '../components/CmsImage.astro';
 import { getPublishedPosts, getUpcomingEvents, getGroups } from '../lib/collections';
 import { homepage, site } from '../lib/settings';
 
 const posts = (await getPublishedPosts()).slice(0, 2);
 const events = await getUpcomingEvents(3);
 const groups = await getGroups();
-const { highlights, notice, vereinTeaserTitle, vereinTeaserText } = homepage;
+const { notice, vereinTeaserTitle, vereinTeaserText } = homepage;
 ---
 
 <BaseLayout>
+  <h1 class="visually-hidden">Europa-Show-Tanzgarde e.V. – Showtanz und Gardetanz aus Wassertrüdingen</h1>
   <Hero />
 
   {
@@ -32,35 +32,12 @@ const { highlights, notice, vereinTeaserTitle, vereinTeaserText } = homepage;
     )
   }
 
-  <!-- Schnelle Einstiege -->
-  {
-    highlights.length > 0 && (
-      <section class="section section--tight">
-        <div class="wrap">
-          <ul class="highlights reveal-group">
-            {highlights.map((h, i) => (
-              <li class="highlight" style={`--reveal-index:${i}`}>
-                <span class="highlight__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-                <h2>{h.title}</h2>
-                <p>{h.text}</p>
-                <a class="arrow-link" href={h.link}>
-                  {h.linkLabel}
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-    )
-  }
-
   <!-- Kommende Termine -->
   {
     events.length > 0 && (
       <section class="section">
         <div class="wrap">
-          <SectionHeading number="01" eyebrow="Bühne frei" title="Kommende Termine" intro="Wo wir als Nächstes auf der Bühne stehen." />
+          <SectionHeading eyebrow="Bühne frei" title="Kommende Termine" intro="Wo wir als Nächstes auf der Bühne stehen." />
           <div class="events-list">
             {events.map((event) => <EventItem event={event} />)}
           </div>
@@ -73,24 +50,10 @@ const { highlights, notice, vereinTeaserTitle, vereinTeaserText } = homepage;
   <!-- Unsere Garden -->
   <section class="section">
     <div class="wrap">
-      <SectionHeading number="02" eyebrow="drei Garden" title="Für jedes Alter" intro="Von den ersten Schritten bis zur großen Bühne." />
+      <SectionHeading eyebrow="drei Garden" title="Für jedes Alter" intro="Von den ersten Schritten bis zur großen Bühne." />
       <div class="grid grid--3">
         {groups.map((group, i) => <GroupCard group={group} index={i} />)}
       </div>
-    </div>
-  </section>
-
-  <!-- Vollbild-Foto: das ganze Ensemble -->
-  <section class="photo-band" aria-label="Die Europa-Show-Tanzgarde auf der Bühne">
-    <CmsImage
-      src="/uploads/ensemble-buehne.webp"
-      alt="Die gesamte Europa-Show-Tanzgarde auf der Bühne, in blau-roten Kostümen unter farbigem Bühnenlicht."
-      ratio="2000 / 940"
-      class="photo-band__img"
-    />
-    <div class="photo-band__caption">
-      <p class="eyebrow">gemeinsam auf der Bühne</p>
-      <p class="photo-band__text">Drei Garden, ein Auftritt.</p>
     </div>
   </section>
 
@@ -99,7 +62,7 @@ const { highlights, notice, vereinTeaserTitle, vereinTeaserText } = homepage;
     posts.length > 0 && (
       <section class="section">
         <div class="wrap">
-          <SectionHeading number="03" eyebrow="frisch aus dem Verein" title="Aktuelles" />
+          <SectionHeading eyebrow="frisch aus dem Verein" title="Aktuelles" />
           <div class="grid grid--2">
             {posts.map((post) => <PostCard post={post} />)}
           </div>
@@ -133,8 +96,8 @@ const { highlights, notice, vereinTeaserTitle, vereinTeaserText } = homepage;
 <style>
   /* Aktueller Hinweis */
   .notice {
-    background: color-mix(in srgb, var(--hot) 16%, var(--night-850));
-    border-block: 1px solid color-mix(in srgb, var(--hot) 40%, transparent);
+    background: color-mix(in srgb, var(--hot) 8%, #ffffff);
+    border-block: 1px solid color-mix(in srgb, var(--hot) 28%, transparent);
   }
 
   .notice__inner {
@@ -159,120 +122,12 @@ const { highlights, notice, vereinTeaserTitle, vereinTeaserText } = homepage;
     font-weight: 500;
   }
 
-  /* Highlights */
-  .highlights {
-    display: grid;
-    gap: var(--space-5);
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  @media (min-width: 720px) {
-    .highlights {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .highlight {
-    position: relative;
-    padding: var(--space-5);
-    background: var(--bg-card);
-    border: 1px solid var(--hairline);
-    border-radius: var(--radius-l);
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    overflow: hidden;
-    transition: transform 0.25s var(--ease-out), border-color 0.25s var(--ease-out);
-  }
-
-  .highlight:hover {
-    transform: translateY(-4px);
-    border-color: var(--hairline-strong);
-  }
-
-  .highlight::before {
-    content: '';
-    position: absolute;
-    inset: 0 auto 0 0;
-    width: 4px;
-    background: linear-gradient(var(--accent), var(--hot));
-    transform: scaleY(0);
-    transform-origin: top;
-    transition: transform 0.3s var(--ease-out);
-  }
-
-  .highlight:hover::before {
-    transform: scaleY(1);
-  }
-
-  .highlight__num {
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: 1rem;
-    letter-spacing: 0.1em;
-    color: var(--hot-bright);
-  }
-
-  .highlight h2 {
-    font-size: var(--step-2);
-  }
-
-  .highlight p {
-    color: var(--text-muted);
-    flex: 1;
-  }
-
   .events-list {
     border-bottom: 1px solid var(--hairline);
   }
 
   .more-btn {
     margin-top: var(--space-6);
-  }
-
-  /* Vollbild-Foto-Band */
-  .photo-band {
-    position: relative;
-    margin-block: var(--space-7);
-    isolation: isolate;
-  }
-
-  .photo-band :global(.photo-band__img) {
-    width: 100%;
-    max-height: 68vh;
-    object-fit: cover;
-    border-radius: 0;
-  }
-
-  .photo-band::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, transparent 45%, rgb(9 12 29 / 0.85));
-    pointer-events: none;
-  }
-
-  .photo-band__caption {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    z-index: 1;
-    padding: clamp(1.2rem, 4vw, 2.5rem);
-  }
-
-  .photo-band__caption .eyebrow {
-    transform-origin: left center;
-  }
-
-  .photo-band__text {
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: var(--step-3);
-    text-transform: uppercase;
-    line-height: 1;
-    text-shadow: 0 2px 20px rgb(0 0 0 / 0.6);
   }
 
   /* Verein-Teaser (helle Sektion) */
@@ -317,7 +172,8 @@ const { highlights, notice, vereinTeaserTitle, vereinTeaserText } = homepage;
     padding: var(--space-4) var(--space-2);
     border: 1px solid var(--cream-hairline);
     border-radius: var(--radius-m);
-    background: var(--cream-50);
+    background: #ffffff;
+    box-shadow: var(--shadow-card);
   }
 
   .verein-teaser__facts strong {
