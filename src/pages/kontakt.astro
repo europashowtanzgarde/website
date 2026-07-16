@@ -1,127 +1,344 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/PageIntro.astro';
+import SocialIcon from '../components/SocialIcon.astro';
 import { site } from '../lib/settings';
 
-const hasFacebook = Boolean(site.social.facebook);
-const hasInstagram = Boolean(site.social.instagram);
+const social = [
+  { href: site.social.facebook, label: 'Facebook', platform: 'facebook' as const },
+  { href: site.social.instagram, label: 'Instagram', platform: 'instagram' as const },
+  { href: site.social.tiktok, label: 'TikTok', platform: 'tiktok' as const },
+].filter((item) => Boolean(item.href));
+
+const topics = [
+  {
+    title: 'Mitmachen',
+    text: 'Nenne uns bitte das Alter der interessierten Person. So können wir direkt die passende Garde zuordnen.',
+  },
+  {
+    title: 'Auftritt anfragen',
+    text: 'Schreib nach Möglichkeit Anlass, Ort und gewünschten Termin dazu.',
+  },
+  {
+    title: 'Verein & Sonstiges',
+    text: 'Eine kurze Beschreibung deines Anliegens genügt – weitere Details können wir anschließend klären.',
+  },
+];
 ---
 
-<BaseLayout
-  title="Kontakt"
-  description="So erreichst du die Europa-Show-Tanzgarde aus Wassertrüdingen – per E-Mail oder über unsere Social-Media-Kanäle."
->
-  <PageIntro
-    eyebrow="schreib uns"
-    title="Kontakt"
-    intro="Fragen zum Mitmachen, zu Auftritten oder zum Verein? Wir freuen uns über deine Nachricht."
-  />
+<BaseLayout title="Kontakt" description="So erreichst du die Europa-Show-Tanzgarde aus Wassertrüdingen – per E-Mail oder über unsere Social-Media-Kanäle.">
+  <PageIntro title="Kontakt" intro="Fragen zum Mitmachen, zu Auftritten oder zum Verein? Wir freuen uns über deine Nachricht." />
 
-  <section class="section section--tight">
-    <div class="wrap kontakt">
-      <div class="kontakt__card kontakt__card--main">
-        <span class="label">E-Mail</span>
-        <a class="kontakt__mail" href={`mailto:${site.email}`}>{site.email}</a>
-        <p class="kontakt__hint">
-          Am schnellsten erreichst du uns per E-Mail. Schreib uns kurz dein Anliegen –
-          bei Interesse am Tanzen gern mit Alter, damit wir dich der passenden Garde
-          zuordnen können.
-        </p>
+  <section class="contact-stage" aria-labelledby="contact-direct-title">
+    <div class="wrap contact-stage__inner">
+      <div class="contact-stage__copy">
+        <p class="contact-stage__context">Direkter Kontakt</p>
+        <h2 id="contact-direct-title">Schreib uns einfach</h2>
+        <p>Am schnellsten erreichst du uns per E-Mail. Ein paar Zeilen zu deinem Anliegen reichen für den ersten Kontakt völlig aus.</p>
+
+        <address>
+          <a class="contact-mail" href={`mailto:${site.email}`}>
+            <span class="contact-mail__address">{site.email}</span>
+            <span class="contact-mail__action">E-Mail schreiben <span aria-hidden="true">→</span></span>
+          </a>
+        </address>
       </div>
 
-      <div class="kontakt__side">
-        {
-          (hasFacebook || hasInstagram) && (
-            <div class="kontakt__card">
-              <span class="label">Social Media</span>
-              <p class="kontakt__hint">Aktuelle Bilder und kurzfristige Infos gibt es hier:</p>
-              <div class="kontakt__socials">
-                {hasFacebook && (
-                  <a class="btn btn--ghost" href={site.social.facebook} target="_blank" rel="noopener">Facebook</a>
-                )}
-                {hasInstagram && (
-                  <a class="btn btn--ghost" href={site.social.instagram} target="_blank" rel="noopener">Instagram</a>
-                )}
-              </div>
-            </div>
-          )
-        }
+      <figure class="contact-stage__visual">
+        <img
+          src="/uploads/showtanzgarde.webp"
+          alt="Mitglieder der Europa-Show-Tanzgarde tanzen in Westernkostümen auf einer grün beleuchteten Bühne."
+          width="1200"
+          height="800"
+          loading="eager"
+          decoding="async"
+        />
+        <figcaption>Gemeinsam auf der Bühne, gemeinsam im Verein.</figcaption>
+      </figure>
+    </div>
+  </section>
 
-        <div class="kontakt__card">
-          <span class="label">Wo wir zuhause sind</span>
-          <p class="kontakt__place">{site.location}</p>
-          <p class="kontakt__hint">
-            Unsere Garden treten vor allem in Wassertrüdingen und im Landkreis Ansbach auf.
-          </p>
-        </div>
-      </div>
+  <section class="section contact-guide" aria-labelledby="contact-guide-title">
+    <div class="wrap contact-guide__layout">
+      <header>
+        <h2 id="contact-guide-title">Worum geht es?</h2>
+        <p>Mit diesen Angaben können wir deine Nachricht schneller einordnen.</p>
+      </header>
+
+      <ul class="contact-guide__list">
+        {topics.map((topic) => <li><h3>{topic.title}</h3><p>{topic.text}</p></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="contact-more" aria-label="Weitere Kontaktmöglichkeiten">
+    <div class="wrap contact-more__grid">
+      {
+        social.length > 0 && (
+          <section aria-labelledby="social-title">
+            <h2 id="social-title">Social Media</h2>
+            <p>Aktuelle Bilder und kurzfristige Infos findest du auf unseren Kanälen.</p>
+            <ul>
+              {social.map((item) => (
+                <li>
+                  <a
+                    class="contact-social__link"
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener"
+                    aria-label={`${item.label} (öffnet in einem neuen Tab)`}
+                    title={item.label}
+                  >
+                    <SocialIcon platform={item.platform} />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+
+      <section aria-labelledby="location-title">
+        <h2 id="location-title">Unser Zuhause</h2>
+        <p class="contact-more__place">{site.location}</p>
+        <p>Unsere Garden treten vor allem in Wassertrüdingen und im Landkreis Ansbach auf.</p>
+      </section>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .kontakt {
+  .contact-stage {
+    padding-block: clamp(2.5rem, 6vw, 5.5rem);
+    color: var(--text-on-color);
+    background: var(--night-900);
+  }
+
+  .contact-stage__inner {
     display: grid;
-    gap: var(--space-5);
+    gap: var(--space-7) clamp(2.5rem, 8vw, 8rem);
+    align-items: center;
+    max-width: 70rem;
   }
 
   @media (min-width: 820px) {
-    .kontakt {
-      grid-template-columns: 1.4fr 1fr;
+    .contact-stage__inner {
+      grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 0.85fr);
+    }
+  }
+
+  .contact-stage__copy {
+    min-width: 0;
+  }
+
+  .contact-stage__context {
+    margin-bottom: var(--space-3);
+    font-weight: 750;
+    color: var(--red-300);
+  }
+
+  .contact-stage h2 {
+    max-width: 12ch;
+    font-size: var(--step-4);
+    color: var(--text-on-color);
+  }
+
+  .contact-stage__copy > p:last-of-type {
+    max-width: 38rem;
+    margin-top: var(--space-4);
+    font-size: var(--step-1);
+    color: var(--text-on-color-muted);
+  }
+
+  .contact-stage address {
+    margin-top: var(--space-7);
+    font-style: normal;
+  }
+
+  .contact-mail {
+    display: grid;
+    gap: var(--space-3);
+    width: 100%;
+    padding-block: var(--space-5);
+    border-block: 1px solid rgb(255 255 255 / 0.3);
+    color: #ffffff;
+    text-decoration: none;
+    transition: background-color var(--transition-fast);
+  }
+
+  .contact-mail:hover {
+    color: #ffffff;
+    background: rgb(255 255 255 / 0.08);
+  }
+
+  .contact-mail__address {
+    min-width: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 1.05rem + 1.2vw, 2.15rem);
+    font-weight: 750;
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+  }
+
+  .contact-mail__action {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    font-weight: 750;
+    color: var(--red-300);
+  }
+
+  .contact-mail__action > span {
+    transition: transform var(--transition-fast);
+  }
+
+  .contact-mail:hover .contact-mail__action > span {
+    transform: translateX(0.35rem);
+  }
+
+  .contact-stage__visual {
+    width: 100%;
+    max-width: 30rem;
+    margin: 0;
+    justify-self: end;
+  }
+
+  .contact-stage__visual img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    object-position: center;
+    border-radius: var(--radius-m);
+  }
+
+  .contact-stage__visual figcaption {
+    margin-top: var(--space-3);
+    font-size: var(--step--1);
+    color: var(--text-on-color-muted);
+  }
+
+  .contact-guide {
+    border-bottom: 1px solid var(--hairline-strong);
+  }
+
+  .contact-guide__layout {
+    display: grid;
+    gap: var(--space-7) clamp(3rem, 8vw, 8rem);
+    max-width: 70rem;
+  }
+
+  @media (min-width: 820px) {
+    .contact-guide__layout {
+      grid-template-columns: minmax(14rem, 0.7fr) minmax(0, 1.3fr);
       align-items: start;
     }
   }
 
-  .kontakt__card {
-    padding: var(--space-6);
-    background: var(--bg-card);
-    border: 1px solid var(--hairline);
-    border-radius: var(--radius-l);
+  .contact-guide header h2,
+  .contact-more h2 {
+    font-size: var(--step-3);
   }
 
-  .kontakt__card--main {
-    background:
-      radial-gradient(80% 130% at 0% 0%, rgb(75 99 230 / 0.16), transparent 55%),
-      var(--bg-card);
-  }
-
-  .kontakt__mail {
-    display: inline-block;
-    margin-block: 0.5rem 1rem;
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: clamp(1.3rem, 1rem + 2vw, 2rem);
-    color: var(--accent-bright);
-    word-break: break-word;
-  }
-
-  .kontakt__mail:hover {
-    color: var(--accent);
-    text-decoration: underline;
-    text-underline-offset: 0.18em;
-  }
-
-  .kontakt__hint {
+  .contact-guide header p {
+    max-width: 28rem;
+    margin-top: var(--space-3);
     color: var(--text-muted);
-    max-width: 40rem;
   }
 
-  .kontakt__side {
+  .contact-guide__list {
+    padding: 0;
+    border-top: 1px solid var(--hairline-strong);
+    list-style: none;
+  }
+
+  .contact-guide__list li {
     display: grid;
-    gap: var(--space-5);
+    gap: var(--space-2) var(--space-6);
+    padding-block: var(--space-5);
+    border-bottom: 1px solid var(--hairline-strong);
   }
 
-  .kontakt__socials {
+  @media (min-width: 560px) {
+    .contact-guide__list li {
+      grid-template-columns: minmax(8.5rem, 0.45fr) minmax(0, 1fr);
+    }
+  }
+
+  .contact-guide__list h3 {
+    font-size: var(--step-1);
+  }
+
+  .contact-guide__list p {
+    max-width: 42rem;
+    color: var(--text-muted);
+  }
+
+  .contact-more {
+    padding-block: var(--section-space);
+    background: var(--surface-soft);
+  }
+
+  .contact-more__grid {
+    display: grid;
+    gap: var(--space-8) clamp(3rem, 10vw, 10rem);
+    max-width: 70rem;
+  }
+
+  @media (min-width: 720px) {
+    .contact-more__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .contact-more section {
+    min-width: 0;
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--hairline-strong);
+  }
+
+  .contact-more section > p {
+    max-width: 34rem;
+    margin-top: var(--space-3);
+    color: var(--text-muted);
+  }
+
+  .contact-more ul {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-3);
-    margin-top: var(--space-4);
+    gap: var(--space-2);
+    margin-top: var(--space-5);
+    padding: 0;
+    list-style: none;
   }
 
-  .kontakt__place {
+  .contact-more .contact-social__link {
+    display: inline-flex;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    min-height: 44px;
+    align-items: center;
+    color: var(--blue-700);
+    background: #ffffff;
+    border: 1px solid var(--hairline-strong);
+    border-radius: var(--radius-s);
+    text-decoration: none;
+    transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+  }
+
+  .contact-more .contact-social__link:hover {
+    color: #ffffff;
+    background: var(--blue-700);
+    border-color: var(--blue-700);
+    transform: translateY(-2px);
+  }
+
+  .contact-more section > .contact-more__place {
     font-family: var(--font-display);
-    font-weight: 700;
     font-size: var(--step-2);
-    margin-block: 0.4rem;
+    font-weight: 750;
+    color: var(--text);
   }
 </style>

@@ -20,175 +20,212 @@ const { notice, vereinTeaserTitle, vereinTeaserText } = homepage;
 
   {
     notice.enabled && notice.text && (
-      <div class="notice" role="status">
+      <aside class="notice" aria-label="Aktueller Hinweis">
         <div class="wrap notice__inner">
-          <span class="notice__dot" aria-hidden="true"></span>
           <p>{notice.text}</p>
-          {notice.link && notice.linkLabel && (
-            <a class="arrow-link" href={notice.link}>{notice.linkLabel}</a>
-          )}
+          {notice.link && notice.linkLabel && <a class="arrow-link" href={notice.link}>{notice.linkLabel}</a>}
         </div>
-      </div>
+      </aside>
     )
   }
 
-  <!-- Kommende Termine -->
   {
     events.length > 0 && (
-      <section class="section">
+      <section class="section home-program">
         <div class="wrap">
-          <SectionHeading eyebrow="Bühne frei" title="Kommende Termine" intro="Wo wir als Nächstes auf der Bühne stehen." />
-          <div class="events-list">
+          <SectionHeading title="Kommende Termine" intro="Wo wir als Nächstes auf der Bühne stehen." />
+          <div class="home-program__list">
             {events.map((event) => <EventItem event={event} />)}
           </div>
-          <a class="btn btn--ghost more-btn" href="/termine">Alle Termine ansehen</a>
+          <a class="arrow-link home-more" href="/termine">Alle Termine ansehen <span aria-hidden="true">→</span></a>
         </div>
       </section>
     )
   }
 
-  <!-- Unsere Garden -->
-  <section class="section">
+  <section class="section rule-section">
     <div class="wrap">
-      <SectionHeading eyebrow="drei Garden" title="Für jedes Alter" intro="Von den ersten Schritten bis zur großen Bühne." />
-      <div class="grid grid--3">
-        {groups.map((group, i) => <GroupCard group={group} index={i} />)}
+      <SectionHeading title="Für jedes Alter" intro="Drei Garden, ein gemeinsamer Auftritt: von den ersten Schritten bis zu den Aktiven." />
+      <div class="groups-index">
+        {groups.map((group) => <GroupCard group={group} variant="summary" />)}
       </div>
+      <a class="arrow-link home-more" href="/sparten">Alle Garden kennenlernen <span aria-hidden="true">→</span></a>
     </div>
   </section>
 
-  <!-- Aktuelles -->
   {
     posts.length > 0 && (
-      <section class="section">
+      <section class="section rule-section">
         <div class="wrap">
-          <SectionHeading eyebrow="frisch aus dem Verein" title="Aktuelles" />
-          <div class="grid grid--2">
+          <SectionHeading title="Aktuelles" intro="Berichte und Neuigkeiten direkt aus dem Vereinsleben." />
+          <div class="posts-list">
             {posts.map((post) => <PostCard post={post} />)}
           </div>
-          <a class="btn btn--ghost more-btn" href="/aktuelles">Alle Beiträge</a>
+          <a class="arrow-link home-more" href="/aktuelles">Alle Beiträge lesen <span aria-hidden="true">→</span></a>
         </div>
       </section>
     )
   }
 
-  <!-- Verein-Teaser & Mitmachen -->
-  <section class="surface-cream">
-    <div class="wrap verein-teaser">
-      <div class="verein-teaser__text">
-        <span class="eyebrow">seit 1981</span>
-        <h2 class="display">{vereinTeaserTitle}</h2>
+  <section class="club-story">
+    <div class="wrap club-story__inner">
+      <div>
+        <p class="club-story__since">Seit 1981 in Wassertrüdingen</p>
+        <h2>{vereinTeaserTitle}</h2>
+      </div>
+      <div class="club-story__content">
         <p>{vereinTeaserText}</p>
-        <div class="verein-teaser__cta">
-          <a class="btn" href="/verein">Mehr über uns</a>
+        <ul class="club-story__facts" aria-label="Vereinsfakten">
+          <li><strong>1981</strong> gegründet</li>
+          <li><strong>3</strong> Garden</li>
+          <li>zuhause in <strong>{site.location}</strong></li>
+        </ul>
+        <div class="club-story__actions">
+          <a class="btn club-story__primary" href="/verein">Mehr über uns</a>
           <a class="btn btn--ghost" href="/kontakt">Mitmachen &amp; Kontakt</a>
         </div>
-      </div>
-      <div class="verein-teaser__facts" aria-hidden="false">
-        <div><strong>1981</strong><span>gegründet</span></div>
-        <div><strong>3</strong><span>Garden</span></div>
-        <div><strong>{site.location}</strong><span>zuhause</span></div>
       </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  /* Aktueller Hinweis */
   .notice {
-    background: color-mix(in srgb, var(--hot) 8%, #ffffff);
-    border-block: 1px solid color-mix(in srgb, var(--hot) 28%, transparent);
+    color: var(--text);
+    background: #fff0f1;
+    border-bottom: 1px solid #e3aeb2;
   }
 
   .notice__inner {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.6rem 1rem;
-    padding-block: 0.9rem;
+    gap: var(--space-2) var(--space-5);
+    padding-block: var(--space-4);
   }
 
-  .notice__dot {
-    width: 10px;
-    height: 10px;
+  .notice__inner::before {
+    content: '';
+    width: 0.65rem;
+    height: 0.65rem;
     border-radius: 50%;
-    background: var(--hot);
-    box-shadow: var(--glow-red);
-    flex: none;
+    background: var(--red-600);
   }
 
-  .notice p {
-    margin: 0;
-    font-weight: 500;
+  .home-program__list {
+    max-width: 58rem;
   }
 
-  .events-list {
-    border-bottom: 1px solid var(--hairline);
-  }
-
-  .more-btn {
-    margin-top: var(--space-6);
-  }
-
-  /* Verein-Teaser (helle Sektion) */
-  .verein-teaser {
-    display: grid;
-    gap: var(--space-7);
-    align-items: center;
-  }
-
-  @media (min-width: 860px) {
-    .verein-teaser {
-      grid-template-columns: 1.5fr 1fr;
-    }
-  }
-
-  .verein-teaser__text h2 {
-    font-size: var(--step-3);
-    margin-block: 0.4rem 0.8rem;
-  }
-
-  .verein-teaser__text p {
-    max-width: 40rem;
-    font-size: var(--step-1);
-    color: var(--cream-ink-muted);
-  }
-
-  .verein-teaser__cta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-4);
+  .home-more {
     margin-top: var(--space-5);
   }
 
-  .verein-teaser__facts {
+  .groups-index {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-4);
-    text-align: center;
+    gap: var(--space-6);
   }
 
-  .verein-teaser__facts div {
-    padding: var(--space-4) var(--space-2);
-    border: 1px solid var(--cream-hairline);
-    border-radius: var(--radius-m);
+  @media (min-width: 680px) and (max-width: 859px) {
+    .groups-index {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+    }
+  }
+
+  @media (min-width: 860px) {
+    .groups-index {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: start;
+    }
+  }
+
+  .posts-list {
+    max-width: 62rem;
+  }
+
+  .club-story {
+    padding-block: var(--section-space);
+    color: var(--text-on-color);
+    background: var(--surface-blue);
+  }
+
+  .club-story__inner {
+    display: grid;
+    gap: var(--space-7) clamp(var(--space-8), 9vw, calc(var(--space-8) * 2));
+  }
+
+  @media (min-width: 1200px) {
+    .club-story__inner {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    }
+  }
+
+  .club-story__since {
+    margin-bottom: var(--space-3);
+    font-weight: 700;
+    color: var(--red-300);
+  }
+
+  .club-story h2 {
+    max-width: 15ch;
+    font-size: var(--step-4);
+    color: var(--text-on-color);
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .club-story__content > p {
+    max-width: 42rem;
+    font-size: var(--step-1);
+    color: var(--text-on-color-muted);
+  }
+
+  .club-story__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-6);
+    margin-top: var(--space-6);
+    padding: var(--space-4) 0;
+    border-block: 1px solid rgb(255 255 255 / 0.25);
+    list-style: none;
+  }
+
+  .club-story__facts li {
+    min-width: 0;
+    color: var(--text-on-color-muted);
+  }
+
+  .club-story__facts strong {
+    color: var(--text-on-color);
+  }
+
+  .club-story__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+  }
+
+  .club-story__primary {
+    color: var(--blue-700);
     background: #ffffff;
-    box-shadow: var(--shadow-card);
+    border-color: #ffffff;
   }
 
-  .verein-teaser__facts strong {
-    display: block;
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: clamp(1.3rem, 1rem + 1.5vw, 2rem);
-    line-height: 1;
-    color: var(--blue-600);
+  .club-story__primary:hover {
+    color: var(--blue-700);
+    background: var(--surface-soft-blue);
+    border-color: var(--surface-soft-blue);
   }
 
-  .verein-teaser__facts span {
-    font-size: var(--step--1);
-    color: var(--cream-ink-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+  .club-story .btn--ghost {
+    color: #ffffff;
+    border-color: rgb(255 255 255 / 0.65);
+  }
+
+  .club-story .btn--ghost:hover {
+    color: #ffffff;
+    background: rgb(255 255 255 / 0.12);
+    border-color: #ffffff;
   }
 </style>

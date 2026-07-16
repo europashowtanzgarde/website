@@ -16,18 +16,24 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isActive = (href: string) => path === href || path.startsWith(href + '/');
 ---
 
-<header class="site-header">
+<header class="site-header" data-site-header>
   <div class="wrap header-inner">
     <a class="brand" href="/" aria-label={`${site.name} – Startseite`}>
       <Image src={logo} alt={site.name} width={240} class="brand__logo" loading="eager" />
     </a>
 
-    <input type="checkbox" id="nav-toggle" class="nav-toggle visually-hidden" />
-    <label for="nav-toggle" class="nav-burger" aria-label="Menü ein- und ausblenden">
+    <button
+      class="nav-burger"
+      type="button"
+      aria-controls="site-navigation"
+      aria-expanded="false"
+      aria-label="Hauptmenü öffnen"
+      data-nav-button
+    >
       <span></span><span></span><span></span>
-    </label>
+    </button>
 
-    <nav class="site-nav" aria-label="Hauptnavigation">
+    <nav id="site-navigation" class="site-nav" aria-label="Hauptnavigation" data-site-nav>
       <ul>
         {
           nav.map((item) => (
@@ -43,11 +49,41 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
   </div>
 </header>
 
+<script is:inline>
+  (() => {
+    const header = document.querySelector('[data-site-header]');
+    const button = header?.querySelector('[data-nav-button]');
+    const nav = header?.querySelector('[data-site-nav]');
+    if (!(header instanceof HTMLElement) || !(button instanceof HTMLButtonElement) || !(nav instanceof HTMLElement)) return;
+
+    const setOpen = (open) => {
+      header.classList.toggle('is-open', open);
+      button.setAttribute('aria-expanded', String(open));
+      button.setAttribute('aria-label', open ? 'Hauptmenü schließen' : 'Hauptmenü öffnen');
+    };
+
+    button.addEventListener('click', () => setOpen(button.getAttribute('aria-expanded') !== 'true'));
+    nav.addEventListener('click', (event) => {
+      if (event.target instanceof HTMLAnchorElement) setOpen(false);
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && button.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        button.focus();
+      }
+    });
+    document.addEventListener('pointerdown', (event) => {
+      if (button.getAttribute('aria-expanded') === 'true' && event.target instanceof Node && !header.contains(event.target)) setOpen(false);
+    });
+    window.matchMedia('(min-width: 900px)').addEventListener('change', () => setOpen(false));
+  })();
+</script>
+
 <style>
   .site-header {
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: var(--z-sticky);
     background: color-mix(in srgb, #ffffff 82%, transparent);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
@@ -61,9 +97,10 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
     gap: var(--space-4);
     min-height: 4.4rem;
     padding-block: 0.6rem;
+    max-width: 74rem;
+    padding-inline: clamp(1.1rem, 4vw, 2.5rem);
   }
 
-  /* --- Wortmarke (echtes Vereinslogo) --- */
   .brand {
     display: inline-flex;
     align-items: center;
@@ -80,14 +117,12 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
     transform: scale(1.03);
   }
 
-  /* --- Navigation (Desktop) --- */
   .site-nav ul {
     display: flex;
     align-items: center;
     gap: clamp(1rem, 2.5vw, 2rem);
     list-style: none;
     padding: 0;
-    margin: 0;
   }
 
   .site-nav a {
@@ -99,10 +134,10 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
     font-size: 1.05rem;
     letter-spacing: 0.03em;
     text-transform: uppercase;
+    text-decoration: none;
     color: var(--text);
   }
 
-  /* Diagonale „Wisch"-Unterstreichung (Signatur). */
   .site-nav a::after {
     content: '';
     position: absolute;
@@ -126,11 +161,6 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
     transform: scaleX(1);
   }
 
-  /* --- Burger (nur mobil sichtbar) --- */
-  .nav-toggle {
-    position: absolute;
-  }
-
   .nav-burger {
     display: none;
     flex-direction: column;
@@ -139,8 +169,10 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
     width: 44px;
     height: 44px;
     padding: 10px;
-    cursor: pointer;
+    border: 0;
     border-radius: var(--radius-s);
+    background: transparent;
+    cursor: pointer;
   }
 
   .nav-burger span {
@@ -150,11 +182,6 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
     background: var(--text);
     border-radius: 2px;
     transition: transform 0.25s var(--ease-out), opacity 0.2s var(--ease-out);
-  }
-
-  .nav-toggle:focus-visible + .nav-burger {
-    outline: 3px solid var(--hot-bright);
-    outline-offset: 2px;
   }
 
   @media (max-width: 899px) {
@@ -167,12 +194,13 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
       left: 0;
       right: 0;
       top: 100%;
+      max-height: 0;
+      overflow: hidden;
+      visibility: hidden;
       background: #ffffff;
       border-bottom: 1px solid var(--hairline-strong);
-      box-shadow: var(--shadow-card);
-      overflow: hidden;
-      max-height: 0;
-      transition: max-height 0.32s var(--ease-out);
+      box-shadow: var(--shadow-s);
+      transition: max-height 0.32s var(--ease-out), visibility 0s linear 0.32s;
     }
 
     .site-nav ul {
@@ -187,7 +215,8 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
 
     .site-nav a {
       display: block;
-      padding: 1rem clamp(1.1rem, 4vw, 2.5rem);
+      min-height: 52px;
+      padding: 0.85rem clamp(1.1rem, 4vw, 2.5rem);
       font-size: 1.3rem;
     }
 
@@ -200,21 +229,22 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
       box-shadow: inset 4px 0 0 var(--hot);
     }
 
-    /* Aufklappen via max-height (animierbar, kein JS). */
-    .nav-toggle:checked ~ .site-nav {
-      max-height: 80vh;
+    .site-header.is-open .site-nav {
+      max-height: min(80vh, 28rem);
       overflow-y: auto;
+      visibility: visible;
+      transition-delay: 0s;
     }
 
-    .nav-toggle:checked + .nav-burger span:nth-child(1) {
+    .site-header.is-open .nav-burger span:nth-child(1) {
       transform: translateY(7.5px) rotate(45deg);
     }
 
-    .nav-toggle:checked + .nav-burger span:nth-child(2) {
+    .site-header.is-open .nav-burger span:nth-child(2) {
       opacity: 0;
     }
 
-    .nav-toggle:checked + .nav-burger span:nth-child(3) {
+    .site-header.is-open .nav-burger span:nth-child(3) {
       transform: translateY(-7.5px) rotate(-45deg);
     }
   }

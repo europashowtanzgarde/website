@@ -8,8 +8,6 @@ import { site } from '../lib/settings';
 
 const upcoming = await getUpcomingEvents();
 const past = await getPastEvents(8);
-
-// JSON-LD für kommende Auftritte/Veranstaltungen (lokale Suche).
 const eventsLd = upcoming.map((e) => ({
   '@context': 'https://schema.org',
   '@type': 'Event',
@@ -22,29 +20,21 @@ const eventsLd = upcoming.map((e) => ({
 }));
 ---
 
-<BaseLayout
-  title="Termine & Auftritte"
-  description="Kommende Auftritte, Feste und Veranstaltungen der Europa-Show-Tanzgarde aus Wassertrüdingen."
->
+<BaseLayout title="Termine & Auftritte" description="Kommende Auftritte, Feste und Veranstaltungen der Europa-Show-Tanzgarde aus Wassertrüdingen.">
   <Fragment slot="head">
     {eventsLd.map((ld) => <script type="application/ld+json" is:inline set:html={JSON.stringify(ld)} />)}
   </Fragment>
 
-  <PageIntro
-    eyebrow="Bühne frei"
-    title="Termine & Auftritte"
-    intro="Wo und wann unsere Garden als Nächstes auf der Bühne stehen."
-  />
+  <PageIntro title="Termine & Auftritte" intro="Wo und wann unsere Garden als Nächstes auf der Bühne stehen." />
 
   <section class="section section--tight">
-    <div class="wrap">
+    <div class="wrap events-page">
+      <h2>Kommende Termine</h2>
       {
         upcoming.length === 0 ? (
-          <p class="empty">Aktuell sind keine öffentlichen Termine eingetragen. Folgt uns auf Social Media, um nichts zu verpassen.</p>
+          <p class="empty-state">Aktuell sind keine öffentlichen Termine eingetragen. Folgt uns auf Social Media, um nichts zu verpassen.</p>
         ) : (
-          <div class="events-list reveal-group">
-            {upcoming.map((event) => <EventItem event={event} showDescription />)}
-          </div>
+          <div class="events-page__list">{upcoming.map((event) => <EventItem event={event} showDescription />)}</div>
         )
       }
     </div>
@@ -52,12 +42,11 @@ const eventsLd = upcoming.map((e) => ({
 
   {
     past.length > 0 && (
-      <section class="section section--tight">
-        <div class="wrap">
-          <h2 class="rueckblick-title">Rückblick</h2>
-          <div class="events-list">
-            {past.map((event) => <EventItem event={event} past />)}
-          </div>
+      <section class="section section--tight events-past">
+        <div class="wrap events-page">
+          <h2>Rückblick</h2>
+          <p class="events-past__intro">Vergangene Auftritte und Veranstaltungen.</p>
+          <div class="events-page__list">{past.map((event) => <EventItem event={event} past />)}</div>
         </div>
       </section>
     )
@@ -65,24 +54,34 @@ const eventsLd = upcoming.map((e) => ({
 </BaseLayout>
 
 <style>
-  .events-list {
-    border-bottom: 1px solid var(--hairline);
+  .events-page {
+    display: grid;
+    gap: var(--space-5) clamp(2rem, 7vw, 7rem);
   }
 
-  .rueckblick-title {
-    font-family: var(--font-display);
+  @media (min-width: 820px) {
+    .events-page {
+      grid-template-columns: 13rem minmax(0, 48rem);
+      align-items: start;
+    }
+
+    .events-page__list,
+    .empty-state,
+    .events-past__intro {
+      grid-column: 2;
+    }
+  }
+
+  .events-page h2 {
     font-size: var(--step-2);
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: var(--space-2);
   }
 
-  .empty {
-    padding: var(--space-7);
-    text-align: center;
+  .events-past {
+    background: var(--surface-soft);
+    border-block: 1px solid var(--hairline);
+  }
+
+  .events-past__intro {
     color: var(--text-muted);
-    border: 1px dashed var(--hairline-strong);
-    border-radius: var(--radius-l);
   }
 </style>

@@ -1,13 +1,8 @@
-/* =========================================================================
-   Design-Tokens – Europa-Show-Tanzgarde
-   Konzept „Weiß & professionell": reiner weißer Grund, Logo-Blau als
-   Primärfarbe für Überschriften/Links/Buttons, dunkles Tintenblau für
-   Fließtext, Rot nur als sparsamer Akzent.
-   Farben aus dem Vereinslogo gesampelt (Blau ≈ #182a9c, Rot ≈ #c31820).
-   ========================================================================= */
+/* Zentrales Designsystem der Europa-Show-Tanzgarde.
+   Die vom geschützten Startseiten-Hero verwendeten Tokens bleiben unverändert. */
 
 :root {
-  /* --- Primitive Farben ------------------------------------------------- */
+  /* Markenfarben aus dem Vereinslogo */
   --blue-700: #182a9c;
   --blue-600: #2438b8;
   --blue-500: #3a52d8;
@@ -15,6 +10,7 @@
   --blue-300: #7d90f2;
   --blue-200: #aab6f8;
 
+  --red-700: #a81219;
   --red-600: #c31820;
   --red-500: #e2242c;
   --red-400: #f0454c;
@@ -27,72 +23,61 @@
   --night-700: #232c5c;
   --night-600: #303a72;
 
-  --amber-400: #f5b942; /* warmes Bühnen-Bodenlicht */
+  --amber-700: #765200;
+  --amber-400: #f5b942;
   --amber-300: #ffd27a;
 
-  --cream-50: #fdfbf6;
-  --cream-100: #faf6ef;
-  --cream-200: #f1ead9;
-  --cream-300: #e4dac4;
-  --cream-500: #b8ad95;
-  --cream-700: #6f6752;
-
-  /* --- Semantische Rollen (helles Theme) ------------------------------- */
+  /* Semantische Farben */
   --bg: #ffffff;
-  --bg-deep: #eef1f8; /* zarter Blaugrau-Sockel (Footer o. Ä.) */
-  --bg-raised: #f5f7fc; /* leicht abgesetzte Flächen / Menüs */
+  --bg-deep: #eef1f8;
+  --bg-raised: #f4f6fb;
   --bg-card: #ffffff;
   --bg-card-hover: #f5f7fc;
-  --hairline: rgb(24 42 156 / 0.12); /* blau getönte helle Linie */
+  --surface-blue: var(--blue-700);
+  --surface-soft: #f4f6fb;
+  --surface-soft-blue: #edf0fa;
+
+  --hairline: rgb(24 42 156 / 0.12);
   --hairline-strong: rgb(24 42 156 / 0.22);
+  --border: #cfd5e8;
+  --border-strong: #9ca7ca;
 
-  --text: #14183a; /* dunkles Tintenblau – Fließtext */
+  --text: #14183a;
   --text-muted: #4b5578;
-  --text-dim: #6c7699;
+  --text-dim: #5e6888;
+  --text-on-color: #ffffff;
+  --text-on-color-muted: #e2e6fb;
 
-  --accent: var(--blue-700); /* Logo-Blau = Primärfarbe */
+  --accent: var(--blue-700);
   --accent-bright: var(--blue-600);
   --accent-deep: var(--blue-700);
-  --hot: var(--red-600); /* Rot nur als sparsamer Akzent */
+  --hot: var(--red-600);
   --hot-bright: var(--red-500);
   --link: var(--blue-700);
   --link-hover: var(--blue-500);
 
-  /* Leicht getönte „Panel"-Sektionen (Kontrapunkt zum reinen Weiß) */
-  --cream-bg: #f5f7fc;
-  --cream-ink: #14183a;
-  --cream-ink-muted: #4b5578;
-  --cream-hairline: rgb(24 42 156 / 0.12);
+  /* Zurückhaltende, funktionale Tiefe */
+  --shadow-s: 0 2px 8px rgb(20 24 58 / 0.1);
 
-  /* --- Glow / Schatten (dezent, für hellen Grund) ---------------------- */
-  --glow-blue: 0 10px 30px -14px rgb(24 42 156 / 0.35);
-  --glow-blue-soft: 0 14px 40px -18px rgb(24 42 156 / 0.26);
-  --glow-red: 0 10px 26px -14px rgb(195 24 32 / 0.32);
-  --glow-red-soft: 0 14px 34px -18px rgb(195 24 32 / 0.22);
-  --shadow-card: 0 14px 34px -22px rgb(20 24 58 / 0.28);
-  --shadow-lift: 0 24px 50px -28px rgb(20 24 58 / 0.32);
-
-  /* --- Typografie ------------------------------------------------------- */
+  /* Typografie – vom Hero verwendete Familien und kleine Stufe unverändert */
   --font-display: 'Big Shoulders Variable', 'Arial Narrow', system-ui, sans-serif;
   --font-body: 'Hanken Grotesk Variable', system-ui, -apple-system, sans-serif;
-  --font-script: 'Kaushan Script', cursive;
 
-  /* Fluid-Skala (clamp: min .. max) */
   --step--1: clamp(0.82rem, 0.79rem + 0.15vw, 0.9rem);
   --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.12rem);
-  --step-1: clamp(1.2rem, 1.12rem + 0.4vw, 1.45rem);
-  --step-2: clamp(1.5rem, 1.36rem + 0.7vw, 2rem);
-  --step-3: clamp(2rem, 1.7rem + 1.5vw, 3rem);
-  --step-4: clamp(2.6rem, 2rem + 3vw, 4.5rem);
-  --step-5: clamp(3.4rem, 2.3rem + 5.5vw, 7rem);
+  --step-1: clamp(1.22rem, 1.15rem + 0.35vw, 1.45rem);
+  --step-2: clamp(1.62rem, 1.45rem + 0.85vw, 2.15rem);
+  --step-3: clamp(2.2rem, 1.85rem + 1.75vw, 3.3rem);
+  --step-4: clamp(2.9rem, 2.2rem + 3.5vw, 5.1rem);
+  --step-5: clamp(3.5rem, 2.55rem + 4.75vw, 6.5rem);
 
   --leading-tight: 1.05;
   --leading-snug: 1.25;
   --leading-normal: 1.65;
   --tracking-display: 0.01em;
-  --tracking-wide: 0.18em;
+  --tracking-wide: 0.12em;
 
-  /* --- Layout / Abstände ------------------------------------------------ */
+  /* 4px-Grundraster */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -102,17 +87,22 @@
   --space-7: 3rem;
   --space-8: 4.5rem;
   --space-9: 6.5rem;
+  --section-space: clamp(3.5rem, 7vw, 6.5rem);
 
-  --container: 74rem;
-  --container-narrow: 52rem;
+  --container: 76rem;
+  --container-narrow: 48rem;
+  --measure: 68ch;
   --radius-s: 8px;
-  --radius-m: 14px;
-  --radius-l: 22px;
+  --radius-m: 12px;
+  --radius-l: 16px;
 
-  /* Signatur-Diagonale (Anklang an das schräge „Show" im Logo) */
-  --skew: -4deg;
-  --diagonal-cut: 1.6vw;
+  --z-dropdown: 20;
+  --z-sticky: 30;
+  --z-modal-backdrop: 40;
+  --z-modal: 50;
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --transition-fast: 160ms var(--ease-out);
+  --transition-base: 240ms var(--ease-out);
 }

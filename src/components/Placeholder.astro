@@ -1,10 +1,4 @@
 ---
-/**
- * Klar gekennzeichneter Platzhalter für noch fehlende Fotos.
- * KEINE Stockfotos – stattdessen eine Bühnenlicht-Grafik in Markenfarben.
- * Die Variante (Lichtwinkel/Farbe) wird deterministisch aus `seed` gewählt,
- * damit nebeneinanderliegende Platzhalter abwechslungsreich wirken.
- */
 interface Props {
   seed?: string;
   label?: string;
@@ -12,70 +6,37 @@ interface Props {
   class?: string;
 }
 
-const { seed = 'buehne', label = 'Foto folgt', ratio = '4 / 3', class: klass } = Astro.props;
-
-let hash = 0;
-for (let i = 0; i < seed.length; i++) hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
-const variant = hash % 3;
-const angle = [122, 90, 148][variant];
-const hot = variant === 1;
+const { seed = 'bild', label = 'Foto folgt', ratio = '4 / 3', class: klass } = Astro.props;
 ---
 
 <div
   class:list={['ph', klass]}
-  data-variant={variant}
-  style={`--ph-ratio:${ratio}; --ph-angle:${angle}deg;`}
-  data-hot={hot ? 'true' : 'false'}
+  style={`--ph-ratio:${ratio};`}
+  data-seed={seed}
   role="img"
   aria-label={label}
 >
-  <span class="ph__tag">{label}</span>
+  <span>{label}</span>
 </div>
 
 <style>
   .ph {
-    position: relative;
-    aspect-ratio: var(--ph-ratio);
+    display: grid;
     width: 100%;
+    aspect-ratio: var(--ph-ratio);
+    place-items: end start;
     overflow: hidden;
+    padding: var(--space-4);
+    border: 1px dashed var(--border-strong);
     border-radius: var(--radius-m);
-    background:
-      radial-gradient(120% 90% at 50% -10%, rgb(24 42 156 / 0.16), transparent 55%),
-      conic-gradient(
-        from var(--ph-angle) at 30% -10%,
-        transparent 0deg,
-        rgb(24 42 156 / 0.08) 18deg,
-        transparent 40deg
-      ),
-      linear-gradient(160deg, #eef1f8, #f7f9fe);
-    border: 1px solid var(--hairline);
+    background: var(--surface-soft-blue);
   }
 
-  .ph[data-hot='true'] {
-    background:
-      radial-gradient(120% 90% at 60% -10%, rgb(195 24 32 / 0.14), transparent 55%),
-      conic-gradient(
-        from var(--ph-angle) at 68% -10%,
-        transparent 0deg,
-        rgb(195 24 32 / 0.09) 18deg,
-        transparent 40deg
-      ),
-      linear-gradient(160deg, #eef1f8, #f7f9fe);
-  }
-
-  .ph__tag {
-    position: absolute;
-    left: 0.85rem;
-    bottom: 0.85rem;
-    padding: 0.3em 0.75em;
+  .ph span {
     font-size: var(--step--1);
-    font-weight: 700;
-    letter-spacing: 0.08em;
+    font-weight: 750;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--text-muted);
-    background: rgb(255 255 255 / 0.75);
-    border: 1px solid var(--hairline-strong);
-    border-radius: 999px;
-    backdrop-filter: blur(4px);
   }
 </style>

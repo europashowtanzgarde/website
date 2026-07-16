@@ -8,41 +8,25 @@ import { getGalleryAlbums } from '../lib/collections';
 const albums = await getGalleryAlbums();
 ---
 
-<BaseLayout
-  title="Galerie"
-  description="Bilder aus Training, Auftritten und dem Vereinsleben der Europa-Show-Tanzgarde."
->
-  <PageIntro
-    eyebrow="Einblicke"
-    title="Galerie"
-    intro="Eindrücke aus Training, Auftritten und dem Vereinsleben – Schritt für Schritt gepflegt."
-  />
+<BaseLayout title="Galerie" description="Bilder aus Training, Auftritten und dem Vereinsleben der Europa-Show-Tanzgarde.">
+  <PageIntro title="Galerie" intro="Eindrücke aus Training, Auftritten und dem Vereinsleben – Schritt für Schritt gepflegt." />
 
   <section class="section section--tight">
     <div class="wrap">
       {
         albums.length === 0 ? (
           <div class="gallery-empty">
-            <div class="gallery-empty__grid" aria-hidden="true">
-              <Placeholder seed="galerie-a" ratio="1 / 1" label="Foto folgt" />
-              <Placeholder seed="galerie-b" ratio="1 / 1" label="Foto folgt" />
-              <Placeholder seed="galerie-c" ratio="1 / 1" label="Foto folgt" />
-              <Placeholder seed="galerie-d" ratio="1 / 1" label="Foto folgt" />
+            <div class="gallery-empty__media" aria-hidden="true">
+              <Placeholder seed="galerie" ratio="4 / 3" label="Foto folgt" />
             </div>
-            <div class="gallery-empty__text">
+            <div>
               <h2>Die Galerie füllt sich gerade</h2>
-              <p>
-                Wir sammeln Fotos aus Auftritten und Training. Bald gibt es hier viel
-                zu sehen. Bis dahin findet ihr aktuelle Bilder auf unseren
-                Social-Media-Kanälen.
-              </p>
+              <p>Wir sammeln Fotos aus Auftritten und Training. Bald gibt es hier mehr zu sehen. Bis dahin findet ihr aktuelle Bilder auf unseren Social-Media-Kanälen.</p>
               <a class="btn btn--ghost" href="/kontakt">Fotos beisteuern?</a>
             </div>
           </div>
         ) : (
-          <div class="albums">
-            {albums.map((album) => <GalleryAlbum album={album} />)}
-          </div>
+          <div class="albums">{albums.map((album) => <GalleryAlbum album={album} />)}</div>
         )
       }
     </div>
@@ -52,31 +36,29 @@ const albums = await getGalleryAlbums();
 <style>
   .gallery-empty {
     display: grid;
-    gap: var(--space-6);
+    gap: var(--space-6) clamp(2rem, 7vw, 7rem);
+    max-width: 62rem;
     align-items: center;
   }
 
-  @media (min-width: 800px) {
+  @media (min-width: 720px) {
     .gallery-empty {
-      grid-template-columns: 1.1fr 1fr;
+      grid-template-columns: minmax(14rem, 0.7fr) minmax(0, 1.3fr);
     }
   }
 
-  .gallery-empty__grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-3);
+  .gallery-empty__media {
+    max-width: 24rem;
   }
 
-  .gallery-empty__text h2 {
+  .gallery-empty h2 {
     font-size: var(--step-3);
-    margin-bottom: 0.7rem;
   }
 
-  .gallery-empty__text p {
+  .gallery-empty p {
+    max-width: 38rem;
+    margin-block: var(--space-3) var(--space-5);
     color: var(--text-muted);
     font-size: var(--step-1);
-    margin-bottom: var(--space-5);
-    max-width: 34rem;
   }
 </style>
