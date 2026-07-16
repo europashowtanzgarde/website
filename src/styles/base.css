@@ -179,7 +179,6 @@ li {
   font-weight: 800;
   font-size: var(--step-4);
   line-height: var(--leading-tight);
-  text-transform: uppercase;
 }
 
 /* Übergroße, „geghostete" Sektionsnummer (editorialer Akzent). */
