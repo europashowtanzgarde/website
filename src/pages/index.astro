@@ -6,12 +6,12 @@ import PostCard from '../components/PostCard.astro';
 import EventItem from '../components/EventItem.astro';
 import GroupCard from '../components/GroupCard.astro';
 import { getPublishedPosts, getUpcomingEvents, getGroups } from '../lib/collections';
-import { homepage, site } from '../lib/settings';
+import { homepage } from '../lib/settings';
 
-const posts = (await getPublishedPosts()).slice(0, 2);
-const events = await getUpcomingEvents(3);
+const posts = (await getPublishedPosts()).slice(0, 3);
+const events = await getUpcomingEvents(4);
 const groups = await getGroups();
-const { notice, vereinTeaserTitle, vereinTeaserText } = homepage;
+const { notice } = homepage;
 ---
 
 <BaseLayout>
@@ -33,9 +33,11 @@ const { notice, vereinTeaserTitle, vereinTeaserText } = homepage;
     events.length > 0 && (
       <section class="section home-program">
         <div class="wrap">
-          <SectionHeading title="Kommende Termine" intro="Wo wir als Nächstes auf der Bühne stehen." />
-          <div class="home-program__list">
-            {events.map((event) => <EventItem event={event} />)}
+          <SectionHeading title="Kommende Termine" />
+          <div class="home-program__scroll" tabindex="0" aria-label="Die nächsten vier Termine, horizontal scrollbar">
+            <div class="home-program__list">
+              {events.map((event) => <EventItem event={event} variant="timeline" />)}
+            </div>
           </div>
           <a class="arrow-link home-more" href="/termine">Alle Termine ansehen <span aria-hidden="true">→</span></a>
         </div>
@@ -45,11 +47,11 @@ const { notice, vereinTeaserTitle, vereinTeaserText } = homepage;
 
   <section class="section rule-section">
     <div class="wrap">
-      <SectionHeading title="Für jedes Alter" intro="Drei Garden, ein gemeinsamer Auftritt: von den ersten Schritten bis zu den Aktiven." />
+      <SectionHeading title="Unsere Sparten" />
       <div class="groups-index">
         {groups.map((group) => <GroupCard group={group} variant="summary" />)}
       </div>
-      <a class="arrow-link home-more" href="/sparten">Alle Garden kennenlernen <span aria-hidden="true">→</span></a>
+      <a class="arrow-link home-more" href="/sparten">Sparten kennenlernen <span aria-hidden="true">→</span></a>
     </div>
   </section>
 
@@ -57,9 +59,15 @@ const { notice, vereinTeaserTitle, vereinTeaserText } = homepage;
     posts.length > 0 && (
       <section class="section rule-section">
         <div class="wrap">
-          <SectionHeading title="Aktuelles" intro="Berichte und Neuigkeiten direkt aus dem Vereinsleben." />
+          <SectionHeading title="Aktuelles" />
           <div class="posts-list">
-            {posts.map((post) => <PostCard post={post} />)}
+            {posts.map((post) => (
+              <PostCard
+                post={post}
+                imagePosition={post.id === 'volksfestumzug' ? 'center 58%' : undefined}
+                imageScale={post.id === 'volksfestumzug' ? 1.25 : 1}
+              />
+            ))}
           </div>
           <a class="arrow-link home-more" href="/aktuelles">Alle Beiträge lesen <span aria-hidden="true">→</span></a>
         </div>
@@ -67,29 +75,38 @@ const { notice, vereinTeaserTitle, vereinTeaserText } = homepage;
     )
   }
 
-  <section class="club-story">
-    <div class="wrap club-story__inner">
-      <div>
-        <p class="club-story__since">Seit 1981 in Wassertrüdingen</p>
-        <h2>{vereinTeaserTitle}</h2>
-      </div>
-      <div class="club-story__content">
-        <p>{vereinTeaserText}</p>
-        <ul class="club-story__facts" aria-label="Vereinsfakten">
-          <li><strong>1981</strong> gegründet</li>
-          <li><strong>3</strong> Garden</li>
-          <li>zuhause in <strong>{site.location}</strong></li>
-        </ul>
-        <div class="club-story__actions">
-          <a class="btn club-story__primary" href="/verein">Mehr über uns</a>
-          <a class="btn btn--ghost" href="/kontakt">Mitmachen &amp; Kontakt</a>
+  <section class="section rule-section home-features" aria-label="Mitmachen und Auftritte buchen">
+    <div class="wrap home-features__grid">
+      <article class="home-feature">
+        <div class="home-feature__copy">
+          <h2>Lust aufs Tanzen? Komm vorbei!</h2>
+          <p>Ob Kindergarde, Jugendgarde oder Große Garde – bei uns ist Platz für alle, die gerne tanzen und Teil unserer Gemeinschaft werden möchten. Entdecke unsere Sparten und komm zu uns!</p>
+          <a class="arrow-link" href="/sparten">Sparten kennenlernen <span aria-hidden="true">→</span></a>
         </div>
-      </div>
+      </article>
+
+      <article class="home-feature">
+        <div class="home-feature__copy">
+          <h2>Ihr sucht noch ein Highlight? Dann bucht uns!</h2>
+          <p>Ob Firmenfeier, private Feier, Vereinsfest oder Veranstaltung – unsere Sparten sorgen mit mitreißenden Choreografien und jeder Menge Energie für besondere Momente.</p>
+          <a class="arrow-link" href="/kontakt">Auftritt anfragen <span aria-hidden="true">→</span></a>
+        </div>
+      </article>
     </div>
   </section>
+
 </BaseLayout>
 
 <style>
+  /* Die Startseite bleibt bewusst kompakter als die ausführlichen Unterseiten. */
+  .section {
+    padding-block: clamp(2.5rem, 4.5vw, 4rem);
+  }
+
+  .section :global(.section-heading) {
+    margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
   .notice {
     color: var(--text);
     background: #fff0f1;
@@ -112,17 +129,47 @@ const { notice, vereinTeaserTitle, vereinTeaserText } = homepage;
     background: var(--red-600);
   }
 
+  .home-program__scroll {
+    max-width: 68rem;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-color: var(--blue-300) transparent;
+  }
+
   .home-program__list {
-    max-width: 58rem;
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(12.5rem, 1fr));
+    min-width: 52rem;
+    padding-block: var(--space-2);
+    background: transparent;
+  }
+
+  .home-program__list::before {
+    position: absolute;
+    top: 5.25rem;
+    right: 12.5%;
+    left: 12.5%;
+    height: 1px;
+    content: '';
+    background: var(--blue-700);
+  }
+
+  .home-program {
+    padding-bottom: clamp(2.5rem, 4.5vw, 4rem);
   }
 
   .home-more {
-    margin-top: var(--space-5);
+    margin-top: var(--space-2);
   }
 
   .groups-index {
     display: grid;
     gap: var(--space-6);
+  }
+
+  .groups-index :global(.group-profile.is-summary) {
+    margin-top: 0;
   }
 
   @media (min-width: 680px) and (max-width: 859px) {
@@ -135,7 +182,7 @@ const { notice, vereinTeaserTitle, vereinTeaserText } = homepage;
   @media (min-width: 860px) {
     .groups-index {
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      align-items: start;
+      align-items: stretch;
     }
   }
 
@@ -143,89 +190,57 @@ const { notice, vereinTeaserTitle, vereinTeaserText } = homepage;
     max-width: 62rem;
   }
 
-  .club-story {
-    padding-block: var(--section-space);
-    color: var(--text-on-color);
-    background: var(--surface-blue);
+  .posts-list :global(.post-teaser) {
+    padding-block: var(--space-5);
   }
 
-  .club-story__inner {
+  .posts-list :global(.post-teaser:first-child) {
+    padding-top: var(--space-2);
+    border-top: 0;
+  }
+
+  .posts-list :global(.post-teaser__more) {
+    margin-top: var(--space-2);
+  }
+
+  .home-features__grid {
     display: grid;
-    gap: var(--space-7) clamp(var(--space-8), 9vw, calc(var(--space-8) * 2));
+    gap: clamp(1.25rem, 2.5vw, 2rem);
   }
 
-  @media (min-width: 1200px) {
-    .club-story__inner {
-      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-    }
+  .home-features {
+    padding-bottom: clamp(0.625rem, 1.125vw, 1rem);
   }
 
-  .club-story__since {
-    margin-bottom: var(--space-3);
-    font-weight: 700;
-    color: var(--red-300);
-  }
-
-  .club-story h2 {
-    max-width: 15ch;
-    font-size: var(--step-4);
-    color: var(--text-on-color);
-    overflow-wrap: normal;
-    word-break: normal;
-  }
-
-  .club-story__content > p {
-    max-width: 42rem;
-    font-size: var(--step-1);
-    color: var(--text-on-color-muted);
-  }
-
-  .club-story__facts {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3) var(--space-6);
-    margin-top: var(--space-6);
-    padding: var(--space-4) 0;
-    border-block: 1px solid rgb(255 255 255 / 0.25);
-    list-style: none;
-  }
-
-  .club-story__facts li {
+  .home-feature {
     min-width: 0;
-    color: var(--text-on-color-muted);
   }
 
-  .club-story__facts strong {
-    color: var(--text-on-color);
-  }
-
-  .club-story__actions {
+  .home-feature__copy {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    margin-top: var(--space-6);
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+    width: 100%;
   }
 
-  .club-story__primary {
-    color: var(--blue-700);
-    background: #ffffff;
-    border-color: #ffffff;
+  .home-feature h2 {
+    max-width: none;
+    font-size: var(--step-3);
   }
 
-  .club-story__primary:hover {
-    color: var(--blue-700);
-    background: var(--surface-soft-blue);
-    border-color: var(--surface-soft-blue);
+  .home-feature__copy > p {
+    max-width: none;
+    margin-top: var(--space-2);
+    color: var(--text-muted);
   }
 
-  .club-story .btn--ghost {
-    color: #ffffff;
-    border-color: rgb(255 255 255 / 0.65);
+  .home-feature .arrow-link {
+    margin-top: 0;
   }
 
-  .club-story .btn--ghost:hover {
-    color: #ffffff;
-    background: rgb(255 255 255 / 0.12);
-    border-color: #ffffff;
+  :global(.site-footer) {
+    margin-top: 0;
   }
+
 </style>

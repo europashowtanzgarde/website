@@ -24,7 +24,10 @@ const posts = defineCollection({
   schema: z.object({
     title: z.string(),
     date: z.coerce.date(),
+    dateLabel: z.string().optional(),
+    hideDate: z.boolean().default(false),
     description: z.string().max(220),
+    lead: z.string().optional(),
     cover: z.string().optional(),
     coverAlt: z.string().default(''),
     gallery: z.array(galleryImage).default([]),
@@ -37,6 +40,7 @@ const events = defineCollection({
   schema: z.object({
     title: z.string(),
     date: z.coerce.date(),
+    endDate: z.coerce.date().optional(),
     // Uhrzeit als "HH:MM" (optional – manche Termine sind ganztägig).
     time: z
       .string()

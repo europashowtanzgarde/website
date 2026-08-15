@@ -13,6 +13,7 @@ const eventsLd = upcoming.map((e) => ({
   '@type': 'Event',
   name: e.data.title,
   startDate: e.data.time ? `${isoDate(e.data.date)}T${e.data.time}` : isoDate(e.data.date),
+  ...(e.data.endDate ? { endDate: isoDate(e.data.endDate) } : {}),
   eventStatus: 'https://schema.org/EventScheduled',
   location: { '@type': 'Place', name: e.data.location },
   organizer: { '@type': 'Organization', name: site.name },
@@ -20,21 +21,20 @@ const eventsLd = upcoming.map((e) => ({
 }));
 ---
 
-<BaseLayout title="Termine & Auftritte" description="Kommende Auftritte, Feste und Veranstaltungen der Europa-Show-Tanzgarde aus Wassertrüdingen.">
+<BaseLayout title="Termine und Auftritte" description="Kommende Auftritte, Feste und Veranstaltungen der Europa-Show-Tanzgarde aus Wassertrüdingen.">
   <Fragment slot="head">
     {eventsLd.map((ld) => <script type="application/ld+json" is:inline set:html={JSON.stringify(ld)} />)}
   </Fragment>
 
-  <PageIntro title="Termine & Auftritte" intro="Wo und wann unsere Garden als Nächstes auf der Bühne stehen." />
+  <PageIntro title="Termine und Auftritte" flush tightTop />
 
-  <section class="section section--tight">
+  <section class="section section--tight upcoming-events">
     <div class="wrap events-page">
-      <h2>Kommende Termine</h2>
       {
         upcoming.length === 0 ? (
           <p class="empty-state">Aktuell sind keine öffentlichen Termine eingetragen. Folgt uns auf Social Media, um nichts zu verpassen.</p>
         ) : (
-          <div class="events-page__list">{upcoming.map((event) => <EventItem event={event} showDescription />)}</div>
+          <div class="events-page__list">{upcoming.map((event) => <EventItem event={event} showDescription variant="listing" />)}</div>
         )
       }
     </div>
@@ -46,7 +46,7 @@ const eventsLd = upcoming.map((e) => ({
         <div class="wrap events-page">
           <h2>Rückblick</h2>
           <p class="events-past__intro">Vergangene Auftritte und Veranstaltungen.</p>
-          <div class="events-page__list">{past.map((event) => <EventItem event={event} past />)}</div>
+          <div class="events-page__list">{past.map((event) => <EventItem event={event} past variant="listing" />)}</div>
         </div>
       </section>
     )
@@ -56,20 +56,21 @@ const eventsLd = upcoming.map((e) => ({
 <style>
   .events-page {
     display: grid;
-    gap: var(--space-5) clamp(2rem, 7vw, 7rem);
+    gap: var(--space-5);
   }
 
-  @media (min-width: 820px) {
-    .events-page {
-      grid-template-columns: 13rem minmax(0, 48rem);
-      align-items: start;
-    }
+  .section.upcoming-events {
+    padding-top: var(--space-4);
+    background: var(--bg);
+    border-top: 0;
+  }
 
-    .events-page__list,
-    .empty-state,
-    .events-past__intro {
-      grid-column: 2;
-    }
+  .events-page__list {
+    display: grid;
+    gap: 0;
+    justify-self: start;
+    width: 100%;
+    max-width: 68rem;
   }
 
   .events-page h2 {
@@ -83,5 +84,15 @@ const eventsLd = upcoming.map((e) => ({
 
   .events-past__intro {
     color: var(--text-muted);
+  }
+
+  :global(.page-intro h1) {
+    max-width: none;
+    font-size: clamp(2rem, 2rem + 3vw, 5.1rem);
+    white-space: nowrap;
+  }
+
+  :global(.page-intro__inner) {
+    grid-template-columns: minmax(0, 1fr);
   }
 </style>

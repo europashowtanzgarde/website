@@ -76,6 +76,7 @@ collections:
           widget: text,
           hint: 'Kurz halten (max. ca. 200 Zeichen). Erscheint in der Übersicht und bei Google.',
         }
+      - { name: lead, label: Einleitung im Beitrag, widget: text, required: false }
       - {
           name: cover,
           label: Titelbild,
@@ -129,6 +130,18 @@ collections:
           time_format: false,
           format: 'YYYY-MM-DD',
           date_format: 'DD.MM.YYYY',
+        }
+      - { name: dateLabel, label: Eigene Datumsanzeige, widget: string, required: false, hint: 'Optional, z. B. 31. Juli + 1. August' }
+      - { name: hideDate, label: Datum ausblenden, widget: boolean, default: false, required: false }
+      - {
+          name: endDate,
+          label: Enddatum,
+          widget: datetime,
+          required: false,
+          time_format: false,
+          format: 'YYYY-MM-DD',
+          date_format: 'DD.MM.YYYY',
+          hint: 'Optional für mehrtägige Termine.',
         }
       - {
           name: time,

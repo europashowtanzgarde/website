@@ -12,17 +12,35 @@ const [featured, ...rest] = posts;
   title="Aktuelles"
   description="Neuigkeiten, Berichte und Einblicke aus dem Vereinsleben der Europa-Show-Tanzgarde aus Wassertrüdingen."
 >
-  <PageIntro title="Aktuelles" intro="Berichte, Ankündigungen und Einblicke – kurz und ohne Umwege." />
+  <PageIntro title="Aktuelles" flush tightTop />
 
-  <section class="section section--tight">
+  <section class="section section--tight posts-section">
     <div class="wrap posts-page">
       {
         posts.length === 0 ? (
           <p class="empty-state">Noch keine Beiträge veröffentlicht. Schaut bald wieder vorbei.</p>
         ) : (
           <div class="posts-page__list">
-            {featured && <PostCard post={featured} featured />}
-            {rest.map((post) => <PostCard post={post} />)}
+            {featured && <PostCard post={featured} />}
+            {rest.map((post) => (
+              <PostCard
+                post={post}
+                imagePosition={
+                  post.id === 'volksfestumzug'
+                    ? 'center 58%'
+                    : post.id === 'neue-trainingsanzuege'
+                      ? 'center 78%'
+                      : undefined
+                }
+                imageScale={
+                  post.id === 'volksfestumzug'
+                    ? 1.25
+                    : post.id === 'neue-trainingsanzuege'
+                      ? 1.08
+                      : 1
+                }
+              />
+            ))}
           </div>
         )
       }
@@ -31,7 +49,16 @@ const [featured, ...rest] = posts;
 </BaseLayout>
 
 <style>
+  .posts-section {
+    padding-top: var(--space-3);
+  }
+
   .posts-page__list {
     max-width: 68rem;
+  }
+
+  .posts-page__list :global(.post-teaser:first-child) {
+    padding-top: var(--space-2);
+    border-top: 0;
   }
 </style>

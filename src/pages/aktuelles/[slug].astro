@@ -3,6 +3,7 @@ import { render } from 'astro:content';
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CmsImage from '../../components/CmsImage.astro';
+import ImageCarousel from '../../components/ImageCarousel.astro';
 import { getPublishedPosts } from '../../lib/collections';
 import { formatDate, isoDate } from '../../lib/date';
 
@@ -12,102 +13,234 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 const { post } = Astro.props;
-const { title, date, description, cover, coverAlt, gallery } = post.data;
+const { title, date, dateLabel, hideDate, description, lead, cover, coverAlt, gallery } = post.data;
+const fallbackLeads: Record<string, string> = {
+  'br-radltour': 'Am 02. August war bei uns einiges los: Die BR Radltour machte Stopp bei ihrer Wasserpause in Wassertrüdingen und natürlich waren auch wir von der Europa-Show-Tanzgarde mit dabei!',
+  vereinsbude: 'Am 31. Juli und 01. August durften wir wieder unsere Vereinsbude öffnen und zwei schöne Tage gemeinsam mit vielen Besuchern verbringen.',
+  volksfestumzug: 'Am 31. Mai waren unsere drei Sparten wieder beim Trüdinger Volksfestumzug dabei!',
+  kinderfasching: 'Am 17. Februar wurde es bunt, fröhlich und natürlich auch tänzerisch!',
+  'neue-trainingsanzuege': 'Ein neuer Look für unseren Nachwuchs!',
+};
+const displayedLead = lead ?? fallbackLeads[post.id];
+const carouselImages = cover && gallery.length > 0
+  ? [{ image: cover, alt: coverAlt }, ...gallery].map((image) => (
+      image.image.endsWith('/br-radltour-jugendgarde-2.jpeg')
+        ? { ...image, position: 'center 74%', scale: 1.25 }
+        : image.image.endsWith('/aktuelles-volksfestumzug-2026.jpeg')
+          ? { ...image, position: 'center 55%', scale: 1.22, offsetX: '2%' }
+        : image.image.endsWith('/vereinsbude-2026.jpeg')
+          ? { ...image, position: 'center 74%', scale: 1.03 }
+        : image.image.endsWith('/kinderfasching-zeitungsartikel-prinzenpaar.jpeg')
+          ? { ...image, fit: 'contain' as const, position: 'center center', scale: 1 }
+        : image.image.endsWith('/kinderfasching-jugendgarde.jpeg')
+          ? { ...image, position: 'center center', scale: 1.1 }
+        : image.image.endsWith('/aktuelles-neue-trainingsanzuege.jpeg')
+          ? { ...image, position: 'center 78%', scale: 1 }
+        : image.image.endsWith('/trainingsjacken-kindergarde.jpeg')
+          ? { ...image, position: 'center 70%', scale: 1.05 }
+        : image
+    ))
+  : [];
 const { Content } = await render(post);
 ---
 
 <BaseLayout title={title} description={description} ogImage={cover ?? '/og-default.png'} article>
-  <article class="post">
-    <header class="post__head">
-      <div class="wrap post__head-inner">
-        <a class="post__back" href="/aktuelles">
-          <span aria-hidden="true">←</span> Alle Beiträge
-        </a>
+  <article class:list={['post', `post--${post.id}`]}>
+    <div class="wrap post__inner">
+      <header class="post__head">
         <div class="post__title-block">
-          <time datetime={isoDate(date)}>{formatDate(date)}</time>
+          {!hideDate && <time datetime={isoDate(date)}>{dateLabel ?? formatDate(date)}</time>}
           <h1>{title}</h1>
-          <p>{description}</p>
         </div>
+      </header>
+
+      {displayedLead && post.id !== 'neue-trainingsanzuege' && <p class="post__lead">{displayedLead}</p>}
+
+      {cover && (
+        <div class="post__cover">
+          {carouselImages.length > 0
+            ? <ImageCarousel images={carouselImages} label={`Bilder zum Beitrag ${title}`} />
+            : <CmsImage src={cover} alt={coverAlt} ratio="4 / 3" loading="eager" />}
+        </div>
+      )}
+
+      <div class="post__content">
+        {displayedLead && post.id === 'neue-trainingsanzuege' && <p class="post__inline-lead">{displayedLead}</p>}
+        <div class="prose"><Content /></div>
+
       </div>
-    </header>
 
-    {cover && <div class="wrap post__cover"><CmsImage src={cover} alt={coverAlt} ratio="16 / 9" loading="eager" /></div>}
-
-    <div class="wrap post__content">
-      <div class="prose"><Content /></div>
-
-      {
-        gallery.length > 0 && (
-          <section class="post__gallery" aria-labelledby="bilder-title">
-            <h2 id="bilder-title">Bilder</h2>
-            <div class="post__gallery-grid">
-              {gallery.map((img, i) => <CmsImage src={img.image} alt={img.alt} seed={`${post.id}-${i}`} ratio="1 / 1" />)}
-            </div>
-          </section>
-        )
-      }
+      <a class="post__back" href="/aktuelles">
+        <span aria-hidden="true">←</span> Alle Beiträge
+      </a>
     </div>
   </article>
 </BaseLayout>
 
 <style>
+  .post {
+    padding-block: clamp(1.25rem, 2.5vw, 2rem) clamp(3rem, 7vw, 6rem);
+  }
+
   .post__head {
-    padding-block: clamp(3rem, 8vw, 7rem) clamp(2rem, 5vw, 4rem);
-    border-bottom: 1px solid var(--hairline);
-  }
-
-  .post__head-inner {
-    display: grid;
-    gap: var(--space-6) clamp(2rem, 7vw, 7rem);
-  }
-
-  @media (min-width: 760px) {
-    .post__head-inner {
-      grid-template-columns: 10rem minmax(0, 1fr);
-    }
+    margin-top: 0;
+    padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
+    border-bottom: 1px solid var(--hairline-strong);
   }
 
   .post__back {
     display: inline-flex;
     min-height: 44px;
     align-items: center;
-    align-self: start;
     gap: 0.4ch;
     font-weight: 700;
-    color: var(--text-muted);
+    color: var(--blue-700);
+    margin-top: clamp(1.5rem, 3vw, 2.5rem);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--hairline-strong);
   }
 
   .post__title-block time {
     font-size: var(--step--1);
-    font-weight: 750;
-    color: var(--red-700);
+    font-weight: 800;
+    color: var(--blue-700);
   }
 
   .post__title-block h1 {
-    max-width: 16ch;
-    margin-top: var(--space-3);
+    max-width: 20ch;
+    margin-top: var(--space-2);
     font-size: var(--step-4);
-    overflow-wrap: anywhere;
-  }
-
-  .post__title-block p {
-    max-width: 46rem;
-    margin-top: var(--space-4);
-    font-size: var(--step-1);
-    color: var(--text-muted);
+    color: var(--blue-700);
+    overflow-wrap: normal;
   }
 
   .post__cover {
-    max-width: 60rem;
-    margin-block: clamp(2rem, 5vw, 4rem);
+    width: 100%;
+    margin-top: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .post__lead {
+    max-width: none;
+    margin-top: clamp(1.5rem, 3vw, 2.5rem);
+    font-family: var(--font-body);
+    font-size: var(--step-0);
+    font-weight: 380;
+    line-height: var(--leading-normal);
+    color: var(--text-muted);
+    text-align: justify;
+    hyphens: auto;
   }
 
   .post__cover :global(img) {
-    max-height: 42rem;
+    max-height: 36rem;
   }
 
   .post__content {
-    padding-bottom: var(--section-space);
+    margin-top: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .post__content :global(.prose) {
+    max-width: none;
+    font-family: var(--font-body);
+    font-size: var(--step-0);
+    font-weight: 380;
+    line-height: var(--leading-normal);
+    color: var(--text-muted);
+  }
+
+  .post__inline-lead {
+    margin-bottom: var(--space-5);
+    font-family: var(--font-body);
+    font-size: var(--step-0);
+    font-weight: 380;
+    line-height: var(--leading-normal);
+    color: var(--text-muted);
+  }
+
+  .post--neue-trainingsanzuege .post__content {
+    padding-top: var(--space-2);
+  }
+
+  .post--br-radltour .post__cover,
+  .post--br-radltour .post__content,
+  .post--vereinsbude .post__cover,
+  .post--vereinsbude .post__content,
+  .post--volksfestumzug .post__cover,
+  .post--volksfestumzug .post__content,
+  .post--kinderfasching .post__cover,
+  .post--kinderfasching .post__content,
+  .post--neue-trainingsanzuege .post__cover,
+  .post--neue-trainingsanzuege .post__content {
+    margin-top: var(--space-2);
+  }
+
+  @media (min-width: 760px) {
+    .post__cover {
+      float: left;
+      width: min(42%, 28rem);
+      margin-right: clamp(1.5rem, 4vw, 3rem);
+      margin-bottom: var(--space-4);
+    }
+
+    .post--br-radltour .post__inner,
+    .post--vereinsbude .post__inner,
+    .post--volksfestumzug .post__inner,
+    .post--kinderfasching .post__inner,
+    .post--neue-trainingsanzuege .post__inner {
+      display: grid;
+      grid-template-columns: minmax(16rem, 28rem) minmax(0, 1fr);
+      column-gap: clamp(1.5rem, 4vw, 3rem);
+    }
+
+    .post--br-radltour .post__head,
+    .post--br-radltour .post__lead,
+    .post--br-radltour .post__back,
+    .post--vereinsbude .post__head,
+    .post--vereinsbude .post__lead,
+    .post--vereinsbude .post__back,
+    .post--volksfestumzug .post__head,
+    .post--volksfestumzug .post__lead,
+    .post--volksfestumzug .post__back,
+    .post--kinderfasching .post__head,
+    .post--kinderfasching .post__lead,
+    .post--kinderfasching .post__back,
+    .post--neue-trainingsanzuege .post__head,
+    .post--neue-trainingsanzuege .post__lead,
+    .post--neue-trainingsanzuege .post__back {
+      grid-column: 1 / -1;
+    }
+
+    .post--br-radltour .post__cover,
+    .post--vereinsbude .post__cover,
+    .post--volksfestumzug .post__cover,
+    .post--kinderfasching .post__cover,
+    .post--neue-trainingsanzuege .post__cover {
+      grid-column: 1;
+      width: 100%;
+      margin-right: 0;
+      margin-bottom: 0;
+      float: none;
+    }
+
+    .post--br-radltour .post__content,
+    .post--vereinsbude .post__content,
+    .post--volksfestumzug .post__content,
+    .post--kinderfasching .post__content,
+    .post--neue-trainingsanzuege .post__content {
+      grid-column: 2;
+    }
+
+  }
+
+  .post__back,
+  .post__gallery {
+    clear: both;
+  }
+
+  .post__inner::after {
+    display: block;
+    clear: both;
+    content: '';
   }
 
   .post__gallery {

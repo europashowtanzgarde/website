@@ -8,9 +8,13 @@ interface Props {
   seed?: string;
   class?: string;
   loading?: 'lazy' | 'eager';
+  position?: string;
+  scale?: number;
+  offsetX?: string;
+  fit?: 'cover' | 'contain';
 }
 
-const { src, alt = '', ratio = '4 / 3', seed = 'bild', class: klass, loading = 'lazy' } = Astro.props;
+const { src, alt = '', ratio = '4 / 3', seed = 'bild', class: klass, loading = 'lazy', position, scale = 1, offsetX = '0', fit = 'cover' } = Astro.props;
 ---
 
 {
@@ -21,7 +25,7 @@ const { src, alt = '', ratio = '4 / 3', seed = 'bild', class: klass, loading = '
       loading={loading}
       decoding="async"
       class:list={['cms-image', klass]}
-      style={`aspect-ratio:${ratio};`}
+      style={`aspect-ratio:${ratio};object-fit:${fit};${position ? `object-position:${position};` : ''}${scale !== 1 || offsetX !== '0' ? `transform:translateX(${offsetX}) scale(${scale});` : ''}`}
     />
   ) : (
     <Placeholder seed={seed} ratio={ratio} class={klass} />
