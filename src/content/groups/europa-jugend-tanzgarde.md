@@ -1,12 +1,13 @@
 ---
-name: Europa-Jugend-Tanzgarde
+name: Jugendgarde
 description: >-
-  Die Jugend-Tanzgarde ist das Bindeglied zwischen den Jüngsten und den Aktiven.
-  Hier werden Choreografien anspruchsvoller, die Formationen größer und die
-  Auftritte regelmäßiger. Aus dem starken Zulauf jüngerer Tänzerinnen entstand
-  die Jugendgarde bereits 1982.
-ageGroup: Kinder & Jugendliche
-image: /uploads/jugendgarde.webp
+  Unsere Jugendgarde verbindet Tanz, Energie und Teamgeist. Mit
+  abwechslungsreichen Choreografien und viel Leidenschaft zeigen unsere
+  Tänzerinnen, was in ihnen steckt.
+ageGroup: ab ca. 11 Jahren
+trainingTime: Jeden Dienstag von 18:00 - 20:00 Uhr in der Turnhalle am Kulturtreff
+contact: Pauline Höver und Natalie Hofer
+image: /uploads/jugendgarde.jpg
 order: 2
 imageAlt: Mitglieder der Europa-Jugend-Tanzgarde posieren in blau-weißen Gardekostümen bei einer Faschingsveranstaltung.
 ---

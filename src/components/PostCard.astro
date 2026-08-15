@@ -6,19 +6,22 @@ import { formatDate, isoDate } from '../lib/date';
 interface Props {
   post: CollectionEntry<'posts'>;
   featured?: boolean;
+  showDate?: boolean;
+  imagePosition?: string;
+  imageScale?: number;
 }
 
-const { post, featured = false } = Astro.props;
-const { title, date, description, cover } = post.data;
+const { post, featured = false, showDate = true, imagePosition, imageScale = 1 } = Astro.props;
+const { title, date, dateLabel, hideDate, description, cover } = post.data;
 const href = `/aktuelles/${post.id}`;
 ---
 
 <article class:list={['post-teaser', { 'is-featured': featured }]}>
   <a class="post-teaser__media" href={href} tabindex="-1" aria-hidden="true">
-    <CmsImage src={cover} alt="" seed={post.id} ratio={featured ? '16 / 10' : '3 / 2'} loading={featured ? 'eager' : 'lazy'} />
+    <CmsImage src={cover} alt="" seed={post.id} ratio={featured ? '16 / 10' : '3 / 2'} loading={featured ? 'eager' : 'lazy'} position={imagePosition} scale={imageScale} />
   </a>
   <div class="post-teaser__body">
-    <time datetime={isoDate(date)}>{formatDate(date)}</time>
+    {showDate && !hideDate && <time datetime={isoDate(date)}>{dateLabel ?? formatDate(date)}</time>}
     <h3><a href={href}>{title}</a></h3>
     <p>{description}</p>
     <span class="post-teaser__more" aria-hidden="true">Weiterlesen <span>→</span></span>
@@ -42,6 +45,8 @@ const href = `/aktuelles/${post.id}`;
     min-width: 0;
     width: 100%;
     max-width: 20rem;
+    overflow: hidden;
+    border-radius: var(--radius-m);
   }
 
   .post-teaser__body {
@@ -58,7 +63,11 @@ const href = `/aktuelles/${post.id}`;
   .post-teaser h3 {
     margin-top: var(--space-2);
     font-size: var(--step-2);
-    color: var(--text);
+    color: var(--blue-700);
+  }
+
+  .post-teaser__body > h3:first-child {
+    margin-top: 0;
   }
 
   .post-teaser h3 a {
@@ -121,5 +130,6 @@ const href = `/aktuelles/${post.id}`;
     .post-teaser.is-featured .post-teaser__media {
       max-width: 28rem;
     }
+
   }
 </style>

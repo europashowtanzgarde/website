@@ -1,119 +1,142 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/PageIntro.astro';
-import CmsImage from '../components/CmsImage.astro';
 
 const timeline = [
-  { year: '1971', title: 'Die Wurzeln', text: 'Zwei Tänzerinnen begeistern bei einer Beat-Party in Wassertrüdingen – der Funke für das Tanzen in der Gruppe ist gelegt.' },
-  { year: '1981', title: 'Die Gründung', text: 'Sechs junge Frauen gründen die „Trüdinger Swinging Girls“. Schon wenige Monate später folgt der erste Auftritt beim Altstadtfest.' },
+  { year: '1981', title: 'Gründung der Stadtgarde Wassertrüdingen', text: 'Sechs junge Frauen gründen die „Trüdinger Swinging Girls“. Schon wenige Monate später folgt der erste Auftritt beim Altstadtfest.' },
   { year: '1982', title: 'Erstes Programm & Jugendgarde', text: 'Mit dem Can-Can steht das erste große Programm auf der Bühne. Aus dem Zulauf jüngerer Tänzerinnen entsteht die Jugend-Tanzgarde.' },
-  { year: '1984', title: 'Die Kindergarde', text: 'Für die Jüngsten wird die Kindergarde gegründet – seitdem tanzen bei uns drei Generationen unter einem Dach.' },
-  { year: '1987', title: 'Der Name „Europa“', text: 'Die Europa-Union Deutschland verleiht der Garde den Namen „Europa-Tanzgarde“ – im Dienst des europäischen Einigungsgedankens. Daher das „Europa“ in unserem Namen.' },
-  { year: '2016', title: '35 Jahre', text: 'Ein Rückblick auf dreieinhalb Jahrzehnte Showtanz, Auftritte und Vereinsleben.' },
-  { year: '2021', title: '„40+1“ Jahre', text: 'Das um ein Jahr verschobene Jubiläum wird in der Hesselberghalle gefeiert.' },
+  { year: '1984', title: 'Gründung der Kindergarde', text: 'Für die Jüngsten wird die Kindergarde gegründet – seitdem tanzen bei uns drei Generationen unter einem Dach.' },
+  { year: '1985', title: 'Erste Erfolge und europäisches Engagement', text: 'Die Garde ist erstmals im Fernsehen zu sehen und absolviert im selben Jahr 30 weitere Auftritte. Beim Gala-Abend in der Partnerstadt Bellac tritt sie erstmals im Ausland auf, wird als „Stadtgarde“ Kooperationsmitglied der Europäischen Union und erhält mit dem Georg-Ehnes-Preis die höchste Auszeichnung im Landkreis Ansbach.' },
+  { year: '1987', title: 'Ernennung zur Europa-Show-Tanzgarde', text: 'Bei ihrem Auftritt für den europäischen Gedanken in Nürnberg wird die Garde durch den ehemaligen Bundespräsidenten Walter Scheel zur Europa-Show-Tanzgarde ernannt.' },
+  { year: '1988', title: 'Gala-Abend im Hilton-Hotel in München', text: 'Die Garde wirkt beim Gala-Abend im Hilton-Hotel in München mit.' },
+  { year: '1989', title: 'Auftritte in Berlin und Nürnberg', text: 'Die Europa-Show-Tanzgarde präsentiert sich bei einem Tanzauftritt in Berlin und tritt in der Meistersingerhalle in Nürnberg auf.' },
+  { year: '1993', title: 'Auftritte im Euro-Disneyland Resort bei Paris', text: 'Die Europa-Tanzgarde präsentiert sich bei Auftritten im Euro-Disneyland Resort nahe Paris.' },
+  { year: '1996', title: 'Europäisches Parlament und Städtepartnerschaft', text: 'Ein großes Highlight und eine besondere Ehre ist der Auftritt der Europa-Show-Tanzgarde im Europäischen Parlament in Brüssel. Außerdem begleitet die Garde die Feierlichkeiten zum zehnjährigen Bestehen der Städtepartnerschaft mit Bellac in Frankreich.' },
+  { year: '1997', title: 'Auftritte in Straßburg und Brüssel', text: 'Die Garde begleitet die Verleihung des „Europa-Diploms“ an die Stadt Wassertrüdingen mit einem Showtanz in Straßburg und präsentiert sich bei Auftritten im Europäischen Parlament in Brüssel.' },
+  { year: '1999', title: 'Europäische Begegnungen und Auszeichnungen', text: 'Die Garde begleitet Feierlichkeiten der Städtepartnerschaft mit Bellac in Frankreich, reist gemeinsam mit dem Stadtoberhaupt zur Verleihung des Europa-Diploms an Wassertrüdingen nach Straßburg und unternimmt in Zusammenarbeit mit Hermann Grimm eine Fahrt nach Rumänien.' },
+  { year: '2000', title: 'Rumänienreise und EXPO-Auftritt', text: 'Die Garde reist erstmals für einen Auftritt und einen Jugendaustausch nach Rumänien und tritt außerdem anlässlich der Weltausstellung EXPO 2000 in Hannover auf.' },
+  { year: '2001', title: 'Monaco, Jubiläum und „Flying Steps“', text: 'Die Europa-Show-Tanzgarde besucht das Fürstentum Monaco und präsentiert sich dort bei mehreren Auftritten. Zum 20-jährigen Bestehen werden die Breakdance-Weltmeister „Flying Steps“ aus Berlin nach Wassertrüdingen eingeladen; außerdem nimmt die Garde in Berlin an einem gemeinsamen Training mit ihnen teil.' },
+  { year: '2002', title: 'Messe- und Auslandsauftritte', text: 'Die Garde tritt auf zwei Fremdenverkehrsmessen in Stuttgart und München auf und absolviert weitere Auslandsauftritte in Rumänien und im Fürstentum Monaco.' },
+  { year: '2003', title: 'Meisterschaft und Auftrittsreisen', text: 'Die Garde tritt bei den Rock’n’Roll-Meisterschaften in Gunzenhausen auf. Weitere Auftrittsreisen führen sie ins Disneyland Paris, an den Plattensee in Ungarn und in die Partnerstadt Bellac.' },
+  { year: '2004', title: 'Reisen, Auszeichnung und Städtepartnerschaft', text: 'Die dritte Rumänientour wird durch einen „Sommerurlaub“ im spanischen Santa Susanna ergänzt. Außerdem erhält die Europa-Show-Tanzgarde den Georg-Ehnes-Gedächtnispreis und begleitet die Feierlichkeiten zum zehnjährigen Bestehen der Städtepartnerschaft mit Bellac in Frankreich.' },
+  { year: '2005', title: 'Auslandsauftritte und Wettbewerbserfolg', text: 'Die Europa-Show-Tanzgarde tritt in Dänemark sowie auf der kroatischen Insel Rab auf. Außerdem erreicht die Jugendgarde beim Teen-Dance-Wettbewerb den 3. Platz.' },
+  { year: '2006', title: 'Tropical Islands und „Bayern-Rundfahrt“', text: 'Die Garde verbindet ihren Auftritt im „Tropical Islands“ bei Berlin mit gemeinsamer Freizeit und tritt außerdem bei der „Bayern-Rundfahrt“ in Gunzenhausen auf.' },
+  { year: '2007', title: 'Berlin-Tour zur „Grünen Woche“', text: 'Bei ihrer Berlin-Tour tritt die Garde auf der Messe „Grüne Woche“ auf.' },
+  { year: '2008', title: 'Chrysanthemenball und „Südwild“', text: 'Die Europa-Show-Tanzgarde tritt beim Chrysanthemenball in der Stadthalle Gunzenhausen auf und erlebt spannende Fernsehaufnahmen mit „Südwild“ für das Bayerische Fernsehen.' },
+  { year: '2009', title: 'Partnerschaftsjubiläum in Bellac', text: 'Die Europa-Show-Tanzgarde feiert das Partnerschaftsjubiläum in Bellac in Frankreich.' },
+  { year: '2009', title: '25 Jahre Städtepartnerschaft', text: 'Die Jubiläumsveranstaltung findet in der Hesselberghalle in Wassertrüdingen statt.' },
+  { year: '2010', title: 'Showauftritte und Tanzturnier', text: 'Die Europa-Show-Tanzgarde gestaltet einen großen Showabend in Auhausen, tritt bei der Seenland-Gala in der Stadthalle Gunzenhausen sowie zum 40-jährigen Bestehen des Maschinenrings im Onoldiasaal in Ansbach auf und nimmt an einem Tanzturnier in Asbach-Bäumenheim teil.' },
+  { year: '2012', title: 'Tourismusmesse und Festzug', text: 'Die Europa-Show-Tanzgarde tritt auf der Freizeit- und Tourismusmesse in Nürnberg auf und nimmt am Festzug in der mittelfränkischen Regierungsstadt Ansbach teil.' },
+  { year: '2013', title: 'Show-Fasching und Reise nach Bellac', text: 'Die Europa-Show-Tanzgarde veranstaltet den ersten Trüdinger „Show-Fasching“ und reist anlässlich der Jubiläumsfeier der Städtepartnerschaft nach Bellac.' },
+  { year: '2014', title: 'Erste Dance Night in der Hesselberghalle', text: 'Bei der ersten Dance Night begrüßt die Europa-Show-Tanzgarde Gastgruppen aus ganz Bayern in der Hesselberghalle.' },
+  { year: '2015', title: 'Show-Fasching und besondere Auftritte', text: 'Die Europa-Show-Tanzgarde veranstaltet den zweiten Trüdinger „Show-Fasching“, absolviert einen Gastauftritt beim Europafest in der Bundeshauptstadt Berlin und tritt beim Kreisreiterball in Ansbach auf.' },
 ];
 
-const werte = [
-  { title: 'Showtanz', text: 'Aufwendige Choreografien mit Ausdruck, Requisiten und wechselnden Themen – die große Bühne für kreative Auftritte.' },
-  { title: 'Gardetanz', text: 'Präzision, Disziplin und Synchronität. Der Gardetanz lebt vom perfekten Zusammenspiel der ganzen Formation.' },
-  { title: 'Zusammenhalt', text: 'Hinter jedem Auftritt steckt ehrenamtliches Engagement: Training, Kostüme, Organisation. Bei uns zählt das Miteinander.' },
-];
 ---
 
 <BaseLayout title="Der Verein" description="Seit 1981 steht die Europa-Show-Tanzgarde für Showtanz, Gardetanz und Vereinsleben in Wassertrüdingen. Unsere Geschichte und was uns ausmacht.">
-  <PageIntro title="Ein Verein aus Wassertrüdingen" intro="Was 1981 als kleine Tanzgruppe begann, ist heute ein fester Teil des örtlichen Vereinslebens." />
-
-  <section class="section section--tight club-photo">
-    <div class="wrap">
-      <figure>
-        <CmsImage
-          src="/uploads/ensemble-buehne.webp"
-          alt="Die gesamte Europa-Show-Tanzgarde auf der Bühne, in blau-roten Kostümen unter farbigem Bühnenlicht."
-          ratio="2000 / 940"
-          loading="eager"
-        />
-        <figcaption>Alle drei Garden gemeinsam auf der Bühne. <span>Foto: HahGold Fotografie</span></figcaption>
-      </figure>
-    </div>
-  </section>
+  <PageIntro title="Die Europa-Show-Tanzgarde" flush tightTop />
 
   <section class="section club-history">
     <div class="wrap club-history__layout">
       <header>
-        <p>1971–heute</p>
         <h2>Unsere Geschichte</h2>
       </header>
-      <ol class="timeline">
-        {timeline.map((item) => (
-          <li>
-            <time>{item.year}</time>
-            <div><h3>{item.title}</h3><p>{item.text}</p></div>
-          </li>
-        ))}
-      </ol>
-    </div>
-  </section>
-
-  <section class="section name-story">
-    <div class="wrap name-story__layout">
-      <figure>
-        <CmsImage
-          src="/uploads/urkunde-1987.webp"
-          alt="Urkunde der Europa-Union Deutschland von 1987 mit den Flaggen europäischer Länder und der Verleihung des Namens Europa-Tanzgarde Wassertrüdingen."
-          ratio="1500 / 1049"
-        />
-      </figure>
-      <div>
-        <p class="name-story__date">11. Juli 1987</p>
-        <h2>„Europa“ im Namen</h2>
-        <p>Die Europa-Union Deutschland verlieh der Garde den Namen <strong>Europa-Tanzgarde Wassertrüdingen</strong> – verbunden mit dem Auftrag, sich für den europäischen Einigungsgedanken einzusetzen. Dieses Stück Vereinsgeschichte tragen wir bis heute im Namen.</p>
+      <div class="club-history__content">
+        <ol class="timeline">
+          {timeline.map((item) => (
+            <li class={`timeline-${item.year}`}>
+              <time>{item.year}</time>
+              <div><h3 class:list={{
+                'timeline__title--nowrap': [
+                  'Gründung der Stadtgarde Wassertrüdingen',
+                  'Erste Erfolge und europäisches Engagement',
+                  'Kooperationsmitglied der Europäischen Union',
+                  'Verleihung des Georg-Ehnes-Preises',
+                  'Ernennung zur Europa-Show-Tanzgarde',
+                  'Gala-Abend im Hilton-Hotel in München',
+                  'Auftritt in der Meistersingerhalle',
+                  'Auftritte im Euro-Disneyland Resort bei Paris',
+                  'Städtepartnerschaft Wassertrüdingen–Bellac',
+                  'Europäisches Parlament und Städtepartnerschaft',
+                  'Auftritte in Straßburg und Brüssel',
+                  'Auftritt im Europäischen Parlament in Brüssel',
+                  'Auftritte im Europäischen Parlament in Brüssel',
+                  'Verleihung des Europa-Diploms in Straßburg',
+                  'Europäische Begegnungen und Auszeichnungen',
+                  'Auftritt bei der EXPO in Hannover',
+                  'Rumänienreise und EXPO-Auftritt',
+                  'Monaco, Jubiläum und „Flying Steps“',
+                  'Besuch und Auftritte im Fürstentum Monaco',
+                  'Auftritte auf Fremdenverkehrsmessen',
+                  'Auslandsauftritte in Rumänien und Monaco',
+                  'Rock’n’Roll-Meisterschaften in Gunzenhausen',
+                  'Meisterschaft und Auftrittsreisen',
+                  'Dritte Rumänientour und Reise nach Spanien',
+                  'Reisen, Auszeichnung und Städtepartnerschaft',
+                  '„Antenne Bayern“-Fest in Wassertrüdingen',
+                  'Auftritte in Dänemark und Kroatien',
+                  'Auslandsauftritte und Wettbewerbserfolg',
+                  '3. Platz beim Teen-Dance-Wettbewerb',
+                  'Verein des Monats bei „Radio 8“',
+                  'Auftritt im „Tropical Islands“ bei Berlin',
+                  '4. Platz beim Tanzwettbewerb in Niederrieden',
+                  'Auftritt bei der „Bayern-Rundfahrt“',
+                  'Tropical Islands und „Bayern-Rundfahrt“',
+                  'Auftritte in Nürnberg und Wassertrüdingen',
+                  'Auftritt beim Chrysanthemenball',
+                  'Fernsehaufnahmen mit „Südwild“',
+                  'Chrysanthemenball und „Südwild“',
+                  'Partnerschaftsjubiläum in Bellac',
+                  'Gemeinsames Wochenende in Prag',
+                  'Erstes historisches Schloss- und Stadtmauerfest',
+                  'Tanzturnier in Asbach-Bäumenheim',
+                  'Freizeit- und Tourismusmesse in Nürnberg',
+                  'Besuch der Gartenschau-Kommission',
+                  'Erster Trüdinger „Show-Fasching“',
+                  'Show-Fasching und Reise nach Bellac',
+                  '30 Jahre Städtepartnerschaft mit Bellac',
+                  'Afrika-Karibik-Fest in Wassertrüdingen',
+                  'Betriebsfest von Schwarzkopf & Henkel',
+                  'Erste Dance Night in der Hesselberghalle',
+                  'Faschingsumzüge in Megesheim und Wassertrüdingen',
+                  'Zweiter Trüdinger „Show-Fasching“',
+                  'Show-Fasching und besondere Auftritte',
+                  'Umbruch und Generationenwechsel',
+                  '50 Jahre Gauschützen Hesselberg',
+                  'Messe Altmühlfranken in Gunzenhausen',
+                  'Russenfasching und Faschingsumzüge',
+                ].includes(item.title),
+              }}>{item.title}</h3><p>{item.text}</p></div>
+            </li>
+          ))}
+        </ol>
+        <div class="european-journeys">
+          <h3>Unterwegs in Europa</h3>
+          <p>Mittlerweile hat die Europa-Show-Tanzgarde acht europäische Länder besucht:</p>
+          <p class="european-journeys__countries">Ungarn, Rumänien, Kroatien, Spanien, Frankreich, England, Belgien und Dänemark</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="section values">
-    <div class="wrap">
-      <header class="values__head">
-        <h2>Zwei Tanzstile, ein Team</h2>
-        <p>Was unsere Auftritte und unser Vereinsleben prägt.</p>
-      </header>
-      <div class="values__list">
-        {werte.map((wert) => <article><h3>{wert.title}</h3><p>{wert.text}</p></article>)}
-      </div>
-    </div>
-  </section>
-
-  <section class="join-club">
-    <div class="wrap join-club__inner">
-      <div><h2>Werde Teil der Garde</h2><p>Ob tanzen, helfen oder unterstützen – im Verein ist Platz für alle.</p></div>
-      <a class="btn" href="/kontakt">Kontakt aufnehmen</a>
-    </div>
-  </section>
 </BaseLayout>
 
 <style>
-  .club-photo figure {
-    max-width: 42rem;
-    margin: 0;
+  :global(.page-intro h1) {
+    max-width: none;
+    font-size: clamp(2rem, 2rem + 3vw, 5.1rem);
+    white-space: nowrap;
   }
 
-  .club-photo :global(img) {
-    width: 100%;
-    max-height: 44rem;
-  }
-
-  .club-photo figcaption {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: var(--space-2) var(--space-5);
-    margin-top: var(--space-3);
-    font-size: var(--step--1);
-    color: var(--text-muted);
+  :global(.page-intro__inner) {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .club-history {
-    border-top: 1px solid var(--hairline-strong);
+    padding-top: var(--space-3);
+    padding-bottom: var(--space-4);
+    border-top: 0;
   }
 
   .club-history__layout {
@@ -133,18 +156,14 @@ const werte = [
     }
   }
 
-  .club-history header > p,
-  .name-story__date {
-    margin-bottom: var(--space-2);
-    font-weight: 750;
-    color: var(--red-700);
+  .club-history h2 {
+    font-size: var(--step-3);
   }
 
-  .club-history h2,
-  .name-story h2,
-  .values h2,
-  .join-club h2 {
-    font-size: var(--step-3);
+  .club-history header h2 {
+    max-width: none;
+    font-size: var(--step-2);
+    white-space: nowrap;
   }
 
   .timeline {
@@ -154,10 +173,14 @@ const werte = [
 
   .timeline li {
     display: grid;
-    grid-template-columns: 4rem minmax(0, 1fr);
+    grid-template-columns: 7rem minmax(0, 1fr);
     gap: var(--space-4);
     padding-block: var(--space-5);
     border-top: 1px solid var(--hairline-strong);
+  }
+
+  .timeline li:first-child {
+    border-top: 0;
   }
 
   .timeline li:last-child {
@@ -167,152 +190,59 @@ const werte = [
   .timeline time {
     font-family: var(--font-display);
     font-size: var(--step-1);
+    font-style: normal;
     font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
     color: var(--blue-700);
+    white-space: nowrap;
   }
 
   .timeline h3 {
+    font-family: var(--font-display);
     font-size: var(--step-1);
+    font-weight: 800;
+    line-height: var(--leading-snug);
     color: var(--text);
+  }
+
+  .timeline-1982 h3 {
+    max-width: none;
+    white-space: nowrap;
+  }
+
+  @media (min-width: 680px) {
+    .timeline__title--nowrap {
+      max-width: none;
+      white-space: nowrap;
+    }
   }
 
   .timeline p {
     margin-top: var(--space-2);
+    font-family: var(--font-body);
+    font-size: var(--step-0);
+    font-weight: 400;
+    line-height: var(--leading-normal);
     color: var(--text-muted);
   }
 
-  .name-story {
-    color: var(--text-on-color);
-    background: var(--night-900);
+  .european-journeys {
+    padding-top: var(--space-6);
   }
 
-  .name-story__layout {
-    display: grid;
-    gap: var(--space-7) clamp(2rem, 7vw, 7rem);
-    align-items: center;
-  }
-
-  @media (min-width: 820px) {
-    .name-story__layout {
-      grid-template-columns: minmax(18rem, 0.9fr) minmax(0, 1.1fr);
-    }
-  }
-
-  .name-story figure {
-    width: 100%;
-    max-width: 28rem;
-    margin: 0;
-  }
-
-  .name-story h2 {
-    color: var(--text-on-color);
-  }
-
-  .name-story div > p:last-child {
-    max-width: 42rem;
-    margin-top: var(--space-4);
-    font-size: var(--step-1);
-    color: var(--text-on-color-muted);
-  }
-
-  .name-story strong {
-    color: #ffffff;
-  }
-
-  .values {
-    background: var(--surface-soft);
-    border-bottom: 1px solid var(--hairline);
-  }
-
-  .values__head {
-    display: grid;
-    gap: var(--space-3) var(--space-7);
-    margin-bottom: var(--space-7);
-  }
-
-  @media (min-width: 760px) {
-    .values__head {
-      grid-template-columns: 1fr 1fr;
-      align-items: end;
-    }
-  }
-
-  .values__head p {
-    color: var(--text-muted);
-    font-size: var(--step-1);
-  }
-
-  .values__list {
-    display: grid;
-  }
-
-  .values__list article {
-    padding-block: var(--space-5);
-    border-top: 1px solid var(--hairline-strong);
-  }
-
-  .values__list article:last-child {
-    border-bottom: 1px solid var(--hairline-strong);
-  }
-
-  @media (min-width: 760px) {
-    .values__list {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      border-block: 1px solid var(--hairline-strong);
-    }
-
-    .values__list article {
-      padding: var(--space-5);
-      border-top: 0;
-      border-right: 1px solid var(--hairline-strong);
-    }
-
-    .values__list article:first-child {
-      padding-left: 0;
-    }
-
-    .values__list article:last-child {
-      padding-right: 0;
-      border-right: 0;
-      border-bottom: 0;
-    }
-  }
-
-  .values__list h3 {
+  .european-journeys h3 {
     font-size: var(--step-2);
+    color: var(--blue-700);
   }
 
-  .values__list p {
+  .european-journeys p {
     margin-top: var(--space-3);
     color: var(--text-muted);
   }
 
-  .join-club {
-    padding-block: clamp(2.75rem, 6vw, 5rem);
-    color: var(--text-on-color);
-    background: var(--surface-blue);
-  }
-
-  .join-club__inner {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-6);
-  }
-
-  .join-club h2 {
-    color: var(--text-on-color);
-  }
-
-  .join-club p {
-    margin-top: var(--space-2);
-    color: var(--text-on-color-muted);
-  }
-
-  .join-club .btn {
-    color: var(--blue-700);
-    background: #ffffff;
-    border-color: #ffffff;
+  .european-journeys .european-journeys__countries {
+    font-weight: 750;
+    color: var(--text);
   }
 </style>

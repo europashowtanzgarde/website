@@ -270,25 +270,13 @@ dd {
   text-transform: uppercase;
 }
 
-.badge[data-cat='auftritt'] {
-  color: var(--red-700);
-  background: #fff0f1;
-}
-
-.badge[data-cat='training'] {
-  color: var(--blue-700);
-  background: #edf0ff;
-}
-
-.badge[data-cat='veranstaltung'] {
-  color: var(--amber-700);
-  background: #fff6d9;
-}
-
+.badge[data-cat='auftritt'],
+.badge[data-cat='training'],
+.badge[data-cat='veranstaltung'],
 .badge[data-cat='vereinsintern'],
 .badge[data-cat='sonstiges'] {
-  color: var(--text-muted);
-  background: var(--surface-soft);
+  color: var(--blue-700);
+  background: #edf0ff;
 }
 
 .empty-state {

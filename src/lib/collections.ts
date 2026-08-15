@@ -46,7 +46,7 @@ export async function getUpcomingEvents(
 ): Promise<CollectionEntry<'events'>[]> {
   const today = todayInBerlin();
   const events = (await getPublicEvents())
-    .filter((e) => dateKey(e.data.date) >= today)
+    .filter((e) => dateKey(e.data.endDate ?? e.data.date) >= today)
     .sort((a, b) => a.data.date.getTime() - b.data.date.getTime());
   return typeof limit === 'number' ? events.slice(0, limit) : events;
 }
@@ -57,7 +57,7 @@ export async function getPastEvents(
 ): Promise<CollectionEntry<'events'>[]> {
   const today = todayInBerlin();
   const events = (await getPublicEvents())
-    .filter((e) => dateKey(e.data.date) < today)
+    .filter((e) => dateKey(e.data.endDate ?? e.data.date) < today)
     .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
   return typeof limit === 'number' ? events.slice(0, limit) : events;
 }

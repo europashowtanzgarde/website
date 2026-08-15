@@ -1,0 +1,119 @@
+---
+import CmsImage from './CmsImage.astro';
+
+interface CarouselImage {
+  image: string;
+  alt: string;
+  caption?: string;
+  position?: string;
+  scale?: number;
+  offsetX?: string;
+  fit?: 'cover' | 'contain';
+}
+
+interface Props {
+  images: CarouselImage[];
+  label?: string;
+}
+
+const { images, label = 'Bildergalerie' } = Astro.props;
+---
+
+<div class="image-carousel" data-carousel aria-label={label}>
+  <div class="image-carousel__stage" aria-live="polite">
+    {images.map((item, index) => (
+      <figure class="image-carousel__slide" data-slide hidden={index !== 0}>
+        <CmsImage
+          src={item.image}
+          alt={item.alt}
+          ratio="4 / 3"
+          loading={index === 0 ? 'eager' : 'lazy'}
+          position={item.position}
+          scale={item.scale}
+          offsetX={item.offsetX}
+          fit={item.fit}
+        />
+        {item.caption && <figcaption>{item.caption}</figcaption>}
+      </figure>
+    ))}
+  </div>
+
+  <div class="image-carousel__controls">
+    <button type="button" data-previous aria-label="Vorheriges Bild">←</button>
+    <span><strong data-current>1</strong> / {images.length}</span>
+    <button type="button" data-next aria-label="Nächstes Bild">→</button>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((carousel) => {
+    const slides = Array.from(carousel.querySelectorAll<HTMLElement>('[data-slide]'));
+    const current = carousel.querySelector<HTMLElement>('[data-current]');
+    const previous = carousel.querySelector<HTMLButtonElement>('[data-previous]');
+    const next = carousel.querySelector<HTMLButtonElement>('[data-next]');
+    let active = 0;
+
+    const show = (index: number) => {
+      active = (index + slides.length) % slides.length;
+      slides.forEach((slide, slideIndex) => { slide.hidden = slideIndex !== active; });
+      if (current) current.textContent = String(active + 1);
+    };
+
+    previous?.addEventListener('click', () => show(active - 1));
+    next?.addEventListener('click', () => show(active + 1));
+  });
+</script>
+
+<style>
+  .image-carousel__stage {
+    overflow: hidden;
+    border-radius: var(--radius-m);
+  }
+
+  .image-carousel__slide[hidden] {
+    display: none;
+  }
+
+  .image-carousel__slide :global(img) {
+    border-radius: 0;
+  }
+
+  .image-carousel__slide figcaption {
+    padding-top: var(--space-2);
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+
+  .image-carousel__controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: var(--space-2);
+  }
+
+  .image-carousel__controls button {
+    display: inline-grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    padding: 0;
+    font: inherit;
+    font-weight: 800;
+    color: var(--blue-700);
+    background: transparent;
+    border: 1px solid var(--hairline-strong);
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  .image-carousel__controls button:hover {
+    color: #ffffff;
+    background: var(--blue-700);
+    border-color: var(--blue-700);
+  }
+
+  .image-carousel__controls span {
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+</style>

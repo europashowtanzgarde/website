@@ -21,10 +21,10 @@ const { name, description, ageGroup, trainingTime, contact, image, imageAlt } = 
     <h3>{name}</h3>
     <p class="group-profile__description">{description}</p>
     {
-      (trainingTime || contact) && (
+      variant === 'detail' && (trainingTime || contact) && (
         <dl class="group-profile__facts">
-          {trainingTime && <div><dt>Training</dt><dd>{trainingTime}</dd></div>}
-          {contact && <div><dt>Ansprechperson</dt><dd>{contact}</dd></div>}
+          {trainingTime && <div><dt>Trainingszeiten</dt><dd>{trainingTime}</dd></div>}
+          {contact && <div><dt>Verantwortlich</dt><dd>{contact}</dd></div>}
         </dl>
       )
     }
@@ -86,13 +86,16 @@ const { name, description, ageGroup, trainingTime, contact, image, imageAlt } = 
   }
 
   .group-profile__facts dt {
-    font-size: var(--step--1);
-    font-weight: 750;
+    font-size: var(--step-0);
+    font-weight: 380;
     color: var(--text-muted);
   }
 
   .group-profile__facts dd {
     margin: 0;
+    font-size: var(--step-0);
+    font-weight: 380;
+    color: var(--text-muted);
   }
 
   @media (min-width: 720px) {
@@ -123,13 +126,4 @@ const { name, description, ageGroup, trainingTime, contact, image, imageAlt } = 
     }
   }
 
-  @media (min-width: 860px) {
-    .group-profile.is-summary:nth-child(2) {
-      margin-top: var(--space-7);
-    }
-
-    .group-profile.is-summary:nth-child(3) {
-      margin-top: calc(var(--space-7) * 2);
-    }
-  }
 </style>

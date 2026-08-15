@@ -1,64 +1,18 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/PageIntro.astro';
-import GalleryAlbum from '../components/GalleryAlbum.astro';
-import Placeholder from '../components/Placeholder.astro';
-import { getGalleryAlbums } from '../lib/collections';
-
-const albums = await getGalleryAlbums();
 ---
 
 <BaseLayout title="Galerie" description="Bilder aus Training, Auftritten und dem Vereinsleben der Europa-Show-Tanzgarde.">
-  <PageIntro title="Galerie" intro="Eindrücke aus Training, Auftritten und dem Vereinsleben – Schritt für Schritt gepflegt." />
+  <PageIntro title="Galerie" flush tightTop />
 
-  <section class="section section--tight">
-    <div class="wrap">
-      {
-        albums.length === 0 ? (
-          <div class="gallery-empty">
-            <div class="gallery-empty__media" aria-hidden="true">
-              <Placeholder seed="galerie" ratio="4 / 3" label="Foto folgt" />
-            </div>
-            <div>
-              <h2>Die Galerie füllt sich gerade</h2>
-              <p>Wir sammeln Fotos aus Auftritten und Training. Bald gibt es hier mehr zu sehen. Bis dahin findet ihr aktuelle Bilder auf unseren Social-Media-Kanälen.</p>
-              <a class="btn btn--ghost" href="/kontakt">Fotos beisteuern?</a>
-            </div>
-          </div>
-        ) : (
-          <div class="albums">{albums.map((album) => <GalleryAlbum album={album} />)}</div>
-        )
-      }
-    </div>
+  <section class="section section--tight gallery-section">
+    <div class="wrap gallery-page"></div>
   </section>
 </BaseLayout>
 
 <style>
-  .gallery-empty {
-    display: grid;
-    gap: var(--space-6) clamp(2rem, 7vw, 7rem);
-    max-width: 62rem;
-    align-items: center;
-  }
-
-  @media (min-width: 720px) {
-    .gallery-empty {
-      grid-template-columns: minmax(14rem, 0.7fr) minmax(0, 1.3fr);
-    }
-  }
-
-  .gallery-empty__media {
-    max-width: 24rem;
-  }
-
-  .gallery-empty h2 {
-    font-size: var(--step-3);
-  }
-
-  .gallery-empty p {
-    max-width: 38rem;
-    margin-block: var(--space-3) var(--space-5);
-    color: var(--text-muted);
-    font-size: var(--step-1);
+  .gallery-section {
+    padding-top: var(--space-3);
   }
 </style>

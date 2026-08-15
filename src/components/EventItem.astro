@@ -1,59 +1,76 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { formatDay, formatMonthShort, formatWeekday, formatTime, isoDate } from '../lib/date';
+import { formatDay, formatMonthShort, formatTime, isoDate } from '../lib/date';
 
 interface Props {
   event: CollectionEntry<'events'>;
   showDescription?: boolean;
   past?: boolean;
+  variant?: 'card' | 'timeline' | 'listing';
 }
 
-const CATEGORY_LABELS: Record<string, string> = {
-  auftritt: 'Auftritt',
-  training: 'Training',
-  veranstaltung: 'Veranstaltung',
-  vereinsintern: 'Vereinsintern',
-  sonstiges: 'Sonstiges',
-};
-
-const { event, showDescription = false, past = false } = Astro.props;
-const { title, date, time, location, description, category } = event.data;
+const { event, showDescription = false, past = false, variant = 'card' } = Astro.props;
+const isListing = variant === 'listing';
+const { title, date, endDate, time, location, description } = event.data;
 const timeLabel = formatTime(time);
+const sameMonth = endDate
+  && date.getUTCFullYear() === endDate.getUTCFullYear()
+  && date.getUTCMonth() === endDate.getUTCMonth();
+const dayLabel = sameMonth ? `${formatDay(date)} – ${formatDay(endDate)}` : formatDay(date);
+const monthLabel = endDate && !sameMonth
+  ? `${formatMonthShort(date)}–${formatMonthShort(endDate)}`
+  : formatMonthShort(date);
+const listingMonthLabel = new Intl.DateTimeFormat('de-DE', { month: 'long' }).format(date);
 ---
 
-<article class:list={['event', { 'is-past': past }]}>
-  <time class="event__date" datetime={isoDate(date)}>
-    <span>{formatDay(date)}</span>
-    <abbr title={formatMonthShort(date)}>{formatMonthShort(date)}</abbr>
+<article class:list={['event', `event--${event.id}`, { 'is-past': past, 'is-timeline': variant === 'timeline', 'is-listing': isListing }]}>
+  <time class:list={['event__date', { 'event__date--range': endDate }]} datetime={isoDate(date)}>
+    <span>{dayLabel}</span>
+    <abbr title={isListing ? listingMonthLabel : monthLabel}>{isListing ? listingMonthLabel : monthLabel}</abbr>
   </time>
   <div class="event__body">
-    <div class="event__meta">
-      <span class="badge" data-cat={category}>{CATEGORY_LABELS[category]}</span>
-      <span>{formatWeekday(date)}{timeLabel && ` · ${timeLabel}`}</span>
-    </div>
     <h3>{title}</h3>
     <p class="event__location">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11Z" stroke-linejoin="round" />
         <circle cx="12" cy="10" r="2.5" />
       </svg>
-      {location}
+      <span>{location}</span>
     </p>
+    {
+      timeLabel && (
+        <div class="event__details">
+          <span>{timeLabel}</span>
+        </div>
+      )
+    }
     {showDescription && description && <p class="event__description">{description}</p>}
   </div>
+  <svg class="event__arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+    <path d="M5 12h13M13 7l5 5-5 5" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
 </article>
 
 <style>
   .event {
+    position: relative;
     display: grid;
-    grid-template-columns: 3.6rem minmax(0, 1fr);
-    gap: var(--space-4);
-    padding-block: clamp(1.5rem, 3vw, 2.25rem);
-    border-top: 1px solid var(--hairline-strong);
+    grid-template-columns: 5.4rem minmax(0, 1fr) auto;
+    gap: clamp(1rem, 3vw, 1.75rem);
+    align-items: center;
+    padding: clamp(1rem, 2.2vw, 1.4rem);
+    overflow: hidden;
+    background: var(--bg-card);
+    border: 1px solid var(--hairline-strong);
+    border-radius: var(--radius-m);
+    box-shadow: 0 1px 2px rgb(20 24 58 / 0.04), 0 8px 24px rgb(20 24 58 / 0.045);
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
   }
 
-  .event:last-child {
-    border-bottom: 1px solid var(--hairline-strong);
+  .event:hover {
+    transform: translateY(-2px);
+    border-color: rgb(24 42 156 / 0.38);
+    box-shadow: 0 2px 4px rgb(20 24 58 / 0.05), 0 14px 32px rgb(20 24 58 / 0.08);
   }
 
   .event.is-past {
@@ -64,9 +81,14 @@ const timeLabel = formatTime(time);
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     align-self: start;
-    padding-block: 0.35rem;
-    border-top: 3px solid var(--red-600);
+    width: 100%;
+    min-height: 4.8rem;
+    padding: 0.65rem 0.4rem 0.55rem;
+    background: var(--surface-soft-blue);
+    border: 1px solid rgb(24 42 156 / 0.16);
+    border-radius: var(--radius-s);
     font-variant-numeric: tabular-nums;
     text-decoration: none;
     color: var(--blue-700);
@@ -77,6 +99,11 @@ const timeLabel = formatTime(time);
     font-size: var(--step-2);
     font-weight: 800;
     line-height: 1;
+    white-space: nowrap;
+  }
+
+  .event__date--range span {
+    font-size: clamp(1.08rem, 2.8vw, 1.42rem);
   }
 
   .event__date abbr {
@@ -91,18 +118,20 @@ const timeLabel = formatTime(time);
     min-width: 0;
   }
 
-  .event__meta {
+  .event__details {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-2) var(--space-3);
+    margin-bottom: var(--space-2);
     font-size: var(--step--1);
     color: var(--text-muted);
   }
 
   .event h3 {
-    margin-top: var(--space-3);
+    margin: 0;
     font-size: var(--step-2);
+    line-height: var(--leading-snug);
     color: var(--text);
   }
 
@@ -117,7 +146,7 @@ const timeLabel = formatTime(time);
   .event__location svg {
     flex: none;
     margin-top: 0.3em;
-    color: var(--red-600);
+    color: var(--blue-700);
   }
 
   .event__description {
@@ -126,10 +155,246 @@ const timeLabel = formatTime(time);
     color: var(--text-muted);
   }
 
+  .event__arrow {
+    color: var(--blue-600);
+    opacity: 0.7;
+    transition: transform 180ms ease, opacity 180ms ease;
+  }
+
+  .event:hover .event__arrow {
+    transform: translateX(3px);
+    opacity: 1;
+  }
+
+  .event.is-listing {
+    grid-template-columns: minmax(10.5rem, 0.55fr) minmax(0, 1.45fr);
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    align-items: stretch;
+    padding: var(--space-6) 0;
+    overflow: visible;
+    background: transparent;
+    border: 0;
+    border-top: 1px solid var(--hairline-strong);
+    border-radius: 0;
+    box-shadow: none;
+    transition: none;
+  }
+
+  .event.is-listing:last-child {
+    border-bottom: 1px solid var(--hairline-strong);
+  }
+
+  .event.is-listing:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .event.is-listing:hover {
+    border-color: var(--hairline-strong);
+    box-shadow: none;
+    transform: none;
+  }
+
+  .event.is-listing .event__date {
+    align-self: stretch;
+    min-height: 9rem;
+    padding: var(--space-5);
+    background: transparent;
+    border: 0;
+  }
+
+  .event.is-listing .event__date span {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+  }
+
+  .event.is-listing .event__date--range span {
+    font-size: clamp(1.8rem, 3.5vw, 3rem);
+  }
+
+  .event.is-listing .event__date abbr {
+    margin-top: var(--space-2);
+    font-size: var(--step-0);
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .event.is-listing .event__body {
+    align-self: center;
+  }
+
+  .event.is-listing h3 {
+    max-width: none;
+    color: var(--blue-700);
+  }
+
+  @media (min-width: 900px) {
+    .event.is-listing.event--2026-11-21-jubilaeum-jahresschlussveranstaltung h3 {
+      white-space: nowrap;
+    }
+  }
+
+  .event.is-listing .event__arrow {
+    display: none;
+  }
+
+  .event.is-timeline {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    min-width: 0;
+    padding: 0 0.9rem 0.5rem;
+    overflow: visible;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .event.is-timeline::before {
+    position: absolute;
+    top: 4.75rem;
+    left: 50%;
+    z-index: 2;
+    width: 0.7rem;
+    height: 0.7rem;
+    content: '';
+    background: var(--blue-700);
+    border: 2px solid var(--bg);
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px var(--blue-700), 0 0 0 4px var(--bg);
+    transform: translate(-50%, -50%);
+  }
+
+  .event.is-timeline:hover {
+    background: transparent;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .event.is-timeline .event__date {
+    align-self: stretch;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    min-width: 0;
+    height: 3.9rem;
+    min-height: 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .event.is-timeline .event__date span {
+    font-size: clamp(1.7rem, 2.6vw, 2.25rem);
+  }
+
+  .event.is-timeline .event__date--range span {
+    font-size: clamp(1.25rem, 2vw, 1.62rem);
+  }
+
+  .event.is-timeline .event__body {
+    width: 100%;
+    margin-top: 1.7rem;
+    text-align: center;
+  }
+
+  .event.is-timeline .event__details {
+    justify-content: center;
+    margin-block: var(--space-3) 0;
+  }
+
+  .event.is-timeline h3 {
+    display: block;
+    min-height: 0;
+    max-width: 24ch;
+    margin-inline: auto;
+    overflow-wrap: normal;
+    font-size: clamp(1rem, 1.25vw, 1.15rem);
+    hyphens: auto;
+    text-wrap: balance;
+    word-break: normal;
+  }
+
+  .event.is-timeline .event__location {
+    justify-content: center;
+    gap: 0.18rem;
+    max-width: none;
+    margin-inline: auto;
+    font-size: var(--step--1);
+    white-space: nowrap;
+  }
+
+  .event.is-timeline .event__location svg {
+    width: 13px;
+    height: 13px;
+    margin-top: 0.22em;
+  }
+
+  .event.is-timeline .event__location span {
+    text-align: left;
+  }
+
+  .event.is-timeline .event__arrow {
+    display: none;
+  }
+
   @media (min-width: 680px) {
     .event {
-      grid-template-columns: 5rem minmax(0, 1fr);
-      gap: var(--space-6);
+      grid-template-columns: 6.6rem minmax(0, 1fr) auto;
+    }
+
+    .event__date {
+      min-height: 5.25rem;
+    }
+  }
+
+  @media (max-width: 460px) {
+    .event {
+      grid-template-columns: 4.8rem minmax(0, 1fr);
+    }
+
+    .event__arrow {
+      display: none;
+    }
+
+    .event h3 {
+      font-size: var(--step-1);
+    }
+  }
+
+  @media (max-width: 679px) {
+    .event.is-listing {
+      grid-template-columns: 6.5rem minmax(0, 1fr);
+      gap: var(--space-4);
+      padding-block: var(--space-5);
+    }
+
+    .event.is-listing .event__date {
+      min-height: 6.5rem;
+      padding: var(--space-3);
+    }
+
+    .event.is-listing .event__date span,
+    .event.is-listing .event__date--range span {
+      font-size: var(--step-2);
+    }
+
+    .event.is-listing .event__date abbr {
+      font-size: var(--step--1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .event,
+    .event__arrow {
+      transition: none;
+    }
+
+    .event:hover,
+    .event:hover .event__arrow {
+      transform: none;
     }
   }
 </style>

@@ -22,7 +22,7 @@ const social = [
 <footer class="site-footer">
   <div class="wrap footer-main">
     <div class="footer-brand">
-      <p class="footer-wordmark">Europa Show <span>Tanzgarde</span></p>
+      <p class="footer-wordmark">Europa <span>Show</span> Tanzgarde</p>
       <p>{site.claim}</p>
       {
         social.length > 0 && (
@@ -60,7 +60,7 @@ const social = [
   </div>
 
   <div class="wrap footer-bottom">
-    <p>© {year} {site.name}. {site.footerText}</p>
+    <p>© {year} {site.name} {site.footerText}</p>
     <p class="footer-legal"><a href="/impressum">Impressum</a><a href="/datenschutz">Datenschutz</a></p>
   </div>
 </footer>
@@ -104,11 +104,12 @@ const social = [
     font-size: var(--step-2);
     font-weight: 800;
     line-height: 1;
+    color: #ffffff;
     text-transform: uppercase;
   }
 
   .footer-wordmark span {
-    color: var(--red-400);
+    color: #ffffff;
   }
 
   .footer-brand > p:nth-child(2) {
