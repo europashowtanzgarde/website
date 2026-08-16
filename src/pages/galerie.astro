@@ -1,13 +1,101 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/PageIntro.astro';
+import { Image } from 'astro:assets';
+
+const imageModules = import.meta.glob<{ default: ImageMetadata }>('../assets/gallery/*.{jpg,jpeg}', { eager: true });
+
+type GalleryImage = {
+  src: ImageMetadata;
+  fileName: string;
+  caption: string;
+  alt: string;
+};
+
+const cleanCaption = (fileName: string) => {
+  const original = fileName.replace(/\.(jpe?g)$/i, '').replace(/ \(\d+\)$/, '');
+  const shortened = original
+    .replace(/^Kindergarde\s+/i, '')
+    .replace(/^Jugendgarde\s+/i, '')
+    .replace(/^Große Garde\s+/i, '')
+    .replace(/^Spalier Große Garde\s*/i, 'Spalier ')
+    .replace(/^Spalier Jugendgarde\s*/i, 'Spalier ');
+  return shortened || original;
+};
+
+const images: GalleryImage[] = Object.entries(imageModules)
+  .map(([path, module]) => {
+    const fileName = path.split('/').at(-1) ?? path;
+    const caption = cleanCaption(fileName);
+    return {
+      src: module.default,
+      fileName,
+      caption,
+      alt: `${caption} – Europa-Show-Tanzgarde`,
+    };
+  })
+  .sort((a, b) => a.fileName.localeCompare(b.fileName, 'de'));
+
+const sections = [
+  {
+    title: 'Kindergarde',
+    images: images.filter(({ fileName }) => fileName.startsWith('Kindergarde')),
+  },
+  {
+    title: 'Jugendgarde',
+    images: images.filter(({ fileName }) =>
+      fileName.includes('Jugendgarde') &&
+      !fileName.includes('und Große Garde') &&
+      !fileName.startsWith('Kindergarde'),
+    ),
+  },
+  {
+    title: 'Große Garde',
+    images: images.filter(({ fileName }) =>
+      (fileName.startsWith('Große Garde') || fileName.startsWith('Spalier Große Garde')) &&
+      !fileName.includes('Jugendgarde'),
+    ),
+  },
+  {
+    title: 'Vereinsleben & unterwegs',
+    images: images.filter(({ fileName }) =>
+      !fileName.startsWith('Kindergarde') &&
+      !(fileName.includes('Jugendgarde') && !fileName.includes('und Große Garde')) &&
+      !((fileName.startsWith('Große Garde') || fileName.startsWith('Spalier Große Garde')) && !fileName.includes('Jugendgarde')),
+    ),
+  },
+];
 ---
 
 <BaseLayout title="Galerie" description="Bilder aus Training, Auftritten und dem Vereinsleben der Europa-Show-Tanzgarde.">
-  <PageIntro title="Galerie" flush tightTop />
+  <PageIntro title="Galerie" flush tightTop compactTitle />
 
   <section class="section section--tight gallery-section">
-    <div class="wrap gallery-page"></div>
+    <div class="wrap gallery-page">
+      {sections.map((section) => (
+        <section class="gallery-group" aria-labelledby={`gallery-${section.title.toLowerCase().replace(/[^a-zäöü]+/g, '-')}`}>
+          <header class="gallery-group__head">
+            <h2 id={`gallery-${section.title.toLowerCase().replace(/[^a-zäöü]+/g, '-')}`}>{section.title}</h2>
+          </header>
+          <div class="gallery-grid">
+            {section.images.map((image) => (
+              <figure
+                class:list={['gallery-card', { 'is-youth-crop': image.fileName === 'Volksfestumzug Jugendgarde.jpeg' }]}
+                style={`--image-ratio: ${image.fileName === 'Volksfestumzug Jugendgarde.jpeg' ? 16 / 9 : image.src.width / image.src.height}`}
+              >
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  width={720}
+                  quality={78}
+                  loading="lazy"
+                />
+              </figure>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
   </section>
 </BaseLayout>
 
@@ -15,4 +103,56 @@ import PageIntro from '../components/PageIntro.astro';
   .gallery-section {
     padding-top: var(--space-3);
   }
+
+  .gallery-group + .gallery-group {
+    margin-top: var(--section-space);
+    padding-top: var(--space-7);
+    border-top: 1px solid var(--hairline-strong);
+  }
+
+  .gallery-group__head {
+    margin-bottom: var(--space-6);
+  }
+
+  .gallery-group__head h2 {
+    max-width: none;
+    font-size: var(--step-3);
+    white-space: nowrap;
+  }
+
+  .gallery-grid {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: clamp(1rem, 2vw, 1.5rem);
+  }
+
+  .gallery-card {
+    flex-grow: var(--image-ratio);
+    flex-basis: calc(var(--image-ratio) * 13rem);
+    min-width: 0;
+    max-width: 38rem;
+  }
+
+  .gallery-card :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-m);
+    background: var(--surface-soft-blue);
+  }
+
+  .gallery-card.is-youth-crop :global(img) {
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: center 44%;
+  }
+
+  @media (max-width: 520px) {
+    .gallery-card {
+      flex-basis: 100%;
+      max-width: none;
+    }
+  }
+
 </style>

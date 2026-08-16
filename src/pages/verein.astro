@@ -4,8 +4,8 @@ import PageIntro from '../components/PageIntro.astro';
 
 const timeline = [
   { year: '1981', title: 'Gründung der Stadtgarde Wassertrüdingen', text: 'Sechs junge Frauen gründen die „Trüdinger Swinging Girls“. Schon wenige Monate später folgt der erste Auftritt beim Altstadtfest.' },
-  { year: '1982', title: 'Erstes Programm & Jugendgarde', text: 'Mit dem Can-Can steht das erste große Programm auf der Bühne. Aus dem Zulauf jüngerer Tänzerinnen entsteht die Jugend-Tanzgarde.' },
-  { year: '1984', title: 'Gründung der Kindergarde', text: 'Für die Jüngsten wird die Kindergarde gegründet – seitdem tanzen bei uns drei Generationen unter einem Dach.' },
+  { year: '1982', title: 'Erstes Programm & Jugendgarde', text: 'Mit dem Can-Can steht das erste große Programm auf der Bühne. Aus dem Zulauf jüngerer Tänzerinnen entsteht die Jugendgarde.' },
+  { year: '1984', title: 'Gründung der Kindergarde', text: 'Für die Jüngsten wird die Kindergarde gegründet.' },
   { year: '1985', title: 'Erste Erfolge und europäisches Engagement', text: 'Die Garde ist erstmals im Fernsehen zu sehen und absolviert im selben Jahr 30 weitere Auftritte. Beim Gala-Abend in der Partnerstadt Bellac tritt sie erstmals im Ausland auf, wird als „Stadtgarde“ Kooperationsmitglied der Europäischen Union und erhält mit dem Georg-Ehnes-Preis die höchste Auszeichnung im Landkreis Ansbach.' },
   { year: '1987', title: 'Ernennung zur Europa-Show-Tanzgarde', text: 'Bei ihrem Auftritt für den europäischen Gedanken in Nürnberg wird die Garde durch den ehemaligen Bundespräsidenten Walter Scheel zur Europa-Show-Tanzgarde ernannt.' },
   { year: '1988', title: 'Gala-Abend im Hilton-Hotel in München', text: 'Die Garde wirkt beim Gala-Abend im Hilton-Hotel in München mit.' },
@@ -24,18 +24,20 @@ const timeline = [
   { year: '2007', title: 'Berlin-Tour zur „Grünen Woche“', text: 'Bei ihrer Berlin-Tour tritt die Garde auf der Messe „Grüne Woche“ auf.' },
   { year: '2008', title: 'Chrysanthemenball und „Südwild“', text: 'Die Europa-Show-Tanzgarde tritt beim Chrysanthemenball in der Stadthalle Gunzenhausen auf und erlebt spannende Fernsehaufnahmen mit „Südwild“ für das Bayerische Fernsehen.' },
   { year: '2009', title: 'Partnerschaftsjubiläum in Bellac', text: 'Die Europa-Show-Tanzgarde feiert das Partnerschaftsjubiläum in Bellac in Frankreich.' },
-  { year: '2009', title: '25 Jahre Städtepartnerschaft', text: 'Die Jubiläumsveranstaltung findet in der Hesselberghalle in Wassertrüdingen statt.' },
   { year: '2010', title: 'Showauftritte und Tanzturnier', text: 'Die Europa-Show-Tanzgarde gestaltet einen großen Showabend in Auhausen, tritt bei der Seenland-Gala in der Stadthalle Gunzenhausen sowie zum 40-jährigen Bestehen des Maschinenrings im Onoldiasaal in Ansbach auf und nimmt an einem Tanzturnier in Asbach-Bäumenheim teil.' },
   { year: '2012', title: 'Tourismusmesse und Festzug', text: 'Die Europa-Show-Tanzgarde tritt auf der Freizeit- und Tourismusmesse in Nürnberg auf und nimmt am Festzug in der mittelfränkischen Regierungsstadt Ansbach teil.' },
   { year: '2013', title: 'Show-Fasching und Reise nach Bellac', text: 'Die Europa-Show-Tanzgarde veranstaltet den ersten Trüdinger „Show-Fasching“ und reist anlässlich der Jubiläumsfeier der Städtepartnerschaft nach Bellac.' },
   { year: '2014', title: 'Erste Dance Night in der Hesselberghalle', text: 'Bei der ersten Dance Night begrüßt die Europa-Show-Tanzgarde Gastgruppen aus ganz Bayern in der Hesselberghalle.' },
   { year: '2015', title: 'Show-Fasching und besondere Auftritte', text: 'Die Europa-Show-Tanzgarde veranstaltet den zweiten Trüdinger „Show-Fasching“, absolviert einen Gastauftritt beim Europafest in der Bundeshauptstadt Berlin und tritt beim Kreisreiterball in Ansbach auf.' },
+  { year: '2017', title: 'Zweite Dance Night', text: 'Die Europa-Show-Tanzgarde veranstaltet die zweite Dance Night.' },
+  { year: '2019', title: 'Dritte Dance Night', text: 'Die Europa-Show-Tanzgarde veranstaltet die dritte Dance Night.' },
+  { year: '2023', title: 'Auftritt zum Partnerschaftsjubiläum in Bellac', text: 'Anlässlich des Jubiläums der Städtepartnerschaft tritt die Europa-Show-Tanzgarde in Bellac auf.' },
 ];
 
 ---
 
 <BaseLayout title="Der Verein" description="Seit 1981 steht die Europa-Show-Tanzgarde für Showtanz, Gardetanz und Vereinsleben in Wassertrüdingen. Unsere Geschichte und was uns ausmacht.">
-  <PageIntro title="Die Europa-Show-Tanzgarde" flush tightTop />
+  <PageIntro title="Die Europa-Show-Tanzgarde" flush tightTop compactTitle />
 
   <section class="section club-history">
     <div class="wrap club-history__layout">
@@ -102,6 +104,7 @@ const timeline = [
                   'Faschingsumzüge in Megesheim und Wassertrüdingen',
                   'Zweiter Trüdinger „Show-Fasching“',
                   'Show-Fasching und besondere Auftritte',
+                  'Auftritt zum Partnerschaftsjubiläum in Bellac',
                   'Umbruch und Generationenwechsel',
                   '50 Jahre Gauschützen Hesselberg',
                   'Messe Altmühlfranken in Gunzenhausen',

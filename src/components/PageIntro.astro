@@ -6,12 +6,13 @@ interface Props {
   flush?: boolean;
   bordered?: boolean;
   tightTop?: boolean;
+  compactTitle?: boolean;
 }
 
-const { eyebrow, title, intro, flush = false, bordered = true, tightTop = false } = Astro.props;
+const { eyebrow, title, intro, flush = false, bordered = true, tightTop = false, compactTitle = false } = Astro.props;
 ---
 
-<header class:list={['page-intro', { 'is-flush': flush, 'is-borderless': !bordered, 'has-tight-top': tightTop }]}>
+<header class:list={['page-intro', { 'is-flush': flush, 'is-borderless': !bordered, 'has-tight-top': tightTop, 'has-compact-title': compactTitle }]}>
   <div class="wrap page-intro__inner">
     <div class="page-intro__title">
       {eyebrow && <p class="page-intro__context">{eyebrow}</p>}
@@ -72,6 +73,10 @@ const { eyebrow, title, intro, flush = false, bordered = true, tightTop = false 
     overflow-wrap: normal;
     word-break: normal;
     hyphens: none;
+  }
+
+  .page-intro.has-compact-title h1 {
+    font-size: clamp(2.4rem, 1.95rem + 2.25vw, 4rem);
   }
 
   .page-intro__text {

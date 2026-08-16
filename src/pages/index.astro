@@ -5,6 +5,8 @@ import SectionHeading from '../components/SectionHeading.astro';
 import PostCard from '../components/PostCard.astro';
 import EventItem from '../components/EventItem.astro';
 import GroupCard from '../components/GroupCard.astro';
+import { Image } from 'astro:assets';
+import jubileeFlyer from '../assets/flyer-jubilaeum-2026.jpeg';
 import { getPublishedPosts, getUpcomingEvents, getGroups } from '../lib/collections';
 import { homepage } from '../lib/settings';
 
@@ -44,6 +46,33 @@ const { notice } = homepage;
       </section>
     )
   }
+
+  <section class="section rule-section home-special">
+    <div class="wrap">
+      <article class="home-special__card">
+        <div class="home-special__media">
+          <Image
+            src={jubileeFlyer}
+            alt="Flyer zum 45-jährigen Jubiläum der Europa-Show-Tanzgarde am 21. November 2026"
+            widths={[480, 720, 960]}
+            sizes="(min-width: 860px) 38vw, 100vw"
+            loading="lazy"
+          />
+        </div>
+        <div class="home-special__copy">
+          <p class="home-special__eyebrow">45 Jahre Europa-Show-Tanzgarde</p>
+          <h2>Wir&nbsp;feiern&nbsp;Jubiläum!</h2>
+          <p>Am 21. November 2026 laden wir euch zu unserem großen Jubiläumsabend in die Hesselberghalle Wassertrüdingen ein. Freut euch auf ein abwechslungsreiches Programm, eine große Tombola und eine Aftershow-Party ab 21 Uhr.</p>
+          <dl class="home-special__facts">
+            <div><dt>Einlass</dt><dd>17:30 Uhr</dd></div>
+            <div><dt>Beginn</dt><dd>18:30 Uhr</dd></div>
+            <div><dt>Eintritt</dt><dd>5 Euro</dd></div>
+          </dl>
+          <p class="home-special__thanks">Ein herzliches Dankeschön an unsere Sponsoren, die dieses Jubiläum unterstützen!</p>
+        </div>
+      </article>
+    </div>
+  </section>
 
   <section class="section rule-section">
     <div class="wrap">
@@ -109,8 +138,8 @@ const { notice } = homepage;
 
   .notice {
     color: var(--text);
-    background: #fff0f1;
-    border-bottom: 1px solid #e3aeb2;
+    background: color-mix(in srgb, var(--red-600) 7%, white);
+    border-bottom: 1px solid color-mix(in srgb, var(--red-600) 30%, white);
   }
 
   .notice__inner {
@@ -161,6 +190,80 @@ const { notice } = homepage;
 
   .home-more {
     margin-top: var(--space-2);
+  }
+
+  .home-special__card {
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    align-items: start;
+    width: 100%;
+  }
+
+  .home-special__media {
+    overflow: hidden;
+    width: min(100%, 16rem);
+    background: var(--blue-950);
+  }
+
+  .home-special__media :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .home-special__copy {
+    width: 100%;
+  }
+
+  .home-special__eyebrow {
+    margin-bottom: var(--space-2);
+    color: var(--red-600);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .home-special__copy h2 {
+    max-width: none;
+    font-size: clamp(1.75rem, 4.6vw, var(--step-4));
+    white-space: nowrap;
+  }
+
+  .home-special__copy > p:not(.home-special__eyebrow) {
+    margin-top: var(--space-3);
+    color: var(--text-muted);
+  }
+
+  .home-special__facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+  }
+
+  .home-special__facts div {
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--blue-300);
+  }
+
+  .home-special__facts dt {
+    color: var(--text-muted);
+    font-size: var(--step--1);
+  }
+
+  .home-special__facts dd {
+    margin: 0.2rem 0 0;
+    font-weight: 700;
+  }
+
+  .home-special__thanks {
+    font-weight: 700;
+  }
+
+  @media (min-width: 680px) {
+    .home-special__card {
+      grid-template-columns: minmax(13rem, 16rem) minmax(20rem, 1fr);
+    }
   }
 
   .groups-index {
