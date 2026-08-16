@@ -276,7 +276,7 @@ dd {
 .badge[data-cat='vereinsintern'],
 .badge[data-cat='sonstiges'] {
   color: var(--blue-700);
-  background: #edf0ff;
+  background: color-mix(in srgb, var(--blue-700) 8%, white);
 }
 
 .empty-state {
