@@ -6,14 +6,16 @@ import PostCard from '../components/PostCard.astro';
 import EventItem from '../components/EventItem.astro';
 import GroupCard from '../components/GroupCard.astro';
 import { Image } from 'astro:assets';
-import jubileeFlyer from '../assets/flyer-jubilaeum-2026.jpeg';
-import { getPublishedPosts, getUpcomingEvents, getGroups } from '../lib/collections';
+import { getPublishedPosts, getUpcomingEvents, getGroups, getAnlass } from '../lib/collections';
 import { homepage } from '../lib/settings';
 
 const posts = (await getPublishedPosts()).slice(0, 3);
 const events = await getUpcomingEvents(4);
 const groups = await getGroups();
 const { notice } = homepage;
+// Blockt für besondere Anlässe (Jubiläum o. Ä.) – über /admin ein- und
+// ausschaltbar, statt wie zuvor fest im Markup zu stehen.
+const anlass = await getAnlass();
 ---
 
 <BaseLayout>
@@ -47,32 +49,40 @@ const { notice } = homepage;
     )
   }
 
-  <section class="section rule-section home-special">
-    <div class="wrap">
-      <article class="home-special__card">
-        <div class="home-special__media">
-          <Image
-            src={jubileeFlyer}
-            alt="Flyer zum 45-jährigen Jubiläum der Europa-Show-Tanzgarde am 21. November 2026"
-            widths={[480, 720, 960]}
-            sizes="(min-width: 860px) 38vw, 100vw"
-            loading="lazy"
-          />
+  {
+    anlass?.enabled && (
+      <section class="section rule-section home-special">
+        <div class="wrap">
+          <article class="home-special__card">
+            {anlass.image && (
+              <div class="home-special__media">
+                <Image
+                  src={anlass.image}
+                  alt={anlass.imageAlt}
+                  widths={[480, 720, 960]}
+                  sizes="(min-width: 860px) 38vw, 100vw"
+                  loading="lazy"
+                />
+              </div>
+            )}
+            <div class="home-special__copy">
+              {anlass.eyebrow && <p class="home-special__eyebrow">{anlass.eyebrow}</p>}
+              <h2>{anlass.title}</h2>
+              {anlass.text && <p>{anlass.text}</p>}
+              {anlass.facts.length > 0 && (
+                <dl class="home-special__facts">
+                  {anlass.facts.map((fact) => (
+                    <div><dt>{fact.label}</dt><dd>{fact.value}</dd></div>
+                  ))}
+                </dl>
+              )}
+              {anlass.footnote && <p class="home-special__thanks">{anlass.footnote}</p>}
+            </div>
+          </article>
         </div>
-        <div class="home-special__copy">
-          <p class="home-special__eyebrow">45 Jahre Europa-Show-Tanzgarde</p>
-          <h2>Wir&nbsp;feiern&nbsp;Jubiläum!</h2>
-          <p>Am 21. November 2026 laden wir euch zu unserem großen Jubiläumsabend in die Hesselberghalle Wassertrüdingen ein. Freut euch auf ein abwechslungsreiches Programm, eine große Tombola und eine Aftershow-Party ab 21 Uhr.</p>
-          <dl class="home-special__facts">
-            <div><dt>Einlass</dt><dd>17:30 Uhr</dd></div>
-            <div><dt>Beginn</dt><dd>18:30 Uhr</dd></div>
-            <div><dt>Eintritt</dt><dd>5 Euro</dd></div>
-          </dl>
-          <p class="home-special__thanks">Ein herzliches Dankeschön an unsere Sponsoren, die dieses Jubiläum unterstützen!</p>
-        </div>
-      </article>
-    </div>
-  </section>
+      </section>
+    )
+  }
 
   <section class="section rule-section">
     <div class="wrap">
@@ -90,13 +100,7 @@ const { notice } = homepage;
         <div class="wrap">
           <SectionHeading title="Aktuelles" />
           <div class="posts-list">
-            {posts.map((post) => (
-              <PostCard
-                post={post}
-                imagePosition={post.id === 'volksfestumzug' ? 'center 58%' : undefined}
-                imageScale={post.id === 'volksfestumzug' ? 1.25 : 1}
-              />
-            ))}
+            {posts.map((post) => <PostCard post={post} />)}
           </div>
           <a class="arrow-link home-more" href="/aktuelles">Alle Beiträge lesen <span aria-hidden="true">→</span></a>
         </div>
@@ -226,7 +230,12 @@ const { notice } = homepage;
   .home-special__copy h2 {
     max-width: none;
     font-size: clamp(1.75rem, 4.6vw, var(--step-4));
-    white-space: nowrap;
+    /*
+      Früher `white-space: nowrap` – bei einem längeren Titel als dem
+      Jubiläums-Titel wäre die Überschrift aus dem Layout gelaufen. Kurze Titel
+      bleiben durch geschützte Leerzeichen im Text weiterhin einzeilig.
+    */
+    text-wrap: balance;
   }
 
   .home-special__copy > p:not(.home-special__eyebrow) {
@@ -236,7 +245,12 @@ const { notice } = homepage;
 
   .home-special__facts {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    /*
+      Früher fest `repeat(3, …)`. Bei drei Eckdaten pixelgleich, verträgt aber
+      auch zwei oder vier – und bricht auf schmalen Displays um, statt die
+      Spalten unlesbar schmal zu quetschen.
+    */
+    grid-template-columns: repeat(auto-fit, minmax(min(7rem, 100%), 1fr));
     gap: var(--space-3);
     margin-top: var(--space-5);
   }

@@ -14,6 +14,8 @@ gallery:
   - image: /uploads/vereinsbude-regionalpavillon.jpeg
     alt: Der Regionalpavillon mit der Vereinsbude der Europa-Show-Tanzgarde.
   - image: /uploads/vereinsbude-2026.jpeg
+    focusY: 74
+    zoom: 1.03
     alt: Helferinnen und Helfer bei der Vereinsbude 2026.
 draft: false
 ---

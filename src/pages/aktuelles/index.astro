@@ -22,25 +22,7 @@ const [featured, ...rest] = posts;
         ) : (
           <div class="posts-page__list">
             {featured && <PostCard post={featured} />}
-            {rest.map((post) => (
-              <PostCard
-                post={post}
-                imagePosition={
-                  post.id === 'volksfestumzug'
-                    ? 'center 58%'
-                    : post.id === 'neue-trainingsanzuege'
-                      ? 'center 78%'
-                      : undefined
-                }
-                imageScale={
-                  post.id === 'volksfestumzug'
-                    ? 1.25
-                    : post.id === 'neue-trainingsanzuege'
-                      ? 1.08
-                      : 1
-                }
-              />
-            ))}
+            {rest.map((post) => <PostCard post={post} />)}
           </div>
         )
       }

@@ -2,8 +2,8 @@
 
 Moderne, schnelle und statische Website für die Europa-Show-Tanzgarde aus
 Wassertrüdingen – Showtanz, Gardetanz und Vereinsleben. Gebaut mit **Astro**,
-gehostet auf **Cloudflare Pages**, gepflegt über ein einfaches, Git-basiertes
-Redaktionssystem (**Sveltia CMS**) unter `/admin`.
+gehostet auf **Cloudflare Pages**, gepflegt über einen eigenen, Git-basierten
+Redaktionsbereich unter `/admin`.
 
 > Diese Seite ist bewusst datensparsam: keine Cookies, kein Tracking, keine
 > externen Schriftarten-CDNs. Deshalb braucht sie auch keinen Cookie-Banner.
@@ -33,8 +33,8 @@ Redaktionssystem (**Sveltia CMS**) unter `/admin`.
 | Framework        | [Astro](https://astro.build) (statische Ausgabe)            |
 | Sprache          | TypeScript (strict)                                         |
 | Inhalte          | Astro Content Collections (Markdown) + JSON für Einstellungen |
-| CMS              | [Sveltia CMS](https://github.com/sveltia/sveltia-cms) (Git-basiert) unter `/admin` |
-| Auth für /admin  | GitHub OAuth über eine Cloudflare Pages Function (`functions/api/`) |
+| Redaktion        | Eigenentwicklung unter `/admin`; schreibt als Commit ins Repo |
+| Zugang zu /admin | Cloudflare Access (Zero Trust) – kein GitHub-Konto für Redakteur:innen |
 | Schriften        | Selbst gehostet via `@fontsource` (DSGVO-konform, kein Google-CDN) |
 | Styling          | Reines CSS mit CSS-Variablen (`src/styles/`)                |
 | Hosting          | Cloudflare Pages                                            |
@@ -73,24 +73,26 @@ npm run dev
 
 ```text
 ├─ public/
-│  ├─ admin/          # Redaktionssystem (Sveltia CMS): index.html + config.yml
 │  ├─ uploads/        # Über /admin hochgeladene Bilder
 │  ├─ favicon.svg     # Favicon (Monogramm)
 │  ├─ apple-touch-icon.png / og-default.png  # aus dem Logo erzeugt
 │  └─ robots.txt
 ├─ functions/
-│  └─ api/            # Cloudflare Pages Functions: GitHub-OAuth (auth, callback)
+│  └─ admin/api/      # Cloudflare Pages Functions: Redaktions-Schnittstelle
 ├─ src/
 │  ├─ assets/         # Logo & Grafiken (werden beim Build optimiert)
 │  ├─ components/     # Wiederverwendbare Bausteine (.astro)
-│  ├─ content/        # Inhalte: posts, events, groups, gallery (Markdown)
+│  ├─ content/        # Inhalte: posts, events, groups, gallery, chronik, anlass
 │  ├─ data/           # Einstellungen: site.json, homepage.json
-│  ├─ layouts/        # Seitengerüst (BaseLayout)
+│  ├─ layouts/        # Seitengerüst (BaseLayout, AdminLayout)
 │  ├─ lib/            # Hilfsfunktionen (Datum, Sammlungen, Einstellungen)
-│  ├─ pages/          # Alle Seiten/Routen
-│  └─ styles/         # Design-System (tokens, base, motion)
+│  ├─ pages/          # Alle Seiten/Routen; admin/ = Redaktionsbereich
+│  ├─ scripts/        # Bedienlogik des Redaktionsbereichs
+│  └─ styles/         # Design-System (tokens, base, motion, admin)
 ├─ scripts/
-│  └─ prepare-logo.mjs  # Freistellen & Aufbereiten des Logos
+│  ├─ prepare-logo.mjs      # Freistellen & Aufbereiten des Logos
+│  ├─ migrate-gallery.mjs   # einmalige Migration (bereits gelaufen)
+│  └─ migrate-chronik.mjs   # einmalige Migration (bereits gelaufen)
 ├─ docs/              # Ausführliche Dokumentation (siehe unten)
 ├─ astro.config.mjs
 └─ package.json
@@ -109,17 +111,28 @@ liegt in [`docs/editor-guide.md`](docs/editor-guide.md).
 
 **Kurz:**
 
-- **Lokal testen (Entwickler:innen):** `npm run dev`, dann
-  `http://localhost:4321/admin/index.html` öffnen und „Work with Local
-  Repository" wählen (funktioniert in Chrome/Edge, ohne Anmeldung).
-- **Live:** Anmeldung mit GitHub (benötigt die einmalige OAuth-Einrichtung,
-  siehe `docs/cloudflare-setup.md`) oder alternativ „Sign In Using Access
-  Token" mit einem persönlichen GitHub-Token.
+- **Live:** Anmeldung ausschließlich über Cloudflare Access (E-Mail +
+  Bestätigungscode). Danach landet man direkt im Editor – kein GitHub-Konto,
+  kein zweites Passwort. Einrichtung: [`docs/cloudflare-setup.md`](docs/cloudflare-setup.md).
+- **Lokal testen (Entwickler:innen):** `npm run dev` zeigt die Oberfläche, führt
+  aber **keine** Functions aus – Daten lassen sich damit nicht laden. Für einen
+  vollständigen Test `npx wrangler pages dev dist` mit einer `.dev.vars`, siehe
+  Abschnitt „Lokal entwickeln" in `docs/cloudflare-setup.md`.
 
-> Hinweis: Die Bedienoberfläche von Sveltia CMS ist derzeit nur auf Englisch
-> oder Japanisch verfügbar. **Alle Eingabefelder sind aber auf Deutsch
-> beschriftet.** Details und eine Alternative (Decap CMS) stehen in
-> `docs/cms-decision.md`.
+### Arbeitsteilung Redaktion ↔ Entwicklung
+
+Beide Wege schreiben in dasselbe Repository. Damit sie sich nicht gegenseitig
+überschreiben, gilt eine klare Grenze – **serverseitig erzwungen**, nicht nur
+vereinbart (`functions/admin/api/_lib/pfade.ts`):
+
+| Bereich | Wer | Dateien |
+| --- | --- | --- |
+| Redaktion (`/admin`) | Vorstand | `src/content/**`, `src/data/*.json`, `src/assets/gallery/**`, `public/uploads/**` |
+| Technik (GitHub) | Entwicklung | alles andere |
+
+Für den Entwickleralltag: **vor jedem Push `git pull --rebase`** – der Vorstand
+kann jederzeit committet haben. Und `src/content/**` sowie `src/data/*.json`
+möglichst nicht direkt anfassen; dann sind Konflikte strukturell ausgeschlossen.
 
 ---
 
@@ -148,19 +161,25 @@ Adminbereich steht in [`docs/cloudflare-setup.md`](docs/cloudflare-setup.md).
 - **Wichtig:** Die echte Domain muss an **einer** Stelle im Code eingetragen
   werden, damit Canonical-URLs, Sitemap und Social-Vorschau stimmen:
   - `astro.config.mjs` → Konstante `SITE_URL`
-  - `public/admin/config.yml` → `base_url`, `site_url`, `display_url`
-  - Aktuell steht dort der Platzhalter `https://www.europashowtanzgarde.de`.
+  - dieselbe Domain als `ALLOWED_DOMAINS` in den Cloudflare-Umgebungsvariablen
+  - Aktuell steht dort `https://www.europashowtanzgarde.de`.
 
 ---
 
 ## Adminbereich schützen (Cloudflare Zero Trust)
 
-Die öffentliche Website bleibt frei zugänglich. Der Pfad `/admin*` sollte über
-**Cloudflare Access (Zero Trust)** auf berechtigte Personen beschränkt werden.
+Die öffentliche Website bleibt frei zugänglich. **Cloudflare Access** schützt
+`/admin` **und** `/admin/api` – hinter der Schnittstelle steht Schreibzugriff
+aufs Repository.
 
-Wichtig: Die OAuth-Endpunkte unter `/api/*` dürfen **nicht** hinter Access
-liegen. Die genaue Schritt-für-Schritt-Anleitung steht in
-[`docs/cloudflare-setup.md`](docs/cloudflare-setup.md).
+> ⚠️ Zwei Punkte, die leicht übersehen werden:
+> 1. Eine Access-Anwendung auf der eigenen Domain schützt die Adresse
+>    `<projekt>.pages.dev` **nicht**. Dafür braucht es eine zweite Anwendung.
+> 2. Frühere Fassungen dieser Datei sagten, `/api/*` dürfe *nicht* hinter Access
+>    liegen. Das galt für den früheren GitHub-Anmeldevorgang und ist heute
+>    **falsch herum**.
+
+Schritt für Schritt: [`docs/cloudflare-setup.md`](docs/cloudflare-setup.md).
 
 ---
 
@@ -169,8 +188,11 @@ liegen. Die genaue Schritt-für-Schritt-Anleitung steht in
 - Das Vereinslogo liegt als Original unter `input/Logo_Europashowtanzgarde.png`.
 - `npm run logo` stellt es frei (grauer Hintergrund → transparent) und erzeugt
   daraus `src/assets/logo.png`, das Apple-Touch-Icon und das Social-Vorschaubild.
-- Redaktionell hochgeladene Bilder landen unter `public/uploads/` und werden von
-  Sveltia beim Upload automatisch verkleinert (WebP).
+- Redaktionell hochgeladene Bilder werden schon im Browser verkleinert
+  (max. 2048 px, WebP) und landen unter `public/uploads/`.
+- **Galeriebilder liegen bewusst unter `src/assets/gallery/`**, nicht in
+  `public/`: Nur dort ermittelt Astro beim Bauen die Bildmaße, und daraus
+  berechnet die Galerie ihr Raster (`--image-ratio`).
 - Herkunft und rechtliche Hinweise aller Bilder: [`docs/image-sources.md`](docs/image-sources.md).
 
 ---
@@ -179,7 +201,7 @@ liegen. Die genaue Schritt-für-Schritt-Anleitung steht in
 
 | Datei                                             | Inhalt                                            |
 | ------------------------------------------------- | ------------------------------------------------- |
-| [`docs/cms-decision.md`](docs/cms-decision.md)    | Vergleich der CMS-Optionen & Begründung           |
+| [`docs/cms-decision.md`](docs/cms-decision.md)    | Warum eine Eigenentwicklung – und warum Git statt Datenbank |
 | [`docs/design-notes.md`](docs/design-notes.md)    | Designidee, Farben, Typografie, Animation         |
 | [`docs/image-sources.md`](docs/image-sources.md)  | Bildquellen & rechtliche Hinweise                 |
 | [`docs/cloudflare-setup.md`](docs/cloudflare-setup.md) | Deployment & Zero-Trust-Schutz für `/admin`  |
@@ -200,13 +222,22 @@ liegen. Die genaue Schritt-für-Schritt-Anleitung steht in
       Personen (v. a. Minderjährige) bestätigen – siehe `docs/image-sources.md`.
 - [ ] **Domain final schalten:** `europashowtanzgarde.de` liegt bereits bei
       Cloudflare. Prüfen, ob „www" oder die nackte Domain Hauptadresse ist, und
-      in `astro.config.mjs` sowie `public/admin/config.yml` bestätigen.
-- [ ] **GitHub OAuth App anlegen** und Secrets in Cloudflare setzen
-      (`docs/cloudflare-setup.md`).
-- [ ] **Cloudflare Access** für `/admin*` einrichten.
+      in `astro.config.mjs` sowie `ALLOWED_DOMAINS` bestätigen.
+- [ ] **Redaktionsbereich in Betrieb nehmen** – die Schritte 3 bis 5 in
+      [`docs/cloudflare-setup.md`](docs/cloudflare-setup.md): Bot-Konto und
+      Token anlegen, Umgebungsvariablen setzen, **beide** Access-Anwendungen
+      einrichten (auch die für `*.pages.dev`). Danach die Sicherheitsprüfungen
+      aus Schritt 6 durchgehen.
 - [ ] **Beispiel-Termine ersetzen:** die vorbefüllten Termine sind mit
       „Beispieltermin" gekennzeichnet und durch echte Daten zu ersetzen.
 - [ ] **Trainingszeiten & Ansprechpartner:innen** bei den Garden ergänzen
       (bewusst leer gelassen, um keine veralteten Angaben zu zeigen).
-- [ ] **Weitere Fotos einpflegen** (Beiträge, Garden, mehr Galerie-Alben) – aus
-      offiziellen Vereinsquellen, siehe `docs/image-sources.md`.
+- [ ] **Weitere Fotos einpflegen** – über `/admin`, siehe `docs/image-sources.md`.
+- [ ] **Bekannte Schwachstellen in Abhängigkeiten:** `npm audit` meldet fünf
+      Punkte in Bau-Werkzeugen (astro, postcss, nanoid, svgo, fast-uri). Sie
+      betreffen nicht die ausgelieferte Seite. `npm audit fix` möchte Astro auf
+      7.2.2 heben – das ist machbar, aber danach gehört der Vergleich des
+      gebauten HTML gegen den vorherigen Stand wiederholt.
+- [ ] **Aufräumen:** rund 20 MB Screenshot-Dateien im Projektstammverzeichnis
+      (`timeline-*.png`, `home-features-*.png` u. a.) stammen aus früheren
+      Layout-Durchgängen und gehören nicht ins Repository.

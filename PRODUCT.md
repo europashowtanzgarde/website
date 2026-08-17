@@ -6,7 +6,7 @@ brand
 
 ## Users
 
-Die Website richtet sich an Menschen aus Wassertrüdingen und der Region, die Auftritte besuchen, sich über den Verein informieren oder selbst mittanzen möchten. Mitglieder, Familien und Vereinsinteressierte sollen Termine, Garden, Ansprechpartner und Einblicke ohne Umwege finden. Redakteurinnen und Redakteure pflegen die Inhalte getrennt davon über Sveltia CMS.
+Die Website richtet sich an Menschen aus Wassertrüdingen und der Region, die Auftritte besuchen, sich über den Verein informieren oder selbst mittanzen möchten. Mitglieder, Familien und Vereinsinteressierte sollen Termine, Garden, Ansprechpartner und Einblicke ohne Umwege finden. Redakteurinnen und Redakteure pflegen die Inhalte getrennt davon über den Redaktionsbereich unter `/admin`.
 
 ## Product Purpose
 

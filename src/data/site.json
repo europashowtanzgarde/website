@@ -4,6 +4,23 @@
   "claim": "Showtanz und Vereinsleben aus Wassertrüdingen",
   "email": "info@europashowtanzgarde.de",
   "location": "Wassertrüdingen",
+  "kontakt": {
+    "intro": [
+      "Du möchtest mehr über die Europa-Show-Tanzgarde erfahren, bei uns mittanzen oder uns für eure Veranstaltung buchen?",
+      "Komm bei einem Training vorbei, kontaktiere uns direkt über unsere Website, per Mail oder per Telefon. Wir freuen uns auf dich!"
+    ],
+    "adresse": [
+      "Europa-Show-Tanzgarde Wassertrüdingen e.V.",
+      "Neue Schulgasse 1",
+      "91717 Wassertrüdingen"
+    ],
+    "telefon": [
+      { "name": "Luisa Geier", "nummer": "+49 151 23461278" },
+      { "name": "Pauline Höver", "nummer": "+49 162 1807530" }
+    ],
+    "bild": "/uploads/pauline-und-luisa.png",
+    "bildAlt": "Zwei Vorstandsmitglieder der Europa-Show-Tanzgarde vor dem Kulturtreff in Wassertrüdingen."
+  },
   "social": {
     "facebook": "https://www.facebook.com/europashowtanzgarde",
     "instagram": "https://www.instagram.com/europashowtanzgarde",

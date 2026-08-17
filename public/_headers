@@ -6,6 +6,16 @@
   Referrer-Policy: strict-origin-when-cross-origin
   X-Frame-Options: SAMEORIGIN
   Permissions-Policy: geolocation=(), microphone=(), camera=()
+  # Die Seite lädt nichts von fremden Servern (Schriften sind selbst gehostet,
+  # kein Tracking, keine CDNs). 'unsafe-inline' ist nötig, weil Astro kleine
+  # Stylesheets direkt in die Seite schreibt.
+  Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self'; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'
+
+# Der Redaktionsbereich gehört nicht in Suchmaschinen.
+/admin/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+
 
 # Von Astro gehashte Assets dürfen dauerhaft gecacht werden.
 /_astro/*

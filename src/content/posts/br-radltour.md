@@ -15,6 +15,8 @@ gallery:
   - image: /uploads/br-radltour-jugendgarde-1.jpeg
     alt: Die Jugendgarde begrüßt die Teilnehmerinnen und Teilnehmer der BR Radltour.
   - image: /uploads/br-radltour-jugendgarde-2.jpeg
+    focusY: 74
+    zoom: 1.25
     alt: Die Jugendgarde beim Spalier für die BR Radltour.
 draft: false
 ---

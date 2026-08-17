@@ -6,11 +6,17 @@ description: >-
   Unsere Kinder- und Jugendgarde sind ab sofort im neuen Look unterwegs -
   perfekt ausgestattet für Auftritte und Veranstaltungen!
 lead: "Ein neuer Look für unseren Nachwuchs!"
+leadImContent: true
 cover: /uploads/aktuelles-neue-trainingsanzuege.jpeg
 coverAlt: Die Jugendgarde in ihren neuen Trainingsjacken.
+coverFocusY: 78
+teaserFocusY: 78
+teaserZoom: 1.08
 gallery:
   - image: /uploads/trainingsjacken-kindergarde.jpeg
     alt: Die Kindergarde in ihren neuen Trainingsjacken.
+    focusY: 70
+    zoom: 1.05
 draft: false
 ---
 

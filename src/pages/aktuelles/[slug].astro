@@ -6,6 +6,7 @@ import CmsImage from '../../components/CmsImage.astro';
 import ImageCarousel from '../../components/ImageCarousel.astro';
 import { getPublishedPosts } from '../../lib/collections';
 import { formatDate, isoDate } from '../../lib/date';
+import { bildProps } from '../../lib/bild';
 
 export const getStaticPaths = (async () => {
   const posts = await getPublishedPosts();
@@ -13,39 +14,29 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 const { post } = Astro.props;
-const { title, date, dateLabel, hideDate, description, lead, cover, coverAlt, gallery } = post.data;
-const fallbackLeads: Record<string, string> = {
-  'br-radltour': 'Am 02. August war bei uns einiges los: Die BR Radltour machte Stopp bei ihrer Wasserpause in Wassertrüdingen und natürlich waren auch wir von der Europa-Show-Tanzgarde mit dabei!',
-  vereinsbude: 'Am 31. Juli und 01. August durften wir wieder unsere Vereinsbude öffnen und zwei schöne Tage gemeinsam mit vielen Besuchern verbringen.',
-  volksfestumzug: 'Am 31. Mai waren unsere drei Sparten wieder beim Trüdinger Volksfestumzug dabei!',
-  kinderfasching: 'Am 17. Februar wurde es bunt, fröhlich und natürlich auch tänzerisch!',
-  'neue-trainingsanzuege': 'Ein neuer Look für unseren Nachwuchs!',
-};
-const displayedLead = lead ?? fallbackLeads[post.id];
+const {
+  title, date, dateLabel, hideDate, description, lead, leadImContent,
+  cover, coverAlt, coverFocusY, coverZoom, coverOffsetX, coverFit, gallery,
+} = post.data;
+
+// Titelbild und Beitragsbilder mit ihrem jeweils redaktionell gepflegten
+// Bildausschnitt (früher pro Dateiname fest im Code hinterlegt).
+const coverDarstellung = bildProps({
+  focusY: coverFocusY, zoom: coverZoom, offsetX: coverOffsetX, fit: coverFit,
+});
 const carouselImages = cover && gallery.length > 0
-  ? [{ image: cover, alt: coverAlt }, ...gallery].map((image) => (
-      image.image.endsWith('/br-radltour-jugendgarde-2.jpeg')
-        ? { ...image, position: 'center 74%', scale: 1.25 }
-        : image.image.endsWith('/aktuelles-volksfestumzug-2026.jpeg')
-          ? { ...image, position: 'center 55%', scale: 1.22, offsetX: '2%' }
-        : image.image.endsWith('/vereinsbude-2026.jpeg')
-          ? { ...image, position: 'center 74%', scale: 1.03 }
-        : image.image.endsWith('/kinderfasching-zeitungsartikel-prinzenpaar.jpeg')
-          ? { ...image, fit: 'contain' as const, position: 'center center', scale: 1 }
-        : image.image.endsWith('/kinderfasching-jugendgarde.jpeg')
-          ? { ...image, position: 'center center', scale: 1.1 }
-        : image.image.endsWith('/aktuelles-neue-trainingsanzuege.jpeg')
-          ? { ...image, position: 'center 78%', scale: 1 }
-        : image.image.endsWith('/trainingsjacken-kindergarde.jpeg')
-          ? { ...image, position: 'center 70%', scale: 1.05 }
-        : image
-    ))
+  ? [
+      { image: cover, alt: coverAlt, ...coverDarstellung },
+      ...gallery.map(({ image, alt, caption, focusY, zoom, offsetX, fit }) => ({
+        image, alt, caption, ...bildProps({ focusY, zoom, offsetX, fit }),
+      })),
+    ]
   : [];
 const { Content } = await render(post);
 ---
 
 <BaseLayout title={title} description={description} ogImage={cover ?? '/og-default.png'} article>
-  <article class:list={['post', `post--${post.id}`]}>
+  <article class:list={['post', `post--${post.id}`, { 'has-lead-im-content': Boolean(lead && leadImContent) }]}>
     <div class="wrap post__inner">
       <header class="post__head">
         <div class="post__title-block">
@@ -54,18 +45,27 @@ const { Content } = await render(post);
         </div>
       </header>
 
-      {displayedLead && post.id !== 'neue-trainingsanzuege' && <p class="post__lead">{displayedLead}</p>}
+      {lead && !leadImContent && <p class="post__lead">{lead}</p>}
 
       {cover && (
         <div class="post__cover">
           {carouselImages.length > 0
             ? <ImageCarousel images={carouselImages} label={`Bilder zum Beitrag ${title}`} />
-            : <CmsImage src={cover} alt={coverAlt} ratio="4 / 3" loading="eager" />}
+            : <CmsImage
+                src={cover}
+                alt={coverAlt}
+                ratio="4 / 3"
+                loading="eager"
+                position={coverDarstellung.position}
+                scale={coverDarstellung.scale}
+                offsetX={coverDarstellung.offsetX}
+                fit={coverDarstellung.fit}
+              />}
         </div>
       )}
 
       <div class="post__content">
-        {displayedLead && post.id === 'neue-trainingsanzuege' && <p class="post__inline-lead">{displayedLead}</p>}
+        {lead && leadImContent && <p class="post__inline-lead">{lead}</p>}
         <div class="prose"><Content /></div>
 
       </div>
@@ -157,79 +157,46 @@ const { Content } = await render(post);
     color: var(--text-muted);
   }
 
-  .post--neue-trainingsanzuege .post__content {
+  /*
+    Steht die Einleitung im Textbereich statt über dem Bild, rückt der
+    Textbereich etwas nach unten (Feld `leadImContent`).
+  */
+  .post.has-lead-im-content .post__content {
     padding-top: var(--space-2);
   }
 
-  .post--br-radltour .post__cover,
-  .post--br-radltour .post__content,
-  .post--vereinsbude .post__cover,
-  .post--vereinsbude .post__content,
-  .post--volksfestumzug .post__cover,
-  .post--volksfestumzug .post__content,
-  .post--kinderfasching .post__cover,
-  .post--kinderfasching .post__content,
-  .post--neue-trainingsanzuege .post__cover,
-  .post--neue-trainingsanzuege .post__content {
+  .post__cover,
+  .post__content {
     margin-top: var(--space-2);
   }
 
+  /*
+    Ab 760px stehen Bild und Text nebeneinander. Diese Regeln galten früher
+    nur für die fünf damals vorhandenen Beiträge (`.post--<slug>`), sodass
+    jeder NEUE Beitrag auf ein abweichendes Float-Layout zurückfiel. Jetzt
+    gelten sie für alle – die bestehenden Beiträge sehen unverändert aus.
+  */
   @media (min-width: 760px) {
-    .post__cover {
-      float: left;
-      width: min(42%, 28rem);
-      margin-right: clamp(1.5rem, 4vw, 3rem);
-      margin-bottom: var(--space-4);
-    }
-
-    .post--br-radltour .post__inner,
-    .post--vereinsbude .post__inner,
-    .post--volksfestumzug .post__inner,
-    .post--kinderfasching .post__inner,
-    .post--neue-trainingsanzuege .post__inner {
+    .post__inner {
       display: grid;
       grid-template-columns: minmax(16rem, 28rem) minmax(0, 1fr);
       column-gap: clamp(1.5rem, 4vw, 3rem);
     }
 
-    .post--br-radltour .post__head,
-    .post--br-radltour .post__lead,
-    .post--br-radltour .post__back,
-    .post--vereinsbude .post__head,
-    .post--vereinsbude .post__lead,
-    .post--vereinsbude .post__back,
-    .post--volksfestumzug .post__head,
-    .post--volksfestumzug .post__lead,
-    .post--volksfestumzug .post__back,
-    .post--kinderfasching .post__head,
-    .post--kinderfasching .post__lead,
-    .post--kinderfasching .post__back,
-    .post--neue-trainingsanzuege .post__head,
-    .post--neue-trainingsanzuege .post__lead,
-    .post--neue-trainingsanzuege .post__back {
+    .post__head,
+    .post__lead,
+    .post__back {
       grid-column: 1 / -1;
     }
 
-    .post--br-radltour .post__cover,
-    .post--vereinsbude .post__cover,
-    .post--volksfestumzug .post__cover,
-    .post--kinderfasching .post__cover,
-    .post--neue-trainingsanzuege .post__cover {
+    .post__cover {
       grid-column: 1;
       width: 100%;
-      margin-right: 0;
-      margin-bottom: 0;
-      float: none;
     }
 
-    .post--br-radltour .post__content,
-    .post--vereinsbude .post__content,
-    .post--volksfestumzug .post__content,
-    .post--kinderfasching .post__content,
-    .post--neue-trainingsanzuege .post__content {
+    .post__content {
       grid-column: 2;
     }
-
   }
 
   .post__back,

@@ -2,23 +2,24 @@
 import type { CollectionEntry } from 'astro:content';
 import CmsImage from './CmsImage.astro';
 import { formatDate, isoDate } from '../lib/date';
+import { bildProps } from '../lib/bild';
 
 interface Props {
   post: CollectionEntry<'posts'>;
   featured?: boolean;
   showDate?: boolean;
-  imagePosition?: string;
-  imageScale?: number;
 }
 
-const { post, featured = false, showDate = true, imagePosition, imageScale = 1 } = Astro.props;
-const { title, date, dateLabel, hideDate, description, cover } = post.data;
+const { post, featured = false, showDate = true } = Astro.props;
+const { title, date, dateLabel, hideDate, description, cover, teaserFocusY, teaserZoom } = post.data;
 const href = `/aktuelles/${post.id}`;
+// Bildausschnitt der Teaser-Karte – redaktionell einstellbar (siehe lib/bild.ts).
+const teaser = bildProps({ focusY: teaserFocusY, zoom: teaserZoom });
 ---
 
 <article class:list={['post-teaser', { 'is-featured': featured }]}>
   <a class="post-teaser__media" href={href} tabindex="-1" aria-hidden="true">
-    <CmsImage src={cover} alt="" seed={post.id} ratio={featured ? '16 / 10' : '3 / 2'} loading={featured ? 'eager' : 'lazy'} position={imagePosition} scale={imageScale} />
+    <CmsImage src={cover} alt="" seed={post.id} ratio={featured ? '16 / 10' : '3 / 2'} loading={featured ? 'eager' : 'lazy'} position={teaser.position} scale={teaser.scale} />
   </a>
   <div class="post-teaser__body">
     {showDate && !hideDate && <time datetime={isoDate(date)}>{dateLabel ?? formatDate(date)}</time>}

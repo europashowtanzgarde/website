@@ -1,38 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/PageIntro.astro';
+import { getChronik } from '../lib/collections';
 
-const timeline = [
-  { year: '1981', title: 'Gründung der Stadtgarde Wassertrüdingen', text: 'Sechs junge Frauen gründen die „Trüdinger Swinging Girls“. Schon wenige Monate später folgt der erste Auftritt beim Altstadtfest.' },
-  { year: '1982', title: 'Erstes Programm & Jugendgarde', text: 'Mit dem Can-Can steht das erste große Programm auf der Bühne. Aus dem Zulauf jüngerer Tänzerinnen entsteht die Jugendgarde.' },
-  { year: '1984', title: 'Gründung der Kindergarde', text: 'Für die Jüngsten wird die Kindergarde gegründet.' },
-  { year: '1985', title: 'Erste Erfolge und europäisches Engagement', text: 'Die Garde ist erstmals im Fernsehen zu sehen und absolviert im selben Jahr 30 weitere Auftritte. Beim Gala-Abend in der Partnerstadt Bellac tritt sie erstmals im Ausland auf, wird als „Stadtgarde“ Kooperationsmitglied der Europäischen Union und erhält mit dem Georg-Ehnes-Preis die höchste Auszeichnung im Landkreis Ansbach.' },
-  { year: '1987', title: 'Ernennung zur Europa-Show-Tanzgarde', text: 'Bei ihrem Auftritt für den europäischen Gedanken in Nürnberg wird die Garde durch den ehemaligen Bundespräsidenten Walter Scheel zur Europa-Show-Tanzgarde ernannt.' },
-  { year: '1988', title: 'Gala-Abend im Hilton-Hotel in München', text: 'Die Garde wirkt beim Gala-Abend im Hilton-Hotel in München mit.' },
-  { year: '1989', title: 'Auftritte in Berlin und Nürnberg', text: 'Die Europa-Show-Tanzgarde präsentiert sich bei einem Tanzauftritt in Berlin und tritt in der Meistersingerhalle in Nürnberg auf.' },
-  { year: '1993', title: 'Auftritte im Euro-Disneyland Resort bei Paris', text: 'Die Europa-Tanzgarde präsentiert sich bei Auftritten im Euro-Disneyland Resort nahe Paris.' },
-  { year: '1996', title: 'Europäisches Parlament und Städtepartnerschaft', text: 'Ein großes Highlight und eine besondere Ehre ist der Auftritt der Europa-Show-Tanzgarde im Europäischen Parlament in Brüssel. Außerdem begleitet die Garde die Feierlichkeiten zum zehnjährigen Bestehen der Städtepartnerschaft mit Bellac in Frankreich.' },
-  { year: '1997', title: 'Auftritte in Straßburg und Brüssel', text: 'Die Garde begleitet die Verleihung des „Europa-Diploms“ an die Stadt Wassertrüdingen mit einem Showtanz in Straßburg und präsentiert sich bei Auftritten im Europäischen Parlament in Brüssel.' },
-  { year: '1999', title: 'Europäische Begegnungen und Auszeichnungen', text: 'Die Garde begleitet Feierlichkeiten der Städtepartnerschaft mit Bellac in Frankreich, reist gemeinsam mit dem Stadtoberhaupt zur Verleihung des Europa-Diploms an Wassertrüdingen nach Straßburg und unternimmt in Zusammenarbeit mit Hermann Grimm eine Fahrt nach Rumänien.' },
-  { year: '2000', title: 'Rumänienreise und EXPO-Auftritt', text: 'Die Garde reist erstmals für einen Auftritt und einen Jugendaustausch nach Rumänien und tritt außerdem anlässlich der Weltausstellung EXPO 2000 in Hannover auf.' },
-  { year: '2001', title: 'Monaco, Jubiläum und „Flying Steps“', text: 'Die Europa-Show-Tanzgarde besucht das Fürstentum Monaco und präsentiert sich dort bei mehreren Auftritten. Zum 20-jährigen Bestehen werden die Breakdance-Weltmeister „Flying Steps“ aus Berlin nach Wassertrüdingen eingeladen; außerdem nimmt die Garde in Berlin an einem gemeinsamen Training mit ihnen teil.' },
-  { year: '2002', title: 'Messe- und Auslandsauftritte', text: 'Die Garde tritt auf zwei Fremdenverkehrsmessen in Stuttgart und München auf und absolviert weitere Auslandsauftritte in Rumänien und im Fürstentum Monaco.' },
-  { year: '2003', title: 'Meisterschaft und Auftrittsreisen', text: 'Die Garde tritt bei den Rock’n’Roll-Meisterschaften in Gunzenhausen auf. Weitere Auftrittsreisen führen sie ins Disneyland Paris, an den Plattensee in Ungarn und in die Partnerstadt Bellac.' },
-  { year: '2004', title: 'Reisen, Auszeichnung und Städtepartnerschaft', text: 'Die dritte Rumänientour wird durch einen „Sommerurlaub“ im spanischen Santa Susanna ergänzt. Außerdem erhält die Europa-Show-Tanzgarde den Georg-Ehnes-Gedächtnispreis und begleitet die Feierlichkeiten zum zehnjährigen Bestehen der Städtepartnerschaft mit Bellac in Frankreich.' },
-  { year: '2005', title: 'Auslandsauftritte und Wettbewerbserfolg', text: 'Die Europa-Show-Tanzgarde tritt in Dänemark sowie auf der kroatischen Insel Rab auf. Außerdem erreicht die Jugendgarde beim Teen-Dance-Wettbewerb den 3. Platz.' },
-  { year: '2006', title: 'Tropical Islands und „Bayern-Rundfahrt“', text: 'Die Garde verbindet ihren Auftritt im „Tropical Islands“ bei Berlin mit gemeinsamer Freizeit und tritt außerdem bei der „Bayern-Rundfahrt“ in Gunzenhausen auf.' },
-  { year: '2007', title: 'Berlin-Tour zur „Grünen Woche“', text: 'Bei ihrer Berlin-Tour tritt die Garde auf der Messe „Grüne Woche“ auf.' },
-  { year: '2008', title: 'Chrysanthemenball und „Südwild“', text: 'Die Europa-Show-Tanzgarde tritt beim Chrysanthemenball in der Stadthalle Gunzenhausen auf und erlebt spannende Fernsehaufnahmen mit „Südwild“ für das Bayerische Fernsehen.' },
-  { year: '2009', title: 'Partnerschaftsjubiläum in Bellac', text: 'Die Europa-Show-Tanzgarde feiert das Partnerschaftsjubiläum in Bellac in Frankreich.' },
-  { year: '2010', title: 'Showauftritte und Tanzturnier', text: 'Die Europa-Show-Tanzgarde gestaltet einen großen Showabend in Auhausen, tritt bei der Seenland-Gala in der Stadthalle Gunzenhausen sowie zum 40-jährigen Bestehen des Maschinenrings im Onoldiasaal in Ansbach auf und nimmt an einem Tanzturnier in Asbach-Bäumenheim teil.' },
-  { year: '2012', title: 'Tourismusmesse und Festzug', text: 'Die Europa-Show-Tanzgarde tritt auf der Freizeit- und Tourismusmesse in Nürnberg auf und nimmt am Festzug in der mittelfränkischen Regierungsstadt Ansbach teil.' },
-  { year: '2013', title: 'Show-Fasching und Reise nach Bellac', text: 'Die Europa-Show-Tanzgarde veranstaltet den ersten Trüdinger „Show-Fasching“ und reist anlässlich der Jubiläumsfeier der Städtepartnerschaft nach Bellac.' },
-  { year: '2014', title: 'Erste Dance Night in der Hesselberghalle', text: 'Bei der ersten Dance Night begrüßt die Europa-Show-Tanzgarde Gastgruppen aus ganz Bayern in der Hesselberghalle.' },
-  { year: '2015', title: 'Show-Fasching und besondere Auftritte', text: 'Die Europa-Show-Tanzgarde veranstaltet den zweiten Trüdinger „Show-Fasching“, absolviert einen Gastauftritt beim Europafest in der Bundeshauptstadt Berlin und tritt beim Kreisreiterball in Ansbach auf.' },
-  { year: '2017', title: 'Zweite Dance Night', text: 'Die Europa-Show-Tanzgarde veranstaltet die zweite Dance Night.' },
-  { year: '2019', title: 'Dritte Dance Night', text: 'Die Europa-Show-Tanzgarde veranstaltet die dritte Dance Night.' },
-  { year: '2023', title: 'Auftritt zum Partnerschaftsjubiläum in Bellac', text: 'Anlässlich des Jubiläums der Städtepartnerschaft tritt die Europa-Show-Tanzgarde in Bellac auf.' },
-];
+// Die Chronik liegt als Sammlung unter src/content/chronik/ und ist damit
+// redaktionell pflegbar. Zuvor stand sie als 30-stellige Konstante hier.
+const timeline = await getChronik();
 
 ---
 
@@ -50,66 +23,7 @@ const timeline = [
             <li class={`timeline-${item.year}`}>
               <time>{item.year}</time>
               <div><h3 class:list={{
-                'timeline__title--nowrap': [
-                  'Gründung der Stadtgarde Wassertrüdingen',
-                  'Erste Erfolge und europäisches Engagement',
-                  'Kooperationsmitglied der Europäischen Union',
-                  'Verleihung des Georg-Ehnes-Preises',
-                  'Ernennung zur Europa-Show-Tanzgarde',
-                  'Gala-Abend im Hilton-Hotel in München',
-                  'Auftritt in der Meistersingerhalle',
-                  'Auftritte im Euro-Disneyland Resort bei Paris',
-                  'Städtepartnerschaft Wassertrüdingen–Bellac',
-                  'Europäisches Parlament und Städtepartnerschaft',
-                  'Auftritte in Straßburg und Brüssel',
-                  'Auftritt im Europäischen Parlament in Brüssel',
-                  'Auftritte im Europäischen Parlament in Brüssel',
-                  'Verleihung des Europa-Diploms in Straßburg',
-                  'Europäische Begegnungen und Auszeichnungen',
-                  'Auftritt bei der EXPO in Hannover',
-                  'Rumänienreise und EXPO-Auftritt',
-                  'Monaco, Jubiläum und „Flying Steps“',
-                  'Besuch und Auftritte im Fürstentum Monaco',
-                  'Auftritte auf Fremdenverkehrsmessen',
-                  'Auslandsauftritte in Rumänien und Monaco',
-                  'Rock’n’Roll-Meisterschaften in Gunzenhausen',
-                  'Meisterschaft und Auftrittsreisen',
-                  'Dritte Rumänientour und Reise nach Spanien',
-                  'Reisen, Auszeichnung und Städtepartnerschaft',
-                  '„Antenne Bayern“-Fest in Wassertrüdingen',
-                  'Auftritte in Dänemark und Kroatien',
-                  'Auslandsauftritte und Wettbewerbserfolg',
-                  '3. Platz beim Teen-Dance-Wettbewerb',
-                  'Verein des Monats bei „Radio 8“',
-                  'Auftritt im „Tropical Islands“ bei Berlin',
-                  '4. Platz beim Tanzwettbewerb in Niederrieden',
-                  'Auftritt bei der „Bayern-Rundfahrt“',
-                  'Tropical Islands und „Bayern-Rundfahrt“',
-                  'Auftritte in Nürnberg und Wassertrüdingen',
-                  'Auftritt beim Chrysanthemenball',
-                  'Fernsehaufnahmen mit „Südwild“',
-                  'Chrysanthemenball und „Südwild“',
-                  'Partnerschaftsjubiläum in Bellac',
-                  'Gemeinsames Wochenende in Prag',
-                  'Erstes historisches Schloss- und Stadtmauerfest',
-                  'Tanzturnier in Asbach-Bäumenheim',
-                  'Freizeit- und Tourismusmesse in Nürnberg',
-                  'Besuch der Gartenschau-Kommission',
-                  'Erster Trüdinger „Show-Fasching“',
-                  'Show-Fasching und Reise nach Bellac',
-                  '30 Jahre Städtepartnerschaft mit Bellac',
-                  'Afrika-Karibik-Fest in Wassertrüdingen',
-                  'Betriebsfest von Schwarzkopf & Henkel',
-                  'Erste Dance Night in der Hesselberghalle',
-                  'Faschingsumzüge in Megesheim und Wassertrüdingen',
-                  'Zweiter Trüdinger „Show-Fasching“',
-                  'Show-Fasching und besondere Auftritte',
-                  'Auftritt zum Partnerschaftsjubiläum in Bellac',
-                  'Umbruch und Generationenwechsel',
-                  '50 Jahre Gauschützen Hesselberg',
-                  'Messe Altmühlfranken in Gunzenhausen',
-                  'Russenfasching und Faschingsumzüge',
-                ].includes(item.title),
+                'timeline__title--nowrap': item.nowrap,
               }}>{item.title}</h3><p>{item.text}</p></div>
             </li>
           ))}

@@ -1,155 +1,181 @@
 # Anleitung für die Website-Pflege
 
 Diese Anleitung richtet sich an alle im Verein, die Inhalte auf der Website
-pflegen – **ganz ohne Programmierkenntnisse**. Nimm dir für den ersten Termin
-oder Beitrag ein paar ruhige Minuten. Kaputtmachen kann man dabei fast nichts:
-Alle Änderungen werden gespeichert und lassen sich rückgängig machen.
+pflegen – **ganz ohne Programmierkenntnisse**. Kaputtmachen kann man dabei fast
+nichts: Jede Änderung wird gespeichert und lässt sich rückgängig machen.
 
-> **Kurz zusammengefasst:** Du meldest dich unter `…/admin` an, füllst
-> Formulare aus und klickst auf **Speichern/Veröffentlichen**. Wenige Minuten
-> später ist die Änderung auf der Website sichtbar.
+> **Kurz gesagt:** Du öffnest `…/admin`, füllst Formulare aus und klickst auf
+> **Speichern**. Ein bis drei Minuten später ist die Änderung auf der Website
+> sichtbar.
 
----
-
-## 1. Im Adminbereich anmelden
-
-1. Öffne im Browser deine Website-Adresse und hänge **`/admin`** an, z. B.
-   `https://www.europashowtanzgarde.de/admin`.
-2. Zuerst erscheint eventuell eine **Cloudflare-Anmeldung** (Sicherheitsschritt).
-   Melde dich mit der E-Mail-Adresse an, die für dich freigeschaltet wurde. Du
-   bekommst einen Bestätigungscode per E-Mail.
-3. Danach zeigt das Redaktionssystem den Knopf **„Sign in with GitHub"**.
-   Darauf klicken und mit dem Vereins-GitHub-Konto anmelden.
-
-> Klappt die Anmeldung nicht? Melde dich bei der Person, die die Website
-> technisch betreut. Häufig fehlt nur eine Freischaltung deiner E-Mail-Adresse.
-
-Nach der Anmeldung siehst du links eine Liste: **Beiträge, Termine, Garden,
-Galerie-Alben, Einstellungen**.
+Der Redaktionsbereich funktioniert auf dem **Handy genauso wie am Rechner**.
+Termine lassen sich gut unterwegs eintragen, längere Beiträge schreibt man
+bequemer am Rechner.
 
 ---
 
-## 2. Einen Beitrag (Neuigkeit) schreiben
+## 1. Anmelden
 
-1. Links auf **Beiträge** klicken → oben rechts **„New Beitrag"**
-   (Neuer Beitrag).
-2. Felder ausfüllen:
-   - **Titel** – die Überschrift.
-   - **Datum** – das Veröffentlichungsdatum.
-   - **Kurzbeschreibung** – ein, zwei Sätze für die Vorschau und Google.
-   - **Titelbild** – optional (siehe [Bild hochladen](#3-ein-bild-hochladen)).
-     Ohne Bild wird automatisch eine schöne Bühnen-Grafik angezeigt.
-   - **Inhalt** – der eigentliche Text. Fett, Listen und Zwischenüberschriften
-     gehen über die kleine Werkzeugleiste.
-   - **Entwurf** – solange dieser Schalter an ist, ist der Beitrag **nicht**
-     öffentlich. Zum Veröffentlichen ausschalten.
-3. Oben auf **„Save"** bzw. **„Publish"** klicken.
+1. Öffne im Browser `https://www.europashowtanzgarde.de/admin`.
+2. Es erscheint eine **Cloudflare-Anmeldung**. Gib die E-Mail-Adresse ein, die
+   für dich freigeschaltet wurde. Du bekommst einen Bestätigungscode per E-Mail.
+3. Danach bist du direkt im Redaktionsbereich. **Mehr braucht es nicht** – kein
+   zweites Passwort, kein weiteres Konto.
 
-Der Beitrag erscheint danach unter **Aktuelles** – der neueste steht oben.
+> Klappt die Anmeldung nicht? Dann ist deine E-Mail-Adresse vermutlich noch
+> nicht freigeschaltet. Melde dich bei der Person, die die Website technisch
+> betreut.
+
+Du siehst dann eine Übersicht mit Kacheln: **Termine, Beiträge, Galerie,
+Garden, Startseite, Chronik, Einstellungen**. Ganz oben steht, wann zuletzt
+etwas geändert wurde.
 
 ---
 
-## 3. Ein Bild hochladen
+## 2. Einen Termin anlegen
 
-Überall, wo ein Bildfeld ist (**Titelbild**, **Galerie** …):
-
-1. Auf das Bildfeld klicken → **„Upload"** wählen.
-2. Bild vom Computer/Handy auswählen. Es wird **automatisch verkleinert** – du
-   musst dich um die Dateigröße nicht kümmern.
-3. **Wichtig – Bildbeschreibung:** In das Feld „Bildbeschreibung" kurz
-   schreiben, was auf dem Bild zu sehen ist (z. B. „Kindergarde beim
-   Altstadtfest"). Das hilft blinden Menschen und Suchmaschinen.
-
-> Bitte nur Fotos verwenden, an denen der Verein die Rechte hat, und bei denen
-> die abgebildeten Personen mit einer Veröffentlichung einverstanden sind
-> (besonders bei Kindern).
-
----
-
-## 4. Einen Termin anlegen
-
-1. Links auf **Termine** → **„New Termin"**.
-2. Felder:
+1. Kachel **Termine** → **+ Neuer Termin**.
+2. Ausfüllen:
    - **Titel** – z. B. „Auftritt beim Altstadtfest".
-   - **Datum** – Tag des Termins.
-   - **Uhrzeit** – optional, im Format `19:30`.
+   - **Datum** – auf dem Handy öffnet sich die gewohnte Datumsauswahl.
+   - **Enddatum** – nur bei mehrtägigen Terminen.
+   - **Uhrzeit** – leer lassen, wenn der Termin ganztägig ist.
    - **Ort** – z. B. „Altstadt Wassertrüdingen".
    - **Beschreibung** – optional.
-   - **Öffentlich sichtbar** – nur eingeschaltete Termine erscheinen auf der
-     Website. Für interne Termine ausschalten.
-   - **Kategorie** – Auftritt, Training, Veranstaltung, Vereinsintern oder
-     Sonstiges (bestimmt die farbige Markierung).
-3. **Speichern.** Termine in der Zukunft erscheinen automatisch unter
-   **Termine**; vergangene rutschen in den „Rückblick".
-
-> Die vorbefüllten Termine sind **Beispiele** (im Text mit „Beispieltermin"
-> gekennzeichnet). Ersetze sie durch echte Termine oder lösche sie.
-
----
-
-## 5. Texte auf der Startseite ändern
-
-1. Links auf **Einstellungen** → **Startseite**.
-2. Hier änderst du u. a.:
-   - **Hero-Titel** und die hervorgehobene zweite Zeile (der große Text ganz oben).
-   - **Hero-Einleitungstext**.
-   - **Aktueller Hinweis (Banner):** Schalter „Hinweis anzeigen" einschalten,
-     um oben auf der Startseite eine Mitteilung einzublenden (z. B. „Nächster
-     großer Auftritt am …").
-   - **Hervorgehobene Bereiche** und **Laufband-Schlagwörter**.
+   - **Kategorie** – bestimmt die farbige Markierung auf der Website.
+   - **Auf der Website anzeigen** – ausschalten für interne Termine.
 3. **Speichern.**
 
+Termine in der Zukunft erscheinen unter **Termine**, vergangene rutschen
+automatisch in den Rückblick. Im Redaktionsbereich sind beide getrennt
+aufgelistet.
+
+Unter *Darstellung des Datums* lässt sich die Datumsanzeige überschreiben
+(z. B. „31. Juli + 1. August") oder ganz ausblenden.
+
 ---
 
-## 6. Vereinsinformationen ändern
+## 3. Einen Beitrag schreiben
 
-1. Links auf **Einstellungen** → **Website-Einstellungen**.
-2. Hier stehen: Vereinsname, Slogan, **Kontakt-E-Mail**, **Social-Media-Links**
-   und die **Impressumsdaten** (Anschrift, Vorstand, Vereinsregister).
+1. Kachel **Beiträge** → **+ Neuer Beitrag**.
+2. Ausfüllen:
+   - **Titel** und **Datum**.
+   - **Kurztext für die Übersicht** – ein bis zwei Sätze. Erscheint in der
+     Beitragsliste und bei Google. Der Zähler zeigt, wie viele der 220 Zeichen
+     verbraucht sind.
+   - **Einleitung** – steht hervorgehoben am Anfang des Beitrags. Darf leer bleiben.
+   - **Titelbild** – siehe [Bilder](#5-bilder-hochladen).
+   - **Weitere Bilder** – erscheinen als Bildergalerie im Beitrag.
+   - **Text** – der eigentliche Beitrag. Über die Leiste darüber lassen sich
+     Wörter **fett** oder *kursiv* setzen, Listen und Zwischenüberschriften
+     einfügen sowie Links setzen.
+   - **Entwurf** – solange dieser Schalter an ist, erscheint der Beitrag **nicht**
+     auf der Website. Zum Veröffentlichen ausschalten.
 3. **Speichern.**
 
-> Die Impressumsfelder sind rechtlich wichtig. Wenn dort noch gelbe
-> Platzhalter auf der Seite `/impressum` erscheinen, bitte die entsprechenden
-> Felder hier vollständig ausfüllen.
+> **Text aus Word oder von einer Webseite einfügen** ist erlaubt. Schriftarten,
+> Farben und Größen werden dabei absichtlich entfernt – der Beitrag übernimmt
+> das Aussehen der Website.
+
+**Falls beim Schreiben etwas dazwischenkommt:** Der Text wird laufend im Browser
+zwischengespeichert. Kommst du später zurück, fragt der Editor, ob du
+weitermachen möchtest.
 
 ---
 
-## 7. Die Galerie pflegen
+## 4. Fotos in die Galerie
 
-1. Links auf **Galerie-Alben** → **„New Album"**.
-2. **Titel** und **Datum** vergeben, optional **Beschreibung** und
-   **Fotohinweis** (z. B. „Fotos: Max Mustermann").
-3. Unter **Bilder** über **„Add Bild"** so viele Fotos hinzufügen, wie du
-   möchtest – jeweils mit kurzer Bildbeschreibung. Faustregel: lieber 20–30 gute
-   Bilder pro Album als 200.
-4. **Speichern.** Das Album erscheint auf der Seite **Galerie**.
+1. Kachel **Galerie** → gewünschten Bereich öffnen
+   (*Kindergarde*, *Jugendgarde*, *Große Garde* oder *Vereinsleben & unterwegs*).
+2. **Fotos hinzufügen** – du kannst mehrere auf einmal auswählen.
+3. Zu jedem Foto kurz beschreiben, was darauf zu sehen ist.
+4. Mit den Pfeilen **↑ ↓** die Reihenfolge ändern, mit **⤒** ein Foto an den
+   Anfang holen, mit **✕** entfernen.
+5. **Speichern.**
 
----
+Die vier Bereiche sind fest vorgegeben und lassen sich nicht löschen.
 
-## 8. Was du besser NICHT anfassen solltest
-
-- **Einträge in „Einstellungen" nicht löschen** (Website-Einstellungen und
-  Startseite). Ändern ja, löschen nein – sonst fehlen Grunddaten der Seite.
-- **Bildbeschreibungen nicht leer lassen**, wenn möglich.
-- Technische Dateien (alles außerhalb des Adminbereichs, z. B. im Ordner `src/`
-  oder `functions/`) bitte nur mit der technischen Betreuung anfassen.
-- Den **Entwurf-Schalter** bei Beiträgen bewusst nutzen: an = versteckt.
+> **Querformat bevorzugen.** Die Galerie ordnet die Bilder nach ihrem
+> Seitenverhältnis an. Hochformat-Fotos erscheinen als schmaler Streifen
+> zwischen den breiten Bildern.
 
 ---
 
-## 9. Wenn etwas falsch ist
+## 5. Bilder hochladen
 
-- **Tippfehler o. Ä.:** Einfach den Eintrag erneut öffnen, korrigieren,
-  speichern.
+Überall, wo ein Bildfeld ist:
+
+1. Auf **Bild wählen** tippen. Auf dem Handy kannst du direkt die Kamera oder
+   deine Fotos öffnen.
+2. Das Bild wird **automatisch verkleinert** – um die Dateigröße musst du dich
+   nicht kümmern. Bei mehreren Fotos zeigt eine Zeile den Fortschritt.
+3. **Bildbeschreibung ausfüllen.** Kurz, was zu sehen ist, z. B. „Kindergarde
+   beim Altstadtfest". Das hilft blinden Menschen und Suchmaschinen – ohne
+   Beschreibung lässt sich nicht speichern.
+
+> Bitte nur Fotos verwenden, an denen der Verein die Rechte hat und bei denen
+> die abgebildeten Personen mit einer Veröffentlichung einverstanden sind –
+> besonders bei Kindern.
+
+---
+
+## 6. Startseite und besondere Anlässe
+
+Kachel **Startseite**:
+
+- **Großes Bild ganz oben** samt Bildbeschreibung austauschen.
+- **Einleitung** – die beiden Titelzeilen und der Text darunter.
+- **Hinweisband** – ein schmaler Hinweis oben auf der Startseite, z. B.
+  „Nächster großer Auftritt am …". Ein Schalter blendet ihn ein und aus.
+- **Block für besondere Anlässe** – der große Abschnitt mit Bild, Text und
+  Eckdaten, aktuell für das Jubiläum. **Nach dem Ereignis einfach den Schalter
+  „Block anzeigen" ausschalten**, dann verschwindet er von der Startseite. Beim
+  nächsten Anlass wieder einschalten und neu befüllen.
+
+---
+
+## 7. Garden, Chronik und Einstellungen
+
+- **Garden** – Kurzbeschreibung, Altersgruppe, Trainingszeit,
+  Ansprechpartner:in und Bild der drei Garden. Die Reihenfolge auf der Seite
+  „Sparten" steuert das Feld *Reihenfolge* (kleinere Zahl = weiter oben).
+- **Chronik** – die Vereinsgeschichte auf der Seite „Verein". Ein Eintrag je
+  Jahr; die Sortierung erfolgt automatisch.
+- **Einstellungen** – Vereinsname, **Kontaktdaten** (Anschrift, E-Mail,
+  Telefonnummern), Social-Media-Links und die **Impressumsdaten**.
+
+> Die Impressumsfelder sind rechtlich vorgeschrieben und dürfen nicht leer
+> bleiben – der Editor lässt sich sonst nicht speichern.
+
+---
+
+## 8. Gut zu wissen
+
+- **Speichern dauert einen Moment.** Nach dem Klick wird die Änderung
+  gespeichert, danach baut die Website sich neu auf. Das dauert ein bis drei
+  Minuten. Danach die Seite im Browser neu laden (ggf. mit `Strg`+`F5`).
+- **Am Rechner** speichert auch `Strg`+`S` (auf dem Mac `Cmd`+`S`).
+- **Fehlt eine Angabe**, springt der Editor beim Speichern zum betroffenen Feld
+  und erklärt, was fehlt. Es wird dann nichts gespeichert.
+- **Arbeitet jemand gleichzeitig am selben Eintrag**, meldet der Editor das,
+  statt die Änderung der anderen Person zu überschreiben. Dann Seite neu laden.
+- **Bilder bleiben erhalten**, wenn du einen Beitrag löschst. Sie lassen sich
+  später wiederverwenden.
+
+---
+
+## 9. Wenn etwas schiefgeht
+
+- **Tippfehler:** Eintrag erneut öffnen, korrigieren, speichern.
 - **Aus Versehen veröffentlicht:** Beim Beitrag den **Entwurf**-Schalter
-  einschalten (versteckt ihn wieder) oder den Termin auf „nicht öffentlich"
-  stellen.
-- **Etwas gelöscht oder größerer Fehler:** Keine Panik. Alle Änderungen sind in
-  der Versionsgeschichte gespeichert und lassen sich wiederherstellen. Melde
-  dich bei der technischen Betreuung – bitte nichts „reparieren", indem du
-  wild weiterklickst.
-- **Änderung nicht sichtbar?** Nach dem Speichern dauert es meist **1–3
-  Minuten**, bis die Website neu gebaut ist. Danach die Seite im Browser neu
-  laden (ggf. mit `Strg`+`F5`).
+  einschalten oder beim Termin *Auf der Website anzeigen* ausschalten.
+- **Etwas gelöscht:** Keine Panik. Alle Änderungen sind in der
+  Versionsgeschichte gespeichert und lassen sich wiederherstellen. Melde dich
+  bei der technischen Betreuung – bitte nicht durch wildes Weiterklicken
+  „reparieren".
+- **Änderung nicht sichtbar?** Erst ein bis drei Minuten warten, dann die Seite
+  neu laden. Bleibt sie aus, steht auf der Startseite des Redaktionsbereichs ein
+  Hinweis – dann bitte die technische Betreuung informieren.
+- **„Deine Anmeldung ist abgelaufen":** Seite neu laden und erneut anmelden.
 
 Viel Freude beim Pflegen der Seite! 💃🕺

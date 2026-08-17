@@ -1,0 +1,224 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout titel="Chronik" zurueck="/admin">
+  <div id="meldungen"></div>
+
+  <section id="ansicht-liste">
+    <p class="adm-feld__hinweis">
+      Die Vereinsgeschichte auf der Seite „Verein". Die Einträge erscheinen dort
+      automatisch nach Jahreszahl geordnet.
+    </p>
+    <p><button type="button" class="adm-knopf" id="neu">+ Neuer Eintrag</button></p>
+    <div id="liste" class="adm-lade">Chronik wird geladen …</div>
+  </section>
+
+  <section id="ansicht-formular" hidden>
+    <form class="adm-form" id="formular" novalidate>
+      <div class="adm-feld">
+        <label for="f-year">Jahr</label>
+        <input type="text" id="f-year" name="year" inputmode="numeric" pattern="[0-9]{4}"
+               maxlength="4" required autocomplete="off" placeholder="2026" />
+      </div>
+
+      <div class="adm-feld">
+        <label for="f-title">Überschrift</label>
+        <input type="text" id="f-title" name="title" required autocomplete="off" />
+      </div>
+
+      <div class="adm-feld">
+        <label for="f-text">Text</label>
+        <textarea id="f-text" name="text" rows="5" required></textarea>
+      </div>
+
+      <div class="adm-feld">
+        <label class="adm-schalter">
+          <input type="checkbox" id="f-nowrap" name="nowrap" />
+          <span>Überschrift nicht umbrechen</span>
+        </label>
+        <p class="adm-feld__hinweis">Nur für kurze Überschriften sinnvoll.</p>
+      </div>
+
+      <p>
+        <button type="button" class="adm-knopf adm-knopf--gefahr" id="loeschen" hidden>Eintrag löschen</button>
+      </p>
+    </form>
+  </section>
+
+  <div slot="leiste" class="adm-leiste" id="leiste" hidden>
+    <div class="adm-leiste__innen">
+      <button type="button" class="adm-knopf" id="speichern">Speichern</button>
+      <button type="button" class="adm-knopf adm-knopf--leise" id="abbrechen">Abbrechen</button>
+      <span class="adm-leiste__status" id="leiste-status"></span>
+    </div>
+  </div>
+
+  <script>
+    import {
+      api, ApiFehler, meldung, meldungLeeren, feldFehlerZeigen,
+      alsGeaendertMarkieren, alsGespeichertMarkieren, istGeaendert,
+      speichernKuerzel, loeschenBestaetigen,
+    } from '../../scripts/admin-kern';
+
+    interface Eintrag { name: string; year: string; title: string; text: string; nowrap?: boolean }
+
+    const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+    const eingabe = (n: string) => $<HTMLInputElement>(`f-${n}`);
+    const textfeld = (n: string) => $<HTMLTextAreaElement>(`f-${n}`);
+
+    const meldungen = $('meldungen');
+    const ansichtListe = $('ansicht-liste');
+    const ansichtFormular = $('ansicht-formular');
+    const leiste = $('leiste');
+    const status = $('leiste-status');
+
+    let dateiName = '';
+    let sha = '';
+
+    async function listeLaden() {
+      const ziel = $('liste');
+      ziel.className = 'adm-lade';
+      ziel.textContent = 'Chronik wird geladen …';
+      try {
+        const { eintraege } = await api<{ eintraege: Eintrag[] }>('chronik');
+        eintraege.sort((a, b) => b.year.localeCompare(a.year));
+        ziel.className = '';
+        ziel.innerHTML = '';
+        if (eintraege.length === 0) {
+          ziel.innerHTML = '<p class="adm-leer">Noch keine Einträge.</p>';
+          return;
+        }
+        const ul = document.createElement('ul');
+        ul.className = 'adm-liste';
+        for (const e of eintraege) {
+          const li = document.createElement('li');
+          li.className = 'adm-eintrag';
+          const haupt = document.createElement('div');
+          haupt.className = 'adm-eintrag__haupt';
+          const t = document.createElement('div');
+          t.className = 'adm-eintrag__titel';
+          t.textContent = `${e.year} – ${e.title}`;
+          const m = document.createElement('div');
+          m.className = 'adm-eintrag__meta';
+          m.textContent = e.text.slice(0, 110) + (e.text.length > 110 ? ' …' : '');
+          haupt.append(t, m);
+
+          const knopf = document.createElement('button');
+          knopf.type = 'button';
+          knopf.className = 'adm-knopf adm-knopf--leise adm-knopf--klein';
+          knopf.textContent = 'Bearbeiten';
+          knopf.addEventListener('click', () => formularOeffnen(e.name));
+          const aktionen = document.createElement('div');
+          aktionen.className = 'adm-eintrag__aktionen';
+          aktionen.append(knopf);
+          li.append(haupt, aktionen);
+          ul.append(li);
+        }
+        ziel.append(ul);
+      } catch (e) {
+        ziel.className = '';
+        ziel.textContent = '';
+        meldung(meldungen, 'fehler', (e as Error).message);
+      }
+    }
+
+    function felderFuellen(e: Partial<Eintrag>) {
+      eingabe('year').value = e.year ?? '';
+      eingabe('title').value = e.title ?? '';
+      textfeld('text').value = e.text ?? '';
+      eingabe('nowrap').checked = Boolean(e.nowrap);
+    }
+
+    function felderLesen() {
+      return {
+        year: eingabe('year').value,
+        title: eingabe('title').value,
+        text: textfeld('text').value,
+        nowrap: eingabe('nowrap').checked,
+      };
+    }
+
+    async function formularOeffnen(kennung: string) {
+      meldungLeeren(meldungen);
+      dateiName = kennung;
+      sha = '';
+      if (kennung) {
+        try {
+          const a = await api<{ daten: Eintrag; sha: string }>(`chronik/${kennung}`);
+          felderFuellen(a.daten);
+          sha = a.sha;
+        } catch (e) {
+          meldung(meldungen, 'fehler', (e as Error).message);
+          return;
+        }
+      } else {
+        felderFuellen({});
+      }
+      $('loeschen').hidden = !kennung;
+      ansichtListe.hidden = true;
+      ansichtFormular.hidden = false;
+      leiste.hidden = false;
+      alsGespeichertMarkieren();
+      eingabe('year').focus();
+    }
+
+    function schliessen() {
+      ansichtFormular.hidden = true;
+      leiste.hidden = true;
+      ansichtListe.hidden = false;
+      alsGespeichertMarkieren();
+      window.scrollTo({ top: 0 });
+    }
+
+    async function speichern() {
+      meldungLeeren(meldungen);
+      feldFehlerZeigen(undefined, '');
+      const knopf = $<HTMLButtonElement>('speichern');
+      knopf.disabled = true;
+      status.textContent = 'Wird gespeichert …';
+      const daten = felderLesen();
+      const neu = !dateiName;
+      // Ein Eintrag je Jahr; gibt es das Jahr schon, meldet die API einen Konflikt.
+      const kennung = dateiName || (/^\d{4}$/.test(daten.year) ? daten.year : 'eintrag');
+      try {
+        await api(`chronik/${kennung}`, { methode: 'PUT', koerper: { daten, sha: sha || undefined, neu } });
+        alsGespeichertMarkieren();
+        status.textContent = '';
+        schliessen();
+        meldung(meldungen, 'ok', 'Gespeichert. In ein bis drei Minuten ist die Änderung sichtbar.');
+        await listeLaden();
+      } catch (e) {
+        status.textContent = '';
+        const f = e as ApiFehler;
+        if (!feldFehlerZeigen(f.feld, f.message)) meldung(meldungen, 'fehler', f.message);
+      } finally {
+        knopf.disabled = false;
+      }
+    }
+
+    $('neu').addEventListener('click', () => formularOeffnen(''));
+    $('speichern').addEventListener('click', speichern);
+    $('abbrechen').addEventListener('click', () => {
+      if (istGeaendert() && !window.confirm('Änderungen verwerfen?')) return;
+      schliessen();
+    });
+    $('loeschen').addEventListener('click', async () => {
+      if (!loeschenBestaetigen(`${eingabe('year').value} – ${eingabe('title').value}`)) return;
+      try {
+        await api(`chronik/${dateiName}`, { methode: 'DELETE' });
+        alsGespeichertMarkieren();
+        schliessen();
+        meldung(meldungen, 'ok', 'Der Eintrag wurde gelöscht.');
+        await listeLaden();
+      } catch (e) {
+        meldung(meldungen, 'fehler', (e as Error).message);
+      }
+    });
+    $('formular').addEventListener('input', alsGeaendertMarkieren);
+    $('formular').addEventListener('submit', (e) => { e.preventDefault(); speichern(); });
+    speichernKuerzel(() => { if (!ansichtFormular.hidden) speichern(); });
+
+    listeLaden();
+  </script>
+</AdminLayout>

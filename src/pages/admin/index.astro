@@ -1,0 +1,68 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+
+/**
+ * Einstieg in den Redaktionsbereich.
+ *
+ * Bewusst nur große Kacheln statt einer Menüleiste: Auf dem Handy ist das der
+ * am einfachsten zu treffende Einstieg, auf dem Rechner bleibt es übersichtlich.
+ */
+const bereiche = [
+  { pfad: '/admin/termine', titel: 'Termine', text: 'Auftritte und Veranstaltungen anlegen, ändern oder löschen.' },
+  { pfad: '/admin/beitraege', titel: 'Beiträge', text: 'Neuigkeiten für die Seite „Aktuelles" schreiben.' },
+  { pfad: '/admin/galerie', titel: 'Galerie', text: 'Fotos zu den vier Bereichen hinzufügen und sortieren.' },
+  { pfad: '/admin/garden', titel: 'Garden', text: 'Trainingszeiten, Ansprechpartner und Bilder der Garden.' },
+  { pfad: '/admin/startseite', titel: 'Startseite', text: 'Großes Bild, Hinweisbanner und der Block für besondere Anlässe.' },
+  { pfad: '/admin/verein', titel: 'Chronik', text: 'Die Vereinsgeschichte auf der Seite „Verein".' },
+  { pfad: '/admin/einstellungen', titel: 'Einstellungen', text: 'Kontaktdaten, Social Media und Impressum.' },
+];
+---
+
+<AdminLayout titel="Redaktion">
+  <div id="status"></div>
+
+  <nav class="adm-kacheln" aria-label="Bereiche">
+    {bereiche.map((b) => (
+      <a class="adm-kachel" href={b.pfad}>
+        <span class="adm-kachel__titel">{b.titel}</span>
+        <span class="adm-kachel__text">{b.text}</span>
+      </a>
+    ))}
+  </nav>
+
+  <p class="adm-feld__hinweis" style="margin-top: var(--space-6)">
+    Änderungen sind nach dem Speichern in etwa ein bis drei Minuten auf der
+    Website sichtbar. <a href="/" target="_blank" rel="noopener">Website ansehen</a>
+  </p>
+
+  <script>
+    import { api, meldung, datumDeutsch } from '../../scripts/admin-kern';
+
+    /*
+      Statuszeile: zeigt, wann zuletzt etwas geändert wurde.
+      Ohne sie bliebe ein fehlgeschlagener Neuaufbau der Website unbemerkt –
+      die Seite steht dann still auf dem letzten funktionierenden Stand.
+    */
+    const ziel = document.getElementById('status')!;
+
+    type Antwort = { letzteAenderung: { nachricht: string; datum: string } | null };
+
+    api<Antwort>('status')
+      .then(({ letzteAenderung }) => {
+        if (!letzteAenderung) return;
+        const wann = new Date(letzteAenderung.datum);
+        const minuten = Math.round((Date.now() - wann.getTime()) / 60000);
+        const zeit =
+          minuten < 2 ? 'gerade eben'
+          : minuten < 60 ? `vor ${minuten} Minuten`
+          : minuten < 1440 ? `vor ${Math.round(minuten / 60)} Stunden`
+          : `am ${datumDeutsch(letzteAenderung.datum)}`;
+        const hinweis =
+          minuten < 4
+            ? ' Die Website wird gerade neu aufgebaut – das dauert ein bis drei Minuten.'
+            : '';
+        meldung(ziel, 'info', `Letzte Änderung ${zeit}.${hinweis}`);
+      })
+      .catch((e) => meldung(ziel, 'fehler', e.message));
+  </script>
+</AdminLayout>

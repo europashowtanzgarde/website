@@ -1,0 +1,27 @@
+---
+title: "Vereinsleben & unterwegs"
+order: 4
+images:
+  - image: "../../assets/gallery/Berlin.jpg"
+    alt: "Berlin – Europa-Show-Tanzgarde"
+  - image: "../../assets/gallery/Dino Schindhelm.jpeg"
+    alt: "Dino Schindhelm – Europa-Show-Tanzgarde"
+  - image: "../../assets/gallery/Gartenschau Eröffnung (2).jpg"
+    alt: "Gartenschau Eröffnung – Europa-Show-Tanzgarde"
+  - image: "../../assets/gallery/Gartenschau Eröffnung.jpg"
+    alt: "Gartenschau Eröffnung – Europa-Show-Tanzgarde"
+  - image: "../../assets/gallery/Gemeinsames Bild ESTG Ghost.jpg"
+    alt: "Gemeinsames Bild ESTG Ghost – Europa-Show-Tanzgarde"
+  - image: "../../assets/gallery/Paris.jpeg"
+    alt: "Paris – Europa-Show-Tanzgarde"
+  - image: "../../assets/gallery/Volksfestumzug Jugendgarde und Große Garde.jpg"
+    alt: "Volksfestumzug Jugendgarde und Große Garde – Europa-Show-Tanzgarde"
+  - image: "../../assets/gallery/Zeitungsbericht 2016.jpeg"
+    alt: "Zeitungsbericht 2016 – Europa-Show-Tanzgarde"
+  - image: "../../assets/gallery/Zeitungsbericht Alien.jpg"
+    alt: "Zeitungsbericht Alien – Europa-Show-Tanzgarde"
+  - image: "../../assets/gallery/Zeitungsbericht Bellac.jpg"
+    alt: "Zeitungsbericht Bellac – Europa-Show-Tanzgarde"
+  - image: "../../assets/gallery/Zeitungsbericht Las Vegas.jpeg"
+    alt: "Zeitungsbericht Las Vegas – Europa-Show-Tanzgarde"
+---

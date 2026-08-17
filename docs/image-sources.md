@@ -76,10 +76,12 @@ nicht sicher geklärt werden kann.
    abgebildeten Personen mit einer Veröffentlichung **einverstanden** sind
    (schriftliche Einwilligung, insbesondere bei Minderjährigen über die
    Erziehungsberechtigten – Stichwort DSGVO & Recht am eigenen Bild).
-3. Fotos über `/admin` hochladen (werden automatisch optimiert). Immer eine
-   kurze **Bildbeschreibung** ergänzen.
-4. Bei Fotos von externen Fotograf:innen den **Fotohinweis** im jeweiligen
-   Galerie-Album eintragen.
+3. Fotos über `/admin` hochladen. Sie werden schon im Browser verkleinert
+   (max. 2048 px, WebP) – um die Dateigröße muss sich niemand kümmern. Eine
+   kurze **Bildbeschreibung** ist Pflicht; ohne sie lässt sich nicht speichern.
+4. Für die Galerie einen der vier Bereiche wählen (Kindergarde, Jugendgarde,
+   Große Garde, Vereinsleben & unterwegs). **Querformat** fügt sich am besten
+   ins Raster ein.
 
 > **TODO (Verein):** Titelbilder für Beiträge, Bilder für die drei Garden und
 > die ersten Galerie-Alben mit echten, freigegebenen Vereinsfotos befüllen.

@@ -1,0 +1,303 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout titel="Garden" zurueck="/admin">
+  <div id="meldungen"></div>
+
+  <section id="ansicht-liste">
+    <p><button type="button" class="adm-knopf" id="neu">+ Neue Garde</button></p>
+    <div id="liste" class="adm-lade">Garden werden geladen …</div>
+  </section>
+
+  <section id="ansicht-formular" hidden>
+    <form class="adm-form" id="formular" novalidate>
+      <div class="adm-feld">
+        <label for="f-name">Name</label>
+        <input type="text" id="f-name" name="name" required autocomplete="off" />
+      </div>
+
+      <div class="adm-feld">
+        <label for="f-description">Kurzbeschreibung</label>
+        <textarea id="f-description" name="description" rows="4" required></textarea>
+        <p class="adm-feld__hinweis">Zwei, drei Sätze über die Garde.</p>
+      </div>
+
+      <div class="adm-feld">
+        <label for="f-ageGroup">Altersgruppe</label>
+        <input type="text" id="f-ageGroup" name="ageGroup" autocomplete="off" placeholder="z. B. ab 16 Jahren" />
+      </div>
+
+      <div class="adm-feld">
+        <label for="f-trainingTime">Trainingszeit</label>
+        <input type="text" id="f-trainingTime" name="trainingTime" autocomplete="off" placeholder="z. B. Mittwoch, 19 Uhr" />
+      </div>
+
+      <div class="adm-feld">
+        <label for="f-contact">Ansprechpartner:in</label>
+        <input type="text" id="f-contact" name="contact" autocomplete="off" />
+      </div>
+
+      <div class="adm-feld" data-feld="image">
+        <span class="adm-feld__titel">Bild</span>
+        <div id="bild"></div>
+        <p class="adm-fortschritt" id="upload-status" hidden></p>
+        <input type="file" id="datei-wahl" accept="image/*" hidden />
+      </div>
+
+      <div class="adm-feld" data-feld="imageAlt">
+        <label for="f-imageAlt">Bildbeschreibung</label>
+        <input type="text" id="f-imageAlt" name="imageAlt" autocomplete="off" />
+      </div>
+
+      <div class="adm-feld">
+        <label for="f-order">Reihenfolge</label>
+        <input type="number" id="f-order" name="order" min="1" max="99" step="1" />
+        <p class="adm-feld__hinweis">Kleinere Zahl = weiter oben auf der Seite „Sparten".</p>
+      </div>
+
+      <p>
+        <button type="button" class="adm-knopf adm-knopf--gefahr" id="loeschen" hidden>Garde löschen</button>
+      </p>
+    </form>
+  </section>
+
+  <div slot="leiste" class="adm-leiste" id="leiste" hidden>
+    <div class="adm-leiste__innen">
+      <button type="button" class="adm-knopf" id="speichern">Speichern</button>
+      <button type="button" class="adm-knopf adm-knopf--leise" id="abbrechen">Abbrechen</button>
+      <span class="adm-leiste__status" id="leiste-status"></span>
+    </div>
+  </div>
+
+  <script>
+    import {
+      api, ApiFehler, meldung, meldungLeeren, feldFehlerZeigen,
+      alsGeaendertMarkieren, alsGespeichertMarkieren, istGeaendert,
+      speichernKuerzel, loeschenBestaetigen, bilderHochladen, vorschauAdresse,
+    } from '../../scripts/admin-kern';
+
+    interface Garde {
+      name: string; description: string; ageGroup?: string; trainingTime?: string;
+      contact?: string; image?: string; imageAlt?: string; order?: number;
+    }
+    interface Eintrag extends Garde { name: string }
+
+    const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+    const eingabe = (n: string) => $<HTMLInputElement>(`f-${n}`);
+    const textfeld = (n: string) => $<HTMLTextAreaElement>(`f-${n}`);
+
+    const meldungen = $('meldungen');
+    const ansichtListe = $('ansicht-liste');
+    const ansichtFormular = $('ansicht-formular');
+    const leiste = $('leiste');
+    const status = $('leiste-status');
+    const dateiWahl = $<HTMLInputElement>('datei-wahl');
+
+    let dateiName = '';
+    let sha = '';
+    let bild: string | null = null;
+
+    async function listeLaden() {
+      const ziel = $('liste');
+      ziel.className = 'adm-lade';
+      ziel.textContent = 'Garden werden geladen …';
+      try {
+        const { eintraege } = await api<{ eintraege: (Eintrag & { name: string })[] }>('garden');
+        eintraege.sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+        ziel.className = '';
+        ziel.innerHTML = '';
+        const ul = document.createElement('ul');
+        ul.className = 'adm-liste adm-liste--raster';
+        for (const g of eintraege) {
+          const li = document.createElement('li');
+          li.className = 'adm-eintrag';
+          const haupt = document.createElement('div');
+          haupt.className = 'adm-eintrag__haupt';
+          const t = document.createElement('div');
+          t.className = 'adm-eintrag__titel';
+          // Der Anzeigename steht im Feld, der Dateiname ist die Kennung.
+          t.textContent = (g as unknown as Record<string, string>).name ?? '';
+          const m = document.createElement('div');
+          m.className = 'adm-eintrag__meta';
+          m.textContent = [g.ageGroup, g.trainingTime].filter(Boolean).join(' · ') || 'noch keine Angaben';
+          haupt.append(t, m);
+
+          const knopf = document.createElement('button');
+          knopf.type = 'button';
+          knopf.className = 'adm-knopf adm-knopf--leise adm-knopf--klein';
+          knopf.textContent = 'Bearbeiten';
+          const kennung = (g as unknown as { name: string }).name;
+          knopf.addEventListener('click', () => formularOeffnen(kennung));
+          const aktionen = document.createElement('div');
+          aktionen.className = 'adm-eintrag__aktionen';
+          aktionen.append(knopf);
+          li.append(haupt, aktionen);
+          ul.append(li);
+        }
+        ziel.append(ul);
+      } catch (e) {
+        ziel.className = '';
+        ziel.textContent = '';
+        meldung(meldungen, 'fehler', (e as Error).message);
+      }
+    }
+
+    function bildZeichnen() {
+      const ziel = $('bild');
+      ziel.innerHTML = '';
+      const knopf = document.createElement('button');
+      knopf.type = 'button';
+      knopf.className = 'adm-knopf adm-knopf--leise';
+      knopf.textContent = bild ? 'Anderes Bild wählen' : 'Bild wählen';
+      knopf.addEventListener('click', () => { dateiWahl.value = ''; dateiWahl.click(); });
+
+      if (bild) {
+        const reihe = document.createElement('div');
+        reihe.className = 'adm-bild';
+        const img = document.createElement('img');
+        img.className = 'adm-bild__vorschau';
+        img.src = vorschauAdresse(bild);
+        img.alt = '';
+        const felder = document.createElement('div');
+        felder.className = 'adm-bild__felder';
+        felder.append(knopf);
+        reihe.append(img, felder);
+        ziel.append(reihe);
+      } else {
+        ziel.append(knopf);
+      }
+    }
+
+    dateiWahl.addEventListener('change', async () => {
+      const dateien = [...(dateiWahl.files ?? [])];
+      if (dateien.length === 0) return;
+      const anzeige = $('upload-status');
+      anzeige.hidden = false;
+      try {
+        const neu = await bilderHochladen(dateien, 'uploads', (f, g) => {
+          anzeige.textContent = f < g ? 'Bild wird verkleinert und hochgeladen …' : 'Fertig.';
+        });
+        bild = neu[0]?.referenz ?? null;
+        bildZeichnen();
+        alsGeaendertMarkieren();
+      } catch (e) {
+        meldung(meldungen, 'fehler', (e as Error).message);
+      } finally {
+        setTimeout(() => { anzeige.hidden = true; }, 1500);
+      }
+    });
+
+    function felderFuellen(g: Partial<Garde>) {
+      eingabe('name').value = g.name ?? '';
+      textfeld('description').value = g.description ?? '';
+      eingabe('ageGroup').value = g.ageGroup ?? '';
+      eingabe('trainingTime').value = g.trainingTime ?? '';
+      eingabe('contact').value = g.contact ?? '';
+      eingabe('imageAlt').value = g.imageAlt ?? '';
+      eingabe('order').value = String(g.order ?? 99);
+      bild = g.image ?? null;
+      bildZeichnen();
+    }
+
+    function felderLesen() {
+      return {
+        name: eingabe('name').value,
+        description: textfeld('description').value,
+        ageGroup: eingabe('ageGroup').value || undefined,
+        trainingTime: eingabe('trainingTime').value || undefined,
+        contact: eingabe('contact').value || undefined,
+        image: bild ?? undefined,
+        imageAlt: eingabe('imageAlt').value || undefined,
+        order: Number(eingabe('order').value) || 99,
+      };
+    }
+
+    async function formularOeffnen(kennung: string) {
+      meldungLeeren(meldungen);
+      dateiName = kennung;
+      sha = '';
+      if (kennung) {
+        try {
+          const a = await api<{ daten: Garde; sha: string }>(`garden/${kennung}`);
+          felderFuellen(a.daten);
+          sha = a.sha;
+        } catch (e) {
+          meldung(meldungen, 'fehler', (e as Error).message);
+          return;
+        }
+      } else {
+        felderFuellen({});
+      }
+      $('loeschen').hidden = !kennung;
+      ansichtListe.hidden = true;
+      ansichtFormular.hidden = false;
+      leiste.hidden = false;
+      alsGespeichertMarkieren();
+      eingabe('name').focus();
+    }
+
+    function schliessen() {
+      ansichtFormular.hidden = true;
+      leiste.hidden = true;
+      ansichtListe.hidden = false;
+      alsGespeichertMarkieren();
+      window.scrollTo({ top: 0 });
+    }
+
+    async function speichern() {
+      meldungLeeren(meldungen);
+      feldFehlerZeigen(undefined, '');
+      const knopf = $<HTMLButtonElement>('speichern');
+      knopf.disabled = true;
+      status.textContent = 'Wird gespeichert …';
+      const daten = felderLesen();
+      const neu = !dateiName;
+      const kennung = dateiName || slug(daten.name);
+      try {
+        await api(`garden/${kennung}`, { methode: 'PUT', koerper: { daten, sha: sha || undefined, neu } });
+        alsGespeichertMarkieren();
+        status.textContent = '';
+        schliessen();
+        meldung(meldungen, 'ok', 'Gespeichert. In ein bis drei Minuten ist die Änderung sichtbar.');
+        await listeLaden();
+      } catch (e) {
+        status.textContent = '';
+        const f = e as ApiFehler;
+        if (!feldFehlerZeigen(f.feld, f.message)) meldung(meldungen, 'fehler', f.message);
+      } finally {
+        knopf.disabled = false;
+      }
+    }
+
+    function slug(t: string) {
+      return t.toLowerCase()
+        .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss')
+        .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'garde';
+    }
+
+    $('neu').addEventListener('click', () => formularOeffnen(''));
+    $('speichern').addEventListener('click', speichern);
+    $('abbrechen').addEventListener('click', () => {
+      if (istGeaendert() && !window.confirm('Änderungen verwerfen?')) return;
+      schliessen();
+    });
+    $('loeschen').addEventListener('click', async () => {
+      if (!loeschenBestaetigen(eingabe('name').value || 'diese Garde')) return;
+      try {
+        await api(`garden/${dateiName}`, { methode: 'DELETE' });
+        alsGespeichertMarkieren();
+        schliessen();
+        meldung(meldungen, 'ok', 'Die Garde wurde gelöscht.');
+        await listeLaden();
+      } catch (e) {
+        meldung(meldungen, 'fehler', (e as Error).message);
+      }
+    });
+    $('formular').addEventListener('input', alsGeaendertMarkieren);
+    $('formular').addEventListener('submit', (e) => { e.preventDefault(); speichern(); });
+    speichernKuerzel(() => { if (!ansichtFormular.hidden) speichern(); });
+
+    listeLaden();
+  </script>
+</AdminLayout>

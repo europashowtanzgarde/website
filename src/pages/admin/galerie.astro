@@ -1,0 +1,276 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout titel="Galerie" zurueck="/admin">
+  <div id="meldungen"></div>
+
+  <section id="ansicht-liste">
+    <p class="adm-feld__hinweis">
+      Wähle einen Bereich aus, um Fotos hinzuzufügen, zu sortieren oder zu entfernen.
+      Die Bereiche selbst sind fest vorgegeben.
+    </p>
+    <div id="liste" class="adm-lade">Bereiche werden geladen …</div>
+  </section>
+
+  <section id="ansicht-formular" hidden>
+    <h2 class="adm-abschnitt__titel" id="bereich-titel"></h2>
+
+    <div class="adm-feld" data-feld="images">
+      <div id="bilder"></div>
+      <p class="adm-fortschritt" id="upload-status" hidden></p>
+      <p style="margin-top: var(--space-4)">
+        <button type="button" class="adm-knopf adm-knopf--leise" id="bilder-waehlen">
+          Fotos hinzufügen
+        </button>
+      </p>
+      <p class="adm-feld__hinweis">
+        Neue Fotos werden unten angehängt. <strong>Querformat</strong> fügt sich am besten
+        ins Raster ein – Hochformat-Bilder erscheinen als schmaler Streifen.
+      </p>
+      <input type="file" id="datei-wahl" accept="image/*" multiple hidden />
+    </div>
+  </section>
+
+  <div slot="leiste" class="adm-leiste" id="leiste" hidden>
+    <div class="adm-leiste__innen">
+      <button type="button" class="adm-knopf" id="speichern">Speichern</button>
+      <button type="button" class="adm-knopf adm-knopf--leise" id="abbrechen">Zurück</button>
+      <span class="adm-leiste__status" id="leiste-status"></span>
+    </div>
+  </div>
+
+  <script>
+    import {
+      api, ApiFehler, meldung, meldungLeeren, feldFehlerZeigen,
+      alsGeaendertMarkieren, alsGespeichertMarkieren, istGeaendert,
+      speichernKuerzel, bilderHochladen, vorschauAdresse,
+    } from '../../scripts/admin-kern';
+
+    interface Bild { image: string; alt: string; crop169?: boolean }
+    interface Bereich { name: string; title: string; order?: number; images?: Bild[] }
+
+    const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+
+    const meldungen = $('meldungen');
+    const ansichtListe = $('ansicht-liste');
+    const ansichtFormular = $('ansicht-formular');
+    const leiste = $('leiste');
+    const status = $('leiste-status');
+    const dateiWahl = $<HTMLInputElement>('datei-wahl');
+
+    let aktuellerBereich: Bereich | null = null;
+    let aktuelleSha = '';
+    let bilder: Bild[] = [];
+
+    async function listeLaden() {
+      const ziel = $('liste');
+      ziel.className = 'adm-lade';
+      ziel.textContent = 'Bereiche werden geladen …';
+      try {
+        const { eintraege } = await api<{ eintraege: Bereich[] }>('galerie');
+        eintraege.sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+        ziel.className = '';
+        ziel.innerHTML = '';
+        const ul = document.createElement('ul');
+        ul.className = 'adm-liste adm-liste--raster';
+        for (const b of eintraege) {
+          const li = document.createElement('li');
+          li.className = 'adm-eintrag';
+          const haupt = document.createElement('div');
+          haupt.className = 'adm-eintrag__haupt';
+          const t = document.createElement('div');
+          t.className = 'adm-eintrag__titel';
+          t.textContent = b.title;
+          const m = document.createElement('div');
+          m.className = 'adm-eintrag__meta';
+          const anzahl = b.images?.length ?? 0;
+          m.textContent = anzahl === 1 ? '1 Foto' : `${anzahl} Fotos`;
+          haupt.append(t, m);
+
+          const knopf = document.createElement('button');
+          knopf.type = 'button';
+          knopf.className = 'adm-knopf adm-knopf--leise adm-knopf--klein';
+          knopf.textContent = 'Öffnen';
+          knopf.addEventListener('click', () => bereichOeffnen(b.name));
+          const aktionen = document.createElement('div');
+          aktionen.className = 'adm-eintrag__aktionen';
+          aktionen.append(knopf);
+
+          li.append(haupt, aktionen);
+          ul.append(li);
+        }
+        ziel.append(ul);
+      } catch (e) {
+        ziel.className = '';
+        ziel.textContent = '';
+        meldung(meldungen, 'fehler', (e as Error).message);
+      }
+    }
+
+    function bilderZeichnen() {
+      const ziel = $('bilder');
+      ziel.innerHTML = '';
+      if (bilder.length === 0) {
+        ziel.innerHTML = '<p class="adm-leer">In diesem Bereich sind noch keine Fotos.</p>';
+        return;
+      }
+      bilder.forEach((b, i) => {
+        const reihe = document.createElement('div');
+        reihe.className = 'adm-bild';
+
+        const bild = document.createElement('img');
+        bild.className = 'adm-bild__vorschau';
+        bild.src = vorschauAdresse(b.image);
+        bild.alt = '';
+        bild.loading = 'lazy';
+
+        const felder = document.createElement('div');
+        felder.className = 'adm-bild__felder';
+
+        const beschriftung = document.createElement('input');
+        beschriftung.type = 'text';
+        beschriftung.value = b.alt ?? '';
+        beschriftung.placeholder = 'Was ist auf dem Foto zu sehen?';
+        beschriftung.setAttribute('aria-label', `Bildbeschreibung für Foto ${i + 1}`);
+        beschriftung.addEventListener('input', () => {
+          bilder[i].alt = beschriftung.value;
+          alsGeaendertMarkieren();
+        });
+
+        const reihe2 = document.createElement('div');
+        reihe2.className = 'adm-bild__reihe';
+        reihe2.append(
+          knopf('↑', 'Nach oben', i === 0, () => tauschen(i, i - 1)),
+          knopf('↓', 'Nach unten', i === bilder.length - 1, () => tauschen(i, i + 1)),
+          knopf('⤒', 'An den Anfang', i === 0, () => {
+            bilder.unshift(...bilder.splice(i, 1));
+            bilderZeichnen();
+            alsGeaendertMarkieren();
+          }),
+          knopf('✕', 'Foto entfernen', false, () => {
+            bilder.splice(i, 1);
+            bilderZeichnen();
+            alsGeaendertMarkieren();
+          }),
+        );
+
+        felder.append(beschriftung, reihe2);
+        reihe.append(bild, felder);
+        ziel.append(reihe);
+      });
+    }
+
+    function knopf(zeichen: string, titel: string, aus: boolean, tun: () => void) {
+      const k = document.createElement('button');
+      k.type = 'button';
+      k.className = 'adm-icon';
+      k.textContent = zeichen;
+      k.title = titel;
+      k.setAttribute('aria-label', titel);
+      k.disabled = aus;
+      k.addEventListener('click', tun);
+      return k;
+    }
+
+    function tauschen(a: number, b: number) {
+      [bilder[a], bilder[b]] = [bilder[b], bilder[a]];
+      bilderZeichnen();
+      alsGeaendertMarkieren();
+    }
+
+    async function bereichOeffnen(name: string) {
+      meldungLeeren(meldungen);
+      try {
+        const a = await api<{ daten: Bereich; sha: string }>(`galerie/${name}`);
+        aktuellerBereich = { ...a.daten, name };
+        aktuelleSha = a.sha;
+        bilder = (a.daten.images ?? []).map((b) => ({ ...b }));
+      } catch (e) {
+        meldung(meldungen, 'fehler', (e as Error).message);
+        return;
+      }
+      $('bereich-titel').textContent = aktuellerBereich.title;
+      bilderZeichnen();
+      ansichtListe.hidden = true;
+      ansichtFormular.hidden = false;
+      leiste.hidden = false;
+      alsGespeichertMarkieren();
+      window.scrollTo({ top: 0 });
+    }
+
+    function schliessen() {
+      ansichtFormular.hidden = true;
+      leiste.hidden = true;
+      ansichtListe.hidden = false;
+      alsGespeichertMarkieren();
+      window.scrollTo({ top: 0 });
+    }
+
+    dateiWahl.addEventListener('change', async () => {
+      const dateien = [...(dateiWahl.files ?? [])];
+      if (dateien.length === 0) return;
+      const anzeige = $('upload-status');
+      anzeige.hidden = false;
+      try {
+        // Galeriebilder MÜSSEN nach src/assets/gallery – nur dort erzeugt Astro
+        // beim Bauen die Maße, aus denen sich das Raster berechnet.
+        const neu = await bilderHochladen(dateien, 'galerie', (fertig, gesamt, name) => {
+          anzeige.textContent = fertig < gesamt
+            ? `Foto ${fertig + 1} von ${gesamt} wird verkleinert und hochgeladen … (${name})`
+            : 'Fertig.';
+        });
+        bilder.push(...neu.map((h) => ({ image: h.referenz, alt: '' })));
+        bilderZeichnen();
+        alsGeaendertMarkieren();
+      } catch (e) {
+        meldung(meldungen, 'fehler', (e as Error).message);
+      } finally {
+        setTimeout(() => { anzeige.hidden = true; }, 1500);
+      }
+    });
+
+    async function speichern() {
+      if (!aktuellerBereich) return;
+      meldungLeeren(meldungen);
+      feldFehlerZeigen(undefined, '');
+      const knopfSpeichern = $<HTMLButtonElement>('speichern');
+      knopfSpeichern.disabled = true;
+      status.textContent = 'Wird gespeichert …';
+      try {
+        await api(`galerie/${aktuellerBereich.name}`, {
+          methode: 'PUT',
+          koerper: {
+            daten: {
+              title: aktuellerBereich.title,
+              order: aktuellerBereich.order,
+              images: bilder,
+            },
+            sha: aktuelleSha,
+          },
+        });
+        alsGespeichertMarkieren();
+        status.textContent = '';
+        schliessen();
+        meldung(meldungen, 'ok', 'Gespeichert. In ein bis drei Minuten ist die Galerie aktualisiert.');
+        await listeLaden();
+      } catch (e) {
+        status.textContent = '';
+        const f = e as ApiFehler;
+        if (!feldFehlerZeigen(f.feld, f.message)) meldung(meldungen, 'fehler', f.message);
+      } finally {
+        knopfSpeichern.disabled = false;
+      }
+    }
+
+    $('speichern').addEventListener('click', speichern);
+    $('bilder-waehlen').addEventListener('click', () => { dateiWahl.value = ''; dateiWahl.click(); });
+    $('abbrechen').addEventListener('click', () => {
+      if (istGeaendert() && !window.confirm('Änderungen verwerfen?')) return;
+      schliessen();
+    });
+    speichernKuerzel(() => { if (!ansichtFormular.hidden) speichern(); });
+
+    listeLaden();
+  </script>
+</AdminLayout>

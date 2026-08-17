@@ -11,8 +11,10 @@ cover: /uploads/aktuelles-kinderfasching.jpeg
 coverAlt: Kinder und Tänzerinnen beim Kinderfasching.
 gallery:
   - image: /uploads/kinderfasching-jugendgarde.jpeg
+    zoom: 1.1
     alt: Die Jugendgarde bei ihrem Auftritt am Kinderfasching.
   - image: /uploads/kinderfasching-zeitungsartikel-prinzenpaar.jpeg
+    fit: contain
     alt: Zeitungsartikel über das Prinzenpaar beim Kinderfasching.
 draft: false
 ---
