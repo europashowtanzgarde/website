@@ -1,0 +1,383 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout titel="Termine" zurueck="/admin">
+  <div id="meldungen"></div>
+
+  <!-- Liste -->
+  <section id="ansicht-liste">
+    <p><button type="button" class="adm-knopf" id="neu">+ Neuer Termin</button></p>
+    <div id="liste" class="adm-lade">Termine werden geladen …</div>
+  </section>
+
+  <!-- Formular -->
+  <section id="ansicht-formular" hidden>
+    <form class="adm-form" id="formular" novalidate>
+      <div class="adm-feld">
+        <label for="f-title">Titel</label>
+        <input type="text" id="f-title" name="title" required autocomplete="off" />
+        <p class="adm-feld__hinweis">Zum Beispiel „Auftritt beim Altstadtfest".</p>
+      </div>
+
+      <div class="adm-feld">
+        <label for="f-date">Datum</label>
+        <input type="date" id="f-date" name="date" required />
+      </div>
+
+      <div class="adm-feld">
+        <label for="f-endDate">Enddatum <span class="adm-feld__hinweis">(nur bei mehrtägigen Terminen)</span></label>
+        <input type="date" id="f-endDate" name="endDate" />
+      </div>
+
+      <div class="adm-feld">
+        <label for="f-time">Uhrzeit</label>
+        <input type="time" id="f-time" name="time" />
+        <p class="adm-feld__hinweis">Leer lassen, wenn der Termin ganztägig ist.</p>
+      </div>
+
+      <div class="adm-feld">
+        <label for="f-location">Ort</label>
+        <input type="text" id="f-location" name="location" required autocomplete="off" />
+      </div>
+
+      <div class="adm-feld">
+        <label for="f-description">Beschreibung</label>
+        <textarea id="f-description" name="description" rows="4"></textarea>
+      </div>
+
+      <div class="adm-feld">
+        <label for="f-category">Kategorie</label>
+        <select id="f-category" name="category">
+          <option value="auftritt">Auftritt</option>
+          <option value="training">Training</option>
+          <option value="veranstaltung">Veranstaltung</option>
+          <option value="vereinsintern">Vereinsintern</option>
+          <option value="sonstiges">Sonstiges</option>
+        </select>
+      </div>
+
+      <div class="adm-feld">
+        <label class="adm-schalter">
+          <input type="checkbox" id="f-public" name="public" checked />
+          <span>Auf der Website anzeigen</span>
+        </label>
+        <p class="adm-feld__hinweis">Ausschalten für interne Termine, die niemand sehen soll.</p>
+      </div>
+
+      <details class="adm-feld">
+        <summary class="adm-feld__titel" style="cursor: pointer">Darstellung des Datums</summary>
+        <div style="margin-top: var(--space-3)">
+          <label for="f-dateLabel">Eigene Datumsanzeige</label>
+          <input type="text" id="f-dateLabel" name="dateLabel" autocomplete="off" />
+          <p class="adm-feld__hinweis">
+            Überschreibt die automatische Anzeige, z. B. „31. Juli + 1. August".
+          </p>
+          <label class="adm-schalter" style="margin-top: var(--space-3)">
+            <input type="checkbox" id="f-hideDate" name="hideDate" />
+            <span>Datum gar nicht anzeigen</span>
+          </label>
+        </div>
+      </details>
+
+      <p>
+        <button type="button" class="adm-knopf adm-knopf--gefahr" id="loeschen" hidden>
+          Termin löschen
+        </button>
+      </p>
+    </form>
+  </section>
+
+  <div slot="leiste" class="adm-leiste" id="leiste" hidden>
+    <div class="adm-leiste__innen">
+      <button type="button" class="adm-knopf" id="speichern">Speichern</button>
+      <button type="button" class="adm-knopf adm-knopf--leise" id="abbrechen">Abbrechen</button>
+      <span class="adm-leiste__status" id="leiste-status"></span>
+    </div>
+  </div>
+
+  <script>
+    import {
+      api, ApiFehler, meldung, meldungLeeren, feldFehlerZeigen, datumDeutsch, heuteIso,
+      Zwischenspeicher, alsGeaendertMarkieren, alsGespeichertMarkieren, istGeaendert,
+      speichernKuerzel, loeschenBestaetigen,
+    } from '../../scripts/admin-kern';
+
+    interface Termin {
+      name: string;
+      title: string;
+      date: string;
+      endDate?: string;
+      time?: string;
+      location: string;
+      description?: string;
+      category?: string;
+      public?: boolean;
+      dateLabel?: string;
+      hideDate?: boolean;
+    }
+
+    const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+
+    const meldungen = $('meldungen');
+    const ansichtListe = $('ansicht-liste');
+    const ansichtFormular = $('ansicht-formular');
+    const listeZiel = $('liste');
+    const formular = $<HTMLFormElement>('formular');
+    const leiste = $('leiste');
+    const knopfSpeichern = $<HTMLButtonElement>('speichern');
+    const knopfLoeschen = $<HTMLButtonElement>('loeschen');
+    const status = $('leiste-status');
+
+    /** Name der gerade bearbeiteten Datei; leer = neuer Termin. */
+    let aktuellerName = '';
+    let aktuelleSha = '';
+    const entwurf = new Zwischenspeicher<Record<string, unknown>>('redaktion:termin-entwurf');
+
+    // --- Liste ---------------------------------------------------------------
+
+    async function listeLaden() {
+      listeZiel.className = 'adm-lade';
+      listeZiel.textContent = 'Termine werden geladen …';
+      try {
+        const { eintraege } = await api<{ eintraege: Termin[] }>('termine');
+        listeZeichnen(eintraege);
+      } catch (e) {
+        listeZiel.className = '';
+        listeZiel.textContent = '';
+        meldung(meldungen, 'fehler', (e as Error).message);
+      }
+    }
+
+    function listeZeichnen(eintraege: Termin[]) {
+      const heute = heuteIso();
+      const kommend = eintraege
+        .filter((t) => (t.endDate ?? t.date) >= heute)
+        .sort((a, b) => a.date.localeCompare(b.date));
+      const vergangen = eintraege
+        .filter((t) => (t.endDate ?? t.date) < heute)
+        .sort((a, b) => b.date.localeCompare(a.date));
+
+      listeZiel.className = '';
+      listeZiel.innerHTML = '';
+
+      if (eintraege.length === 0) {
+        listeZiel.innerHTML =
+          '<p class="adm-leer">Noch keine Termine. Lege oben den ersten an.</p>';
+        return;
+      }
+      abschnitt('Kommende Termine', kommend, false);
+      abschnitt('Vergangene Termine', vergangen, true);
+    }
+
+    function abschnitt(titel: string, eintraege: Termin[], vergangen: boolean) {
+      if (eintraege.length === 0) return;
+      const block = document.createElement('div');
+      block.className = 'adm-abschnitt';
+      const h = document.createElement('h2');
+      h.className = 'adm-abschnitt__titel';
+      h.textContent = `${titel} (${eintraege.length})`;
+      block.append(h);
+
+      const ul = document.createElement('ul');
+      ul.className = 'adm-liste';
+      for (const t of eintraege) {
+        const li = document.createElement('li');
+        li.className = `adm-eintrag${vergangen ? ' adm-eintrag--vergangen' : ''}`;
+
+        const haupt = document.createElement('div');
+        haupt.className = 'adm-eintrag__haupt';
+        const titelZeile = document.createElement('div');
+        titelZeile.className = 'adm-eintrag__titel';
+        titelZeile.textContent = t.title;
+        const meta = document.createElement('div');
+        meta.className = 'adm-eintrag__meta';
+        meta.textContent = [
+          t.dateLabel || datumDeutsch(t.date),
+          t.time,
+          t.location,
+          t.public === false ? 'nicht öffentlich' : '',
+        ].filter(Boolean).join(' · ');
+        haupt.append(titelZeile, meta);
+
+        const aktionen = document.createElement('div');
+        aktionen.className = 'adm-eintrag__aktionen';
+        const bearbeiten = document.createElement('button');
+        bearbeiten.type = 'button';
+        bearbeiten.className = 'adm-knopf adm-knopf--leise adm-knopf--klein';
+        bearbeiten.textContent = 'Bearbeiten';
+        bearbeiten.addEventListener('click', () => formularOeffnen(t.name));
+        aktionen.append(bearbeiten);
+
+        li.append(haupt, aktionen);
+        ul.append(li);
+      }
+      block.append(ul);
+      listeZiel.append(block);
+    }
+
+    // --- Formular ------------------------------------------------------------
+
+    /*
+      Zugriff über die Feld-IDs statt über `formular.<name>`: Namen wie „title"
+      kollidieren sonst mit gleichnamigen Eigenschaften des Formular-Elements.
+    */
+    const eingabe = (name: string) => $<HTMLInputElement>(`f-${name}`);
+    const auswahl = (name: string) => $<HTMLSelectElement>(`f-${name}`);
+    const textfeld = (name: string) => $<HTMLTextAreaElement>(`f-${name}`);
+
+    function felderFuellen(t: Partial<Termin>) {
+      eingabe('title').value = t.title ?? '';
+      eingabe('date').value = t.date ?? heuteIso();
+      eingabe('endDate').value = t.endDate ?? '';
+      eingabe('time').value = t.time ?? '';
+      eingabe('location').value = t.location ?? '';
+      textfeld('description').value = t.description ?? '';
+      auswahl('category').value = t.category ?? 'auftritt';
+      eingabe('public').checked = t.public !== false;
+      eingabe('dateLabel').value = t.dateLabel ?? '';
+      eingabe('hideDate').checked = Boolean(t.hideDate);
+    }
+
+    function felderLesen(): Record<string, unknown> {
+      return {
+        title: eingabe('title').value,
+        date: eingabe('date').value,
+        endDate: eingabe('endDate').value || undefined,
+        time: eingabe('time').value || undefined,
+        location: eingabe('location').value,
+        description: textfeld('description').value || undefined,
+        category: auswahl('category').value,
+        public: eingabe('public').checked,
+        dateLabel: eingabe('dateLabel').value || undefined,
+        hideDate: eingabe('hideDate').checked,
+      };
+    }
+
+    async function formularOeffnen(name: string) {
+      meldungLeeren(meldungen);
+      aktuellerName = name;
+      aktuelleSha = '';
+
+      if (name) {
+        try {
+          const antwort = await api<{ daten: Termin; sha: string }>(`termine/${name}`);
+          felderFuellen(antwort.daten);
+          aktuelleSha = antwort.sha;
+        } catch (e) {
+          meldung(meldungen, 'fehler', (e as Error).message);
+          return;
+        }
+      } else {
+        felderFuellen({});
+        const gemerkt = entwurf.lesen();
+        if (gemerkt && window.confirm(
+          'Du hast einen unfertigen Termin von vorhin. Möchtest du dort weitermachen?\n\n' +
+          'Abbrechen verwirft ihn.',
+        )) {
+          felderFuellen(gemerkt.daten as Partial<Termin>);
+        } else {
+          entwurf.verwerfen();
+        }
+      }
+
+      knopfLoeschen.hidden = !name;
+      ansichtListe.hidden = true;
+      ansichtFormular.hidden = false;
+      leiste.hidden = false;
+      alsGespeichertMarkieren();
+      eingabe("title").focus();
+    }
+
+    function formularSchliessen() {
+      ansichtFormular.hidden = true;
+      leiste.hidden = true;
+      ansichtListe.hidden = false;
+      alsGespeichertMarkieren();
+      window.scrollTo({ top: 0 });
+    }
+
+    async function speichern() {
+      meldungLeeren(meldungen);
+      feldFehlerZeigen(undefined, '');
+      knopfSpeichern.disabled = true;
+      status.textContent = 'Wird gespeichert …';
+
+      const daten = felderLesen();
+      const neu = !aktuellerName;
+      // Dateiname aus Datum und Titel – so bleibt die Ablage chronologisch.
+      const name = aktuellerName || dateinameBilden(String(daten.date), String(daten.title));
+
+      try {
+        await api(`termine/${name}`, {
+          methode: 'PUT',
+          koerper: { daten, sha: aktuelleSha || undefined, neu },
+        });
+        entwurf.verwerfen();
+        alsGespeichertMarkieren();
+        status.textContent = '';
+        formularSchliessen();
+        meldung(meldungen, 'ok', 'Gespeichert. In ein bis drei Minuten ist die Änderung auf der Website zu sehen.');
+        await listeLaden();
+      } catch (e) {
+        status.textContent = '';
+        const f = e as ApiFehler;
+        if (!feldFehlerZeigen(f.feld, f.message)) {
+          meldung(meldungen, 'fehler', f.message);
+        }
+      } finally {
+        knopfSpeichern.disabled = false;
+      }
+    }
+
+    function dateinameBilden(datum: string, titel: string): string {
+      const rest = titel
+        .toLowerCase()
+        .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 60) || 'termin';
+      return /^\d{4}-\d{2}-\d{2}$/.test(datum) ? `${datum}-${rest}` : rest;
+    }
+
+    async function loeschen() {
+      const titel = eingabe("title").value || "dieser Termin";
+      if (!loeschenBestaetigen(titel)) return;
+      try {
+        await api(`termine/${aktuellerName}`, { methode: 'DELETE' });
+        alsGespeichertMarkieren();
+        formularSchliessen();
+        meldung(meldungen, 'ok', 'Der Termin wurde gelöscht.');
+        await listeLaden();
+      } catch (e) {
+        meldung(meldungen, 'fehler', (e as Error).message);
+      }
+    }
+
+    // --- Verdrahtung ---------------------------------------------------------
+
+    $('neu').addEventListener('click', () => formularOeffnen(''));
+    knopfSpeichern.addEventListener('click', speichern);
+    knopfLoeschen.addEventListener('click', loeschen);
+    $('abbrechen').addEventListener('click', () => {
+      if (istGeaendert() && !window.confirm('Änderungen verwerfen?')) return;
+      entwurf.verwerfen();
+      formularSchliessen();
+    });
+
+    formular.addEventListener('input', () => {
+      alsGeaendertMarkieren();
+      if (!aktuellerName) entwurf.merken(felderLesen());
+    });
+    formular.addEventListener('submit', (e) => {
+      e.preventDefault();
+      speichern();
+    });
+
+    speichernKuerzel(() => {
+      if (!ansichtFormular.hidden) speichern();
+    });
+
+    listeLaden();
+  </script>
+</AdminLayout>

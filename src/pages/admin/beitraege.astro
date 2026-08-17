@@ -1,0 +1,474 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout titel="Beiträge" zurueck="/admin">
+  <div id="meldungen"></div>
+
+  <section id="ansicht-liste">
+    <p><button type="button" class="adm-knopf" id="neu">+ Neuer Beitrag</button></p>
+    <div id="liste" class="adm-lade">Beiträge werden geladen …</div>
+  </section>
+
+  <section id="ansicht-formular" hidden>
+    <form class="adm-form" id="formular" novalidate>
+      <div class="adm-feld">
+        <label for="f-title">Titel</label>
+        <input type="text" id="f-title" name="title" required autocomplete="off" />
+      </div>
+
+      <div class="adm-feld">
+        <label for="f-date">Datum</label>
+        <input type="date" id="f-date" name="date" required />
+      </div>
+
+      <div class="adm-feld">
+        <label for="f-description">Kurztext für die Übersicht</label>
+        <textarea id="f-description" name="description" rows="3" maxlength="220"></textarea>
+        <p class="adm-feld__hinweis">
+          Ein bis zwei Sätze. Erscheint in der Beitragsliste und bei Google.
+          <span id="zaehler">0</span> von 220 Zeichen.
+        </p>
+      </div>
+
+      <div class="adm-feld">
+        <label for="f-lead">Einleitung</label>
+        <textarea id="f-lead" name="lead" rows="3"></textarea>
+        <p class="adm-feld__hinweis">Steht hervorgehoben am Anfang des Beitrags. Darf leer bleiben.</p>
+      </div>
+
+      <div class="adm-feld" data-feld="cover">
+        <span class="adm-feld__titel">Titelbild</span>
+        <div id="titelbild"></div>
+        <p class="adm-feld__hinweis">Querformat sieht in der Übersicht am besten aus.</p>
+      </div>
+
+      <div class="adm-feld" data-feld="coverAlt">
+        <label for="f-coverAlt">Bildbeschreibung des Titelbilds</label>
+        <input type="text" id="f-coverAlt" name="coverAlt" autocomplete="off" />
+        <p class="adm-feld__hinweis">Was ist auf dem Bild zu sehen? Hilft blinden Menschen und Suchmaschinen.</p>
+      </div>
+
+      <div class="adm-feld" data-feld="gallery">
+        <span class="adm-feld__titel">Weitere Bilder</span>
+        <div id="bilder"></div>
+        <p class="adm-fortschritt" id="upload-status" hidden></p>
+        <p style="margin-top: var(--space-3)">
+          <button type="button" class="adm-knopf adm-knopf--leise" id="bilder-waehlen">
+            Bilder hinzufügen
+          </button>
+        </p>
+        <input type="file" id="datei-wahl" accept="image/*" multiple hidden />
+      </div>
+
+      <div class="adm-feld">
+        <span class="adm-feld__titel">Text</span>
+        <div class="adm-editor-huelle">
+          <div class="adm-werkzeuge" id="werkzeuge" role="toolbar" aria-label="Textformatierung"></div>
+          <div class="adm-editor" id="editor" data-feld="text"></div>
+        </div>
+      </div>
+
+      <div class="adm-feld">
+        <label class="adm-schalter">
+          <input type="checkbox" id="f-draft" name="draft" />
+          <span>Entwurf – noch nicht veröffentlichen</span>
+        </label>
+      </div>
+
+      <p>
+        <button type="button" class="adm-knopf adm-knopf--gefahr" id="loeschen" hidden>
+          Beitrag löschen
+        </button>
+      </p>
+    </form>
+  </section>
+
+  <div slot="leiste" class="adm-leiste" id="leiste" hidden>
+    <div class="adm-leiste__innen">
+      <button type="button" class="adm-knopf" id="speichern">Speichern</button>
+      <button type="button" class="adm-knopf adm-knopf--leise" id="abbrechen">Abbrechen</button>
+      <span class="adm-leiste__status" id="leiste-status"></span>
+    </div>
+  </div>
+
+  <script>
+    import {
+      api, ApiFehler, meldung, meldungLeeren, feldFehlerZeigen, datumDeutsch, heuteIso,
+      Zwischenspeicher, alsGeaendertMarkieren, alsGespeichertMarkieren, istGeaendert,
+      speichernKuerzel, loeschenBestaetigen, bilderHochladen, vorschauAdresse,
+    } from '../../scripts/admin-kern';
+    import { editorAufbauen } from '../../scripts/admin-editor';
+
+    interface Bild { image: string; alt: string; caption?: string }
+    interface Beitrag {
+      name: string; title: string; date: string; description: string;
+      lead?: string; cover?: string; coverAlt?: string; gallery?: Bild[]; draft?: boolean;
+    }
+
+    const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+    const eingabe = (n: string) => $<HTMLInputElement>(`f-${n}`);
+    const textfeld = (n: string) => $<HTMLTextAreaElement>(`f-${n}`);
+
+    const meldungen = $('meldungen');
+    const ansichtListe = $('ansicht-liste');
+    const ansichtFormular = $('ansicht-formular');
+    const formular = $<HTMLFormElement>('formular');
+    const leiste = $('leiste');
+    const status = $('leiste-status');
+    const dateiWahl = $<HTMLInputElement>('datei-wahl');
+
+    let aktuellerName = '';
+    let aktuelleSha = '';
+    let titelbild: string | null = null;
+    let bilder: Bild[] = [];
+    const entwurf = new Zwischenspeicher<Record<string, unknown>>('redaktion:beitrag-entwurf');
+
+    const editor = editorAufbauen($('editor'), $('werkzeuge'), () => {
+      alsGeaendertMarkieren();
+      merken();
+    });
+
+    // --- Liste ---------------------------------------------------------------
+
+    async function listeLaden() {
+      const ziel = $('liste');
+      ziel.className = 'adm-lade';
+      ziel.textContent = 'Beiträge werden geladen …';
+      try {
+        const { eintraege } = await api<{ eintraege: Beitrag[] }>('beitraege');
+        eintraege.sort((a, b) => b.date.localeCompare(a.date));
+        ziel.className = '';
+        ziel.innerHTML = '';
+        if (eintraege.length === 0) {
+          ziel.innerHTML = '<p class="adm-leer">Noch keine Beiträge. Lege oben den ersten an.</p>';
+          return;
+        }
+        const ul = document.createElement('ul');
+        ul.className = 'adm-liste';
+        for (const b of eintraege) {
+          const li = document.createElement('li');
+          li.className = 'adm-eintrag';
+          const haupt = document.createElement('div');
+          haupt.className = 'adm-eintrag__haupt';
+          const t = document.createElement('div');
+          t.className = 'adm-eintrag__titel';
+          t.textContent = b.title;
+          const m = document.createElement('div');
+          m.className = 'adm-eintrag__meta';
+          m.textContent = [datumDeutsch(b.date), b.draft ? 'Entwurf' : ''].filter(Boolean).join(' · ');
+          haupt.append(t, m);
+
+          const knopf = document.createElement('button');
+          knopf.type = 'button';
+          knopf.className = 'adm-knopf adm-knopf--leise adm-knopf--klein';
+          knopf.textContent = 'Bearbeiten';
+          knopf.addEventListener('click', () => formularOeffnen(b.name));
+          const aktionen = document.createElement('div');
+          aktionen.className = 'adm-eintrag__aktionen';
+          aktionen.append(knopf);
+
+          li.append(haupt, aktionen);
+          ul.append(li);
+        }
+        ziel.append(ul);
+      } catch (e) {
+        ziel.className = '';
+        ziel.textContent = '';
+        meldung(meldungen, 'fehler', (e as Error).message);
+      }
+    }
+
+    // --- Bilder --------------------------------------------------------------
+
+    function titelbildZeichnen() {
+      const ziel = $('titelbild');
+      ziel.innerHTML = '';
+      if (!titelbild) {
+        const knopf = document.createElement('button');
+        knopf.type = 'button';
+        knopf.className = 'adm-knopf adm-knopf--leise';
+        knopf.textContent = 'Titelbild wählen';
+        knopf.addEventListener('click', () => dateiWaehlen(true));
+        ziel.append(knopf);
+        return;
+      }
+      const reihe = document.createElement('div');
+      reihe.className = 'adm-bild';
+      const bild = document.createElement('img');
+      bild.className = 'adm-bild__vorschau';
+      bild.src = vorschauAdresse(titelbild);
+      bild.alt = '';
+      const felder = document.createElement('div');
+      felder.className = 'adm-bild__felder';
+      const entfernen = document.createElement('button');
+      entfernen.type = 'button';
+      entfernen.className = 'adm-knopf adm-knopf--leise adm-knopf--klein';
+      entfernen.textContent = 'Anderes Bild wählen';
+      entfernen.addEventListener('click', () => dateiWaehlen(true));
+      felder.append(entfernen);
+      reihe.append(bild, felder);
+      ziel.append(reihe);
+    }
+
+    function bilderZeichnen() {
+      const ziel = $('bilder');
+      ziel.innerHTML = '';
+      bilder.forEach((b, i) => {
+        const reihe = document.createElement('div');
+        reihe.className = 'adm-bild';
+
+        const bild = document.createElement('img');
+        bild.className = 'adm-bild__vorschau';
+        bild.src = vorschauAdresse(b.image);
+        bild.alt = '';
+        bild.loading = 'lazy';
+
+        const felder = document.createElement('div');
+        felder.className = 'adm-bild__felder';
+        const beschriftung = document.createElement('input');
+        beschriftung.type = 'text';
+        beschriftung.value = b.alt ?? '';
+        beschriftung.placeholder = 'Was ist auf dem Bild zu sehen?';
+        beschriftung.setAttribute('aria-label', `Bildbeschreibung für Bild ${i + 1}`);
+        beschriftung.addEventListener('input', () => {
+          bilder[i].alt = beschriftung.value;
+          alsGeaendertMarkieren();
+          merken();
+        });
+
+        const reihe2 = document.createElement('div');
+        reihe2.className = 'adm-bild__reihe';
+        // Sortieren über Schaltflächen statt Ziehen: Auf Touch-Geräten ist
+        // Ziehen über eine lange Liste kaum zu treffen.
+        reihe2.append(
+          sortierKnopf('↑', 'Nach oben', i === 0, () => tauschen(i, i - 1)),
+          sortierKnopf('↓', 'Nach unten', i === bilder.length - 1, () => tauschen(i, i + 1)),
+          sortierKnopf('✕', 'Bild entfernen', false, () => {
+            bilder.splice(i, 1);
+            bilderZeichnen();
+            alsGeaendertMarkieren();
+            merken();
+          }),
+        );
+
+        felder.append(beschriftung, reihe2);
+        reihe.append(bild, felder);
+        ziel.append(reihe);
+      });
+    }
+
+    function sortierKnopf(zeichen: string, titel: string, aus: boolean, tun: () => void) {
+      const k = document.createElement('button');
+      k.type = 'button';
+      k.className = 'adm-icon';
+      k.textContent = zeichen;
+      k.title = titel;
+      k.setAttribute('aria-label', titel);
+      k.disabled = aus;
+      k.addEventListener('click', tun);
+      return k;
+    }
+
+    function tauschen(a: number, b: number) {
+      [bilder[a], bilder[b]] = [bilder[b], bilder[a]];
+      bilderZeichnen();
+      alsGeaendertMarkieren();
+      merken();
+    }
+
+    let alsTitelbild = false;
+    function dateiWaehlen(titel: boolean) {
+      alsTitelbild = titel;
+      dateiWahl.multiple = !titel;
+      dateiWahl.value = '';
+      dateiWahl.click();
+    }
+
+    dateiWahl.addEventListener('change', async () => {
+      const dateien = [...(dateiWahl.files ?? [])];
+      if (dateien.length === 0) return;
+      const anzeige = $('upload-status');
+      anzeige.hidden = false;
+
+      try {
+        const hochgeladen = await bilderHochladen(dateien, 'uploads', (fertig, gesamt, name) => {
+          anzeige.textContent = fertig < gesamt
+            ? `Bild ${fertig + 1} von ${gesamt} wird verkleinert und hochgeladen … (${name})`
+            : 'Fertig.';
+        });
+        if (alsTitelbild) {
+          titelbild = hochgeladen[0]?.referenz ?? null;
+          titelbildZeichnen();
+        } else {
+          bilder.push(...hochgeladen.map((h) => ({ image: h.referenz, alt: '' })));
+          bilderZeichnen();
+        }
+        alsGeaendertMarkieren();
+        merken();
+      } catch (e) {
+        meldung(meldungen, 'fehler', (e as Error).message);
+      } finally {
+        setTimeout(() => { anzeige.hidden = true; }, 1500);
+      }
+    });
+
+    // --- Formular ------------------------------------------------------------
+
+    function felderFuellen(b: Partial<Beitrag>, text = '') {
+      eingabe('title').value = b.title ?? '';
+      eingabe('date').value = b.date ?? heuteIso();
+      textfeld('description').value = b.description ?? '';
+      textfeld('lead').value = b.lead ?? '';
+      eingabe('coverAlt').value = b.coverAlt ?? '';
+      eingabe('draft').checked = Boolean(b.draft);
+      titelbild = b.cover ?? null;
+      bilder = (b.gallery ?? []).map((g) => ({ ...g }));
+      editor.setzen(text);
+      titelbildZeichnen();
+      bilderZeichnen();
+      zaehlerAktualisieren();
+    }
+
+    function felderLesen() {
+      return {
+        daten: {
+          title: eingabe('title').value,
+          date: eingabe('date').value,
+          description: textfeld('description').value,
+          lead: textfeld('lead').value || undefined,
+          cover: titelbild ?? undefined,
+          coverAlt: eingabe('coverAlt').value || undefined,
+          gallery: bilder,
+          draft: eingabe('draft').checked,
+        },
+        text: editor.lesen(),
+      };
+    }
+
+    function merken() {
+      if (!aktuellerName) entwurf.merken(felderLesen() as unknown as Record<string, unknown>);
+    }
+
+    function zaehlerAktualisieren() {
+      $('zaehler').textContent = String(textfeld('description').value.length);
+    }
+
+    async function formularOeffnen(name: string) {
+      meldungLeeren(meldungen);
+      aktuellerName = name;
+      aktuelleSha = '';
+
+      if (name) {
+        try {
+          const a = await api<{ daten: Beitrag; text: string; sha: string }>(`beitraege/${name}`);
+          felderFuellen(a.daten, a.text);
+          aktuelleSha = a.sha;
+        } catch (e) {
+          meldung(meldungen, 'fehler', (e as Error).message);
+          return;
+        }
+      } else {
+        felderFuellen({});
+        const gemerkt = entwurf.lesen();
+        if (gemerkt && window.confirm(
+          'Du hast einen unfertigen Beitrag von vorhin. Möchtest du dort weitermachen?\n\nAbbrechen verwirft ihn.',
+        )) {
+          const g = gemerkt.daten as { daten: Partial<Beitrag>; text: string };
+          felderFuellen(g.daten, g.text);
+        } else {
+          entwurf.verwerfen();
+        }
+      }
+
+      $('loeschen').hidden = !name;
+      ansichtListe.hidden = true;
+      ansichtFormular.hidden = false;
+      leiste.hidden = false;
+      alsGespeichertMarkieren();
+      eingabe('title').focus();
+    }
+
+    function formularSchliessen() {
+      ansichtFormular.hidden = true;
+      leiste.hidden = true;
+      ansichtListe.hidden = false;
+      alsGespeichertMarkieren();
+      window.scrollTo({ top: 0 });
+    }
+
+    async function speichern() {
+      meldungLeeren(meldungen);
+      feldFehlerZeigen(undefined, '');
+      const knopf = $<HTMLButtonElement>('speichern');
+      knopf.disabled = true;
+      status.textContent = 'Wird gespeichert …';
+
+      const { daten, text } = felderLesen();
+      const neu = !aktuellerName;
+      const name = aktuellerName || slug(String(daten.title));
+
+      try {
+        await api(`beitraege/${name}`, {
+          methode: 'PUT',
+          koerper: { daten, text, sha: aktuelleSha || undefined, neu },
+        });
+        entwurf.verwerfen();
+        alsGespeichertMarkieren();
+        status.textContent = '';
+        formularSchliessen();
+        meldung(meldungen, 'ok', 'Gespeichert. In ein bis drei Minuten ist der Beitrag auf der Website zu sehen.');
+        await listeLaden();
+      } catch (e) {
+        status.textContent = '';
+        const f = e as ApiFehler;
+        if (!feldFehlerZeigen(f.feld, f.message)) meldung(meldungen, 'fehler', f.message);
+      } finally {
+        knopf.disabled = false;
+      }
+    }
+
+    function slug(titel: string) {
+      return titel
+        .toLowerCase()
+        .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 60) || 'beitrag';
+    }
+
+    // --- Verdrahtung ---------------------------------------------------------
+
+    $('neu').addEventListener('click', () => formularOeffnen(''));
+    $('speichern').addEventListener('click', speichern);
+    $('bilder-waehlen').addEventListener('click', () => dateiWaehlen(false));
+    $('abbrechen').addEventListener('click', () => {
+      if (istGeaendert() && !window.confirm('Änderungen verwerfen?')) return;
+      entwurf.verwerfen();
+      formularSchliessen();
+    });
+    $('loeschen').addEventListener('click', async () => {
+      const titel = eingabe('title').value || 'dieser Beitrag';
+      if (!loeschenBestaetigen(titel)) return;
+      try {
+        await api(`beitraege/${aktuellerName}`, { methode: 'DELETE' });
+        alsGespeichertMarkieren();
+        formularSchliessen();
+        meldung(meldungen, 'ok', 'Der Beitrag wurde gelöscht. Die Bilder bleiben erhalten und können weiterverwendet werden.');
+        await listeLaden();
+      } catch (e) {
+        meldung(meldungen, 'fehler', (e as Error).message);
+      }
+    });
+
+    formular.addEventListener('input', () => {
+      alsGeaendertMarkieren();
+      zaehlerAktualisieren();
+      merken();
+    });
+    formular.addEventListener('submit', (e) => { e.preventDefault(); speichern(); });
+    speichernKuerzel(() => { if (!ansichtFormular.hidden) speichern(); });
+
+    listeLaden();
+  </script>
+</AdminLayout>

@@ -10,6 +10,11 @@ lead: >-
   dabei!
 cover: /uploads/aktuelles-volksfestumzug-2026.jpeg
 coverAlt: Die Garden der Europa-Show-Tanzgarde beim Volksfestumzug 2026.
+coverFocusY: 55
+coverZoom: 1.22
+coverOffsetX: 2%
+teaserFocusY: 58
+teaserZoom: 1.25
 gallery:
   - image: /uploads/volksfestumzug-jugendgarde.jpeg
     alt: Die Jugendgarde beim Trüdinger Volksfestumzug.

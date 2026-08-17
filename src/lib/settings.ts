@@ -16,6 +16,22 @@ const siteSchema = z.object({
   claim: z.string(),
   email: z.string(),
   location: z.string(),
+  /**
+   * Kontaktseite. Anschrift, Telefonnummern und Bild standen früher fest im
+   * Markup von `kontakt.astro` – bei einem Vorstandswechsel wäre dafür jedes
+   * Mal eine Code-Änderung nötig gewesen.
+   */
+  kontakt: z
+    .object({
+      intro: z.array(z.string()).default([]),
+      adresse: z.array(z.string()).default([]),
+      telefon: z
+        .array(z.object({ name: z.string(), nummer: z.string() }))
+        .default([]),
+      bild: z.string().default(''),
+      bildAlt: z.string().default(''),
+    })
+    .default({ intro: [], adresse: [], telefon: [], bild: '', bildAlt: '' }),
   social: z.object({
     facebook: z.string().optional(),
     instagram: z.string().optional(),
@@ -35,6 +51,9 @@ const siteSchema = z.object({
 
 const homepageSchema = z.object({
   heroKicker: z.string(),
+  /** Großes Bühnenfoto ganz oben. Stand früher fest in `Hero.astro`. */
+  heroImage: z.string().default(''),
+  heroImageAlt: z.string().default(''),
   heroTitle: z.string(),
   heroHighlight: z.string(),
   heroText: z.string(),

@@ -1,0 +1,61 @@
+---
+/**
+ * Gerüst des Redaktionsbereichs.
+ *
+ * Bewusst NICHT das BaseLayout der Website: kein Seitenkopf mit Navigation,
+ * keine Fußzeile, keine Schriftarten-Vorlagen für Fließtext – der Editor ist
+ * ein Werkzeug, keine Seite zum Lesen. Farben und Abstände kommen aber aus
+ * demselben Design-System, damit er nicht wie ein Fremdkörper wirkt.
+ */
+import '@fontsource-variable/hanken-grotesk';
+import '@fontsource-variable/big-shoulders';
+import '../styles/tokens.css';
+import '../styles/admin.css';
+
+interface Props {
+  titel: string;
+  /** Ziel des Zurück-Pfeils. Fehlt er, ist dies die Startseite. */
+  zurueck?: string;
+}
+
+const { titel, zurueck } = Astro.props;
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{titel} · Redaktion</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body class="adm">
+    <header class="adm-kopf">
+      <div class="adm-kopf__innen">
+        {zurueck && (
+          <a class="adm-kopf__zurueck" href={zurueck} aria-label="Zurück">
+            <span aria-hidden="true">←</span>
+          </a>
+        )}
+        <h1 class="adm-kopf__titel">{titel}</h1>
+        <span class="adm-kopf__rechts">Redaktion</span>
+      </div>
+    </header>
+
+    <main class="adm-inhalt">
+      <slot />
+    </main>
+
+    <slot name="leiste" />
+
+    <script>
+      import { tastaturBeobachten, fokusSichtbarHalten, verlassenWarnen } from '../scripts/admin-kern';
+
+      // Gilt auf jeder Seite des Redaktionsbereichs.
+      tastaturBeobachten();
+      fokusSichtbarHalten();
+      verlassenWarnen();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,393 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout titel="Startseite" zurueck="/admin">
+  <div id="meldungen"></div>
+  <div id="lade" class="adm-lade">Wird geladen …</div>
+
+  <form class="adm-form" id="formular" hidden novalidate>
+    <div class="adm-abschnitt">
+      <h2 class="adm-abschnitt__titel">Großes Bild ganz oben</h2>
+
+      <div class="adm-feld" data-feld="heroImage">
+        <span class="adm-feld__titel">Bild</span>
+        <div id="hero-bild"></div>
+        <p class="adm-fortschritt" id="hero-status" hidden></p>
+        <p class="adm-feld__hinweis">Querformat. Wird über die volle Breite angezeigt und beschnitten.</p>
+        <input type="file" id="hero-wahl" accept="image/*" hidden />
+      </div>
+
+      <div class="adm-feld" data-feld="heroImageAlt">
+        <label for="f-heroImageAlt">Bildbeschreibung</label>
+        <input type="text" id="f-heroImageAlt" autocomplete="off" />
+      </div>
+
+      <div class="adm-feld">
+        <label for="f-heroKicker">Kleine Zeile über dem Titel</label>
+        <input type="text" id="f-heroKicker" autocomplete="off" />
+      </div>
+    </div>
+
+    <div class="adm-abschnitt">
+      <h2 class="adm-abschnitt__titel">Einleitung</h2>
+      <div class="adm-feld">
+        <label for="f-heroTitle">Titel, erste Zeile</label>
+        <input type="text" id="f-heroTitle" autocomplete="off" />
+      </div>
+      <div class="adm-feld">
+        <label for="f-heroHighlight">Titel, zweite Zeile</label>
+        <input type="text" id="f-heroHighlight" autocomplete="off" />
+      </div>
+      <div class="adm-feld">
+        <label for="f-heroText">Einleitungstext</label>
+        <textarea id="f-heroText" rows="4"></textarea>
+      </div>
+    </div>
+
+    <div class="adm-abschnitt">
+      <h2 class="adm-abschnitt__titel">Hinweisband</h2>
+      <div class="adm-feld">
+        <label class="adm-schalter">
+          <input type="checkbox" id="f-noticeEnabled" />
+          <span>Hinweis oben auf der Startseite anzeigen</span>
+        </label>
+      </div>
+      <div class="adm-feld">
+        <label for="f-noticeText">Text</label>
+        <input type="text" id="f-noticeText" autocomplete="off" />
+      </div>
+      <div class="adm-feld">
+        <label for="f-noticeLink">Link (optional)</label>
+        <input type="text" id="f-noticeLink" autocomplete="off" placeholder="/termine" />
+      </div>
+      <div class="adm-feld">
+        <label for="f-noticeLinkLabel">Beschriftung des Links</label>
+        <input type="text" id="f-noticeLinkLabel" autocomplete="off" />
+      </div>
+    </div>
+  </form>
+
+  <form class="adm-form" id="anlass-formular" hidden novalidate>
+    <div class="adm-abschnitt">
+      <h2 class="adm-abschnitt__titel">Block für besondere Anlässe</h2>
+      <p class="adm-feld__hinweis" style="margin-bottom: var(--space-4)">
+        Für Jubiläum, Tag der offenen Tür oder ähnliche Ereignisse. Nach dem
+        Ereignis einfach ausschalten – der Block verschwindet dann von der Startseite.
+      </p>
+
+      <div class="adm-feld">
+        <label class="adm-schalter">
+          <input type="checkbox" id="a-enabled" />
+          <span>Block anzeigen</span>
+        </label>
+      </div>
+
+      <div class="adm-feld" data-feld="image">
+        <span class="adm-feld__titel">Bild (z. B. ein Flyer)</span>
+        <div id="anlass-bild"></div>
+        <p class="adm-fortschritt" id="anlass-status" hidden></p>
+        <input type="file" id="anlass-wahl" accept="image/*" hidden />
+      </div>
+
+      <div class="adm-feld" data-feld="imageAlt">
+        <label for="a-imageAlt">Bildbeschreibung</label>
+        <input type="text" id="a-imageAlt" autocomplete="off" />
+      </div>
+
+      <div class="adm-feld">
+        <label for="a-eyebrow">Kleine Zeile darüber</label>
+        <input type="text" id="a-eyebrow" autocomplete="off" />
+      </div>
+
+      <div class="adm-feld" data-feld="title">
+        <label for="a-title">Überschrift</label>
+        <input type="text" id="a-title" autocomplete="off" />
+        <p class="adm-feld__hinweis">Kurz halten – die Überschrift wird sehr groß dargestellt.</p>
+      </div>
+
+      <div class="adm-feld">
+        <label for="a-text">Text</label>
+        <textarea id="a-text" rows="4"></textarea>
+      </div>
+
+      <div class="adm-feld" data-feld="facts">
+        <span class="adm-feld__titel">Eckdaten</span>
+        <div id="fakten"></div>
+        <p style="margin-top: var(--space-3)">
+          <button type="button" class="adm-knopf adm-knopf--leise adm-knopf--klein" id="fakt-neu">
+            + Eckdatum
+          </button>
+        </p>
+        <p class="adm-feld__hinweis">Höchstens vier, zum Beispiel Einlass, Beginn und Eintritt.</p>
+      </div>
+
+      <div class="adm-feld">
+        <label for="a-footnote">Schlusssatz</label>
+        <input type="text" id="a-footnote" autocomplete="off" />
+      </div>
+    </div>
+  </form>
+
+  <div slot="leiste" class="adm-leiste" id="leiste" hidden>
+    <div class="adm-leiste__innen">
+      <button type="button" class="adm-knopf" id="speichern">Speichern</button>
+      <a class="adm-knopf adm-knopf--leise" href="/admin">Zurück</a>
+      <span class="adm-leiste__status" id="leiste-status"></span>
+    </div>
+  </div>
+
+  <script>
+    import {
+      api, ApiFehler, meldung, meldungLeeren, feldFehlerZeigen,
+      alsGeaendertMarkieren, alsGespeichertMarkieren, speichernKuerzel,
+      bilderHochladen, vorschauAdresse,
+    } from '../../scripts/admin-kern';
+
+    const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+    const meldungen = $('meldungen');
+    const status = $('leiste-status');
+
+    let startseite: Record<string, unknown> = {};
+    let startseiteSha = '';
+    let anlass: Record<string, unknown> = {};
+    let anlassSha = '';
+    let heroBild: string | null = null;
+    let anlassBild: string | null = null;
+    let fakten: { label: string; value: string }[] = [];
+
+    const wert = (id: string) => $<HTMLInputElement>(id).value;
+    const setze = (id: string, v: unknown) => { $<HTMLInputElement>(id).value = String(v ?? ''); };
+
+    async function laden() {
+      try {
+        const [s, a] = await Promise.all([
+          api<{ daten: Record<string, unknown>; sha: string }>('einstellungen/startseite'),
+          api<{ eintraege: Record<string, unknown>[] }>('anlass'),
+        ]);
+        startseite = s.daten;
+        startseiteSha = s.sha;
+
+        const ersterAnlass = a.eintraege[0];
+        if (ersterAnlass) {
+          const kennung = String(ersterAnlass.name);
+          const voll = await api<{ daten: Record<string, unknown>; sha: string }>(`anlass/${kennung}`);
+          anlass = { ...voll.daten, name: kennung };
+          anlassSha = voll.sha;
+        }
+
+        felderFuellen();
+        $('lade').hidden = true;
+        $('formular').hidden = false;
+        $('anlass-formular').hidden = false;
+        $('leiste').hidden = false;
+        alsGespeichertMarkieren();
+      } catch (e) {
+        $('lade').hidden = true;
+        meldung(meldungen, 'fehler', (e as Error).message);
+      }
+    }
+
+    function felderFuellen() {
+      setze('f-heroKicker', startseite.heroKicker);
+      setze('f-heroTitle', startseite.heroTitle);
+      setze('f-heroHighlight', startseite.heroHighlight);
+      setze('f-heroText', startseite.heroText);
+      setze('f-heroImageAlt', startseite.heroImageAlt);
+      heroBild = (startseite.heroImage as string) || null;
+
+      const notice = (startseite.notice ?? {}) as Record<string, unknown>;
+      $<HTMLInputElement>('f-noticeEnabled').checked = Boolean(notice.enabled);
+      setze('f-noticeText', notice.text);
+      setze('f-noticeLink', notice.link);
+      setze('f-noticeLinkLabel', notice.linkLabel);
+
+      $<HTMLInputElement>('a-enabled').checked = Boolean(anlass.enabled);
+      setze('a-eyebrow', anlass.eyebrow);
+      setze('a-title', anlass.title);
+      setze('a-text', anlass.text);
+      setze('a-imageAlt', anlass.imageAlt);
+      setze('a-footnote', anlass.footnote);
+      anlassBild = (anlass.image as string) || null;
+      fakten = ((anlass.facts ?? []) as { label: string; value: string }[]).map((f) => ({ ...f }));
+
+      bildZeichnen('hero-bild', heroBild, () => bildWaehlen('hero'));
+      bildZeichnen('anlass-bild', anlassBild, () => bildWaehlen('anlass'));
+      faktenZeichnen();
+    }
+
+    function bildZeichnen(zielId: string, bild: string | null, waehlen: () => void) {
+      const ziel = $(zielId);
+      ziel.innerHTML = '';
+      const knopf = document.createElement('button');
+      knopf.type = 'button';
+      knopf.className = 'adm-knopf adm-knopf--leise';
+      knopf.textContent = bild ? 'Anderes Bild wählen' : 'Bild wählen';
+      knopf.addEventListener('click', waehlen);
+      if (!bild) { ziel.append(knopf); return; }
+      const reihe = document.createElement('div');
+      reihe.className = 'adm-bild';
+      const img = document.createElement('img');
+      img.className = 'adm-bild__vorschau';
+      img.src = vorschauAdresse(bild);
+      img.alt = '';
+      const felder = document.createElement('div');
+      felder.className = 'adm-bild__felder';
+      felder.append(knopf);
+      reihe.append(img, felder);
+      ziel.append(reihe);
+    }
+
+    function bildWaehlen(welches: 'hero' | 'anlass') {
+      const wahl = $<HTMLInputElement>(welches === 'hero' ? 'hero-wahl' : 'anlass-wahl');
+      wahl.value = '';
+      wahl.click();
+    }
+
+    for (const welches of ['hero', 'anlass'] as const) {
+      $<HTMLInputElement>(`${welches}-wahl`).addEventListener('change', async (e) => {
+        const dateien = [...((e.target as HTMLInputElement).files ?? [])];
+        if (dateien.length === 0) return;
+        const anzeige = $(`${welches}-status`);
+        anzeige.hidden = false;
+        try {
+          // Das Bild des Anlass-Blocks liegt bei den Galeriebildern, damit es
+          // beim Bauen optimiert wird (schärfer und deutlich kleiner).
+          const ordner = welches === 'anlass' ? 'galerie' : 'uploads';
+          const neu = await bilderHochladen(dateien, ordner, (f, g) => {
+            anzeige.textContent = f < g ? 'Bild wird verkleinert und hochgeladen …' : 'Fertig.';
+          });
+          const referenz = neu[0]?.referenz ?? null;
+          if (welches === 'hero') {
+            heroBild = referenz;
+            bildZeichnen('hero-bild', heroBild, () => bildWaehlen('hero'));
+          } else {
+            anlassBild = referenz;
+            bildZeichnen('anlass-bild', anlassBild, () => bildWaehlen('anlass'));
+          }
+          alsGeaendertMarkieren();
+        } catch (err) {
+          meldung(meldungen, 'fehler', (err as Error).message);
+        } finally {
+          setTimeout(() => { anzeige.hidden = true; }, 1500);
+        }
+      });
+    }
+
+    function faktenZeichnen() {
+      const ziel = $('fakten');
+      ziel.innerHTML = '';
+      fakten.forEach((f, i) => {
+        const reihe = document.createElement('div');
+        reihe.className = 'adm-bild__reihe';
+        reihe.style.marginTop = 'var(--space-2)';
+
+        const bez = document.createElement('input');
+        bez.type = 'text';
+        bez.value = f.label;
+        bez.placeholder = 'Einlass';
+        bez.setAttribute('aria-label', `Bezeichnung ${i + 1}`);
+        bez.addEventListener('input', () => { fakten[i].label = bez.value; alsGeaendertMarkieren(); });
+
+        const val = document.createElement('input');
+        val.type = 'text';
+        val.value = f.value;
+        val.placeholder = '17:30 Uhr';
+        val.setAttribute('aria-label', `Wert ${i + 1}`);
+        val.addEventListener('input', () => { fakten[i].value = val.value; alsGeaendertMarkieren(); });
+
+        const weg = document.createElement('button');
+        weg.type = 'button';
+        weg.className = 'adm-icon';
+        weg.textContent = '✕';
+        weg.title = 'Entfernen';
+        weg.setAttribute('aria-label', `Eckdatum ${i + 1} entfernen`);
+        weg.addEventListener('click', () => {
+          fakten.splice(i, 1);
+          faktenZeichnen();
+          alsGeaendertMarkieren();
+        });
+
+        reihe.append(bez, val, weg);
+        ziel.append(reihe);
+      });
+      $<HTMLButtonElement>('fakt-neu').disabled = fakten.length >= 4;
+    }
+
+    async function speichern() {
+      meldungLeeren(meldungen);
+      feldFehlerZeigen(undefined, '');
+      const knopf = $<HTMLButtonElement>('speichern');
+      knopf.disabled = true;
+      status.textContent = 'Wird gespeichert …';
+
+      const neueStartseite = {
+        ...startseite,
+        heroKicker: wert('f-heroKicker'),
+        heroTitle: wert('f-heroTitle'),
+        heroHighlight: wert('f-heroHighlight'),
+        heroText: wert('f-heroText'),
+        heroImage: heroBild ?? '',
+        heroImageAlt: wert('f-heroImageAlt'),
+        notice: {
+          enabled: $<HTMLInputElement>('f-noticeEnabled').checked,
+          text: wert('f-noticeText'),
+          link: wert('f-noticeLink'),
+          linkLabel: wert('f-noticeLinkLabel'),
+        },
+      };
+
+      const neuerAnlass = {
+        enabled: $<HTMLInputElement>('a-enabled').checked,
+        eyebrow: wert('a-eyebrow'),
+        title: wert('a-title'),
+        text: wert('a-text'),
+        image: anlassBild ?? undefined,
+        imageAlt: wert('a-imageAlt'),
+        facts: fakten.filter((f) => f.label || f.value),
+        footnote: wert('a-footnote'),
+      };
+
+      try {
+        const s = await api<{ sha: string }>('einstellungen/startseite', {
+          methode: 'PUT',
+          koerper: { daten: neueStartseite, sha: startseiteSha },
+        });
+        startseiteSha = s.sha;
+        startseite = neueStartseite;
+
+        const kennung = String(anlass.name ?? 'startseite');
+        const a = await api<{ sha: string }>(`anlass/${kennung}`, {
+          methode: 'PUT',
+          koerper: { daten: neuerAnlass, sha: anlassSha || undefined, neu: !anlassSha },
+        });
+        anlassSha = a.sha;
+        anlass = { ...neuerAnlass, name: kennung };
+
+        alsGespeichertMarkieren();
+        status.textContent = '';
+        meldung(meldungen, 'ok', 'Gespeichert. In ein bis drei Minuten ist die Startseite aktualisiert.');
+        window.scrollTo({ top: 0 });
+      } catch (e) {
+        status.textContent = '';
+        const f = e as ApiFehler;
+        if (!feldFehlerZeigen(f.feld, f.message)) meldung(meldungen, 'fehler', f.message);
+      } finally {
+        knopf.disabled = false;
+      }
+    }
+
+    $('fakt-neu').addEventListener('click', () => {
+      if (fakten.length >= 4) return;
+      fakten.push({ label: '', value: '' });
+      faktenZeichnen();
+      alsGeaendertMarkieren();
+    });
+    $('speichern').addEventListener('click', speichern);
+    $('formular').addEventListener('input', alsGeaendertMarkieren);
+    $('anlass-formular').addEventListener('input', alsGeaendertMarkieren);
+    speichernKuerzel(speichern);
+
+    laden();
+  </script>
+</AdminLayout>

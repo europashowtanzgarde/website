@@ -2,69 +2,20 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/PageIntro.astro';
 import { Image } from 'astro:assets';
+import { getGalleryBereiche } from '../lib/collections';
 
-const imageModules = import.meta.glob<{ default: ImageMetadata }>('../assets/gallery/*.{jpg,jpeg}', { eager: true });
+/*
+  Die Bereiche und ihre Bilder kommen aus `src/content/gallery/` und sind damit
+  redaktionell pflegbar. Zuvor wurden sie aus den Dateinamen im Ordner
+  `src/assets/gallery/` abgeleitet – die Reihenfolge hing an `localeCompare`,
+  die Zuordnung an Präfixen wie „Kindergarde …". Beides ließ sich über eine
+  Oberfläche nicht bedienen.
 
-type GalleryImage = {
-  src: ImageMetadata;
-  fileName: string;
-  caption: string;
-  alt: string;
-};
-
-const cleanCaption = (fileName: string) => {
-  const original = fileName.replace(/\.(jpe?g)$/i, '').replace(/ \(\d+\)$/, '');
-  const shortened = original
-    .replace(/^Kindergarde\s+/i, '')
-    .replace(/^Jugendgarde\s+/i, '')
-    .replace(/^Große Garde\s+/i, '')
-    .replace(/^Spalier Große Garde\s*/i, 'Spalier ')
-    .replace(/^Spalier Jugendgarde\s*/i, 'Spalier ');
-  return shortened || original;
-};
-
-const images: GalleryImage[] = Object.entries(imageModules)
-  .map(([path, module]) => {
-    const fileName = path.split('/').at(-1) ?? path;
-    const caption = cleanCaption(fileName);
-    return {
-      src: module.default,
-      fileName,
-      caption,
-      alt: `${caption} – Europa-Show-Tanzgarde`,
-    };
-  })
-  .sort((a, b) => a.fileName.localeCompare(b.fileName, 'de'));
-
-const sections = [
-  {
-    title: 'Kindergarde',
-    images: images.filter(({ fileName }) => fileName.startsWith('Kindergarde')),
-  },
-  {
-    title: 'Jugendgarde',
-    images: images.filter(({ fileName }) =>
-      fileName.includes('Jugendgarde') &&
-      !fileName.includes('und Große Garde') &&
-      !fileName.startsWith('Kindergarde'),
-    ),
-  },
-  {
-    title: 'Große Garde',
-    images: images.filter(({ fileName }) =>
-      (fileName.startsWith('Große Garde') || fileName.startsWith('Spalier Große Garde')) &&
-      !fileName.includes('Jugendgarde'),
-    ),
-  },
-  {
-    title: 'Vereinsleben & unterwegs',
-    images: images.filter(({ fileName }) =>
-      !fileName.startsWith('Kindergarde') &&
-      !(fileName.includes('Jugendgarde') && !fileName.includes('und Große Garde')) &&
-      !((fileName.startsWith('Große Garde') || fileName.startsWith('Spalier Große Garde')) && !fileName.includes('Jugendgarde')),
-    ),
-  },
-];
+  Unverändert bleibt die Darstellung: Das Rasterlayout verteilt die Bilder nach
+  ihrem Seitenverhältnis (`--image-ratio`), das aus den Maßen der optimierten
+  Bilder stammt.
+*/
+const sections = await getGalleryBereiche();
 ---
 
 <BaseLayout title="Galerie" description="Bilder aus Training, Auftritten und dem Vereinsleben der Europa-Show-Tanzgarde.">
@@ -80,11 +31,11 @@ const sections = [
           <div class="gallery-grid">
             {section.images.map((image) => (
               <figure
-                class:list={['gallery-card', { 'is-youth-crop': image.fileName === 'Volksfestumzug Jugendgarde.jpeg' }]}
-                style={`--image-ratio: ${image.fileName === 'Volksfestumzug Jugendgarde.jpeg' ? 16 / 9 : image.src.width / image.src.height}`}
+                class:list={['gallery-card', { 'is-youth-crop': image.crop169 }]}
+                style={`--image-ratio: ${image.crop169 ? 16 / 9 : image.image.width / image.image.height}`}
               >
                 <Image
-                  src={image.src}
+                  src={image.image}
                   alt={image.alt}
                   width={720}
                   quality={78}

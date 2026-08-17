@@ -1,0 +1,296 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout titel="Einstellungen" zurueck="/admin">
+  <div id="meldungen"></div>
+  <div id="lade" class="adm-lade">Wird geladen …</div>
+
+  <form class="adm-form" id="formular" hidden novalidate>
+    <div class="adm-abschnitt">
+      <h2 class="adm-abschnitt__titel">Verein</h2>
+      <div class="adm-feld"><label for="f-name">Vollständiger Name</label><input type="text" id="f-name" /></div>
+      <div class="adm-feld"><label for="f-shortName">Kurzname</label><input type="text" id="f-shortName" /></div>
+      <div class="adm-feld"><label for="f-claim">Slogan</label><input type="text" id="f-claim" /></div>
+      <div class="adm-feld"><label for="f-location">Ort</label><input type="text" id="f-location" /></div>
+      <div class="adm-feld"><label for="f-footerText">Text in der Fußzeile</label><input type="text" id="f-footerText" /></div>
+    </div>
+
+    <div class="adm-abschnitt">
+      <h2 class="adm-abschnitt__titel">Kontaktseite</h2>
+
+      <div class="adm-feld"><label for="f-email">E-Mail</label><input type="email" id="f-email" /></div>
+
+      <div class="adm-feld">
+        <label for="f-adresse">Anschrift</label>
+        <textarea id="f-adresse" rows="3"></textarea>
+        <p class="adm-feld__hinweis">Eine Zeile je Angabe.</p>
+      </div>
+
+      <div class="adm-feld">
+        <span class="adm-feld__titel">Telefonnummern</span>
+        <div id="telefon"></div>
+        <p style="margin-top: var(--space-3)">
+          <button type="button" class="adm-knopf adm-knopf--leise adm-knopf--klein" id="tel-neu">
+            + Nummer
+          </button>
+        </p>
+      </div>
+
+      <div class="adm-feld">
+        <label for="f-intro">Einleitungstext</label>
+        <textarea id="f-intro" rows="4"></textarea>
+        <p class="adm-feld__hinweis">Eine Leerzeile trennt Absätze.</p>
+      </div>
+
+      <div class="adm-feld" data-feld="kontakt.bild">
+        <span class="adm-feld__titel">Bild auf der Kontaktseite</span>
+        <div id="kontakt-bild"></div>
+        <p class="adm-fortschritt" id="bild-status" hidden></p>
+        <p class="adm-feld__hinweis">Hochformat. Wird auf 3:4 zugeschnitten.</p>
+        <input type="file" id="bild-wahl" accept="image/*" hidden />
+      </div>
+
+      <div class="adm-feld"><label for="f-bildAlt">Bildbeschreibung</label><input type="text" id="f-bildAlt" /></div>
+    </div>
+
+    <div class="adm-abschnitt">
+      <h2 class="adm-abschnitt__titel">Social Media</h2>
+      <div class="adm-feld"><label for="f-facebook">Facebook</label><input type="url" id="f-facebook" /></div>
+      <div class="adm-feld"><label for="f-instagram">Instagram</label><input type="url" id="f-instagram" /></div>
+      <div class="adm-feld"><label for="f-tiktok">TikTok</label><input type="url" id="f-tiktok" /></div>
+      <div class="adm-feld"><label for="f-youtube">YouTube</label><input type="url" id="f-youtube" /></div>
+      <p class="adm-feld__hinweis">Leer lassen, wenn es den Kanal nicht gibt – dann erscheint er nirgends.</p>
+    </div>
+
+    <div class="adm-abschnitt">
+      <h2 class="adm-abschnitt__titel">Impressum</h2>
+      <p class="adm-feld__hinweis" style="margin-bottom: var(--space-4)">
+        Diese Angaben sind rechtlich vorgeschrieben. Bitte sorgfältig ausfüllen.
+      </p>
+      <div class="adm-feld" data-feld="impressum.verein"><label for="f-i-verein">Vereinsname</label><input type="text" id="f-i-verein" /></div>
+      <div class="adm-feld" data-feld="impressum.vertretenDurch"><label for="f-i-vertretenDurch">Vertreten durch</label><input type="text" id="f-i-vertretenDurch" /></div>
+      <div class="adm-feld" data-feld="impressum.strasse"><label for="f-i-strasse">Straße und Hausnummer</label><input type="text" id="f-i-strasse" /></div>
+      <div class="adm-feld" data-feld="impressum.plzOrt"><label for="f-i-plzOrt">PLZ und Ort</label><input type="text" id="f-i-plzOrt" /></div>
+      <div class="adm-feld"><label for="f-i-register">Vereinsregister</label><input type="text" id="f-i-register" /></div>
+    </div>
+  </form>
+
+  <div slot="leiste" class="adm-leiste" id="leiste" hidden>
+    <div class="adm-leiste__innen">
+      <button type="button" class="adm-knopf" id="speichern">Speichern</button>
+      <a class="adm-knopf adm-knopf--leise" href="/admin">Zurück</a>
+      <span class="adm-leiste__status" id="leiste-status"></span>
+    </div>
+  </div>
+
+  <script>
+    import {
+      api, ApiFehler, meldung, meldungLeeren, feldFehlerZeigen,
+      alsGeaendertMarkieren, alsGespeichertMarkieren, speichernKuerzel,
+      bilderHochladen, vorschauAdresse,
+    } from '../../scripts/admin-kern';
+
+    const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+    const meldungen = $('meldungen');
+    const status = $('leiste-status');
+    const wert = (id: string) => $<HTMLInputElement>(id).value.trim();
+    const setze = (id: string, v: unknown) => { $<HTMLInputElement>(id).value = String(v ?? ''); };
+
+    let daten: Record<string, any> = {};
+    let sha = '';
+    let bild: string | null = null;
+    let telefon: { name: string; nummer: string }[] = [];
+
+    async function laden() {
+      try {
+        const a = await api<{ daten: Record<string, any>; sha: string }>('einstellungen/website');
+        daten = a.daten;
+        sha = a.sha;
+        felderFuellen();
+        $('lade').hidden = true;
+        $('formular').hidden = false;
+        $('leiste').hidden = false;
+        alsGespeichertMarkieren();
+      } catch (e) {
+        $('lade').hidden = true;
+        meldung(meldungen, 'fehler', (e as Error).message);
+      }
+    }
+
+    function felderFuellen() {
+      for (const f of ['name', 'shortName', 'claim', 'location', 'footerText', 'email']) {
+        setze(`f-${f}`, daten[f]);
+      }
+      const s = daten.social ?? {};
+      for (const f of ['facebook', 'instagram', 'tiktok', 'youtube']) setze(`f-${f}`, s[f]);
+
+      const i = daten.impressum ?? {};
+      for (const f of ['verein', 'vertretenDurch', 'strasse', 'plzOrt', 'register']) {
+        setze(`f-i-${f}`, i[f]);
+      }
+
+      const k = daten.kontakt ?? {};
+      $<HTMLTextAreaElement>('f-adresse').value = (k.adresse ?? []).join('\n');
+      $<HTMLTextAreaElement>('f-intro').value = (k.intro ?? []).join('\n\n');
+      setze('f-bildAlt', k.bildAlt);
+      bild = k.bild || null;
+      telefon = (k.telefon ?? []).map((t: { name: string; nummer: string }) => ({ ...t }));
+      telefonZeichnen();
+      bildZeichnen();
+    }
+
+    function telefonZeichnen() {
+      const ziel = $('telefon');
+      ziel.innerHTML = '';
+      telefon.forEach((t, idx) => {
+        const reihe = document.createElement('div');
+        reihe.className = 'adm-bild__reihe';
+        reihe.style.marginTop = 'var(--space-2)';
+
+        const name = document.createElement('input');
+        name.type = 'text';
+        name.value = t.name;
+        name.placeholder = 'Name';
+        name.setAttribute('aria-label', `Name ${idx + 1}`);
+        name.addEventListener('input', () => { telefon[idx].name = name.value; alsGeaendertMarkieren(); });
+
+        const nummer = document.createElement('input');
+        nummer.type = 'text';
+        nummer.value = t.nummer;
+        nummer.placeholder = '+49 …';
+        nummer.setAttribute('aria-label', `Nummer ${idx + 1}`);
+        nummer.addEventListener('input', () => { telefon[idx].nummer = nummer.value; alsGeaendertMarkieren(); });
+
+        const weg = document.createElement('button');
+        weg.type = 'button';
+        weg.className = 'adm-icon';
+        weg.textContent = '✕';
+        weg.title = 'Entfernen';
+        weg.setAttribute('aria-label', `Nummer ${idx + 1} entfernen`);
+        weg.addEventListener('click', () => {
+          telefon.splice(idx, 1);
+          telefonZeichnen();
+          alsGeaendertMarkieren();
+        });
+
+        reihe.append(name, nummer, weg);
+        ziel.append(reihe);
+      });
+    }
+
+    function bildZeichnen() {
+      const ziel = $('kontakt-bild');
+      ziel.innerHTML = '';
+      const knopf = document.createElement('button');
+      knopf.type = 'button';
+      knopf.className = 'adm-knopf adm-knopf--leise';
+      knopf.textContent = bild ? 'Anderes Bild wählen' : 'Bild wählen';
+      knopf.addEventListener('click', () => {
+        const w = $<HTMLInputElement>('bild-wahl');
+        w.value = '';
+        w.click();
+      });
+      if (!bild) { ziel.append(knopf); return; }
+      const reihe = document.createElement('div');
+      reihe.className = 'adm-bild';
+      const img = document.createElement('img');
+      img.className = 'adm-bild__vorschau';
+      img.src = vorschauAdresse(bild);
+      img.alt = '';
+      const felder = document.createElement('div');
+      felder.className = 'adm-bild__felder';
+      felder.append(knopf);
+      reihe.append(img, felder);
+      ziel.append(reihe);
+    }
+
+    $<HTMLInputElement>('bild-wahl').addEventListener('change', async (e) => {
+      const dateien = [...((e.target as HTMLInputElement).files ?? [])];
+      if (dateien.length === 0) return;
+      const anzeige = $('bild-status');
+      anzeige.hidden = false;
+      try {
+        const neu = await bilderHochladen(dateien, 'uploads', (f, g) => {
+          anzeige.textContent = f < g ? 'Bild wird verkleinert und hochgeladen …' : 'Fertig.';
+        });
+        bild = neu[0]?.referenz ?? null;
+        bildZeichnen();
+        alsGeaendertMarkieren();
+      } catch (err) {
+        meldung(meldungen, 'fehler', (err as Error).message);
+      } finally {
+        setTimeout(() => { anzeige.hidden = true; }, 1500);
+      }
+    });
+
+    async function speichern() {
+      meldungLeeren(meldungen);
+      feldFehlerZeigen(undefined, '');
+      const knopf = $<HTMLButtonElement>('speichern');
+      knopf.disabled = true;
+      status.textContent = 'Wird gespeichert …';
+
+      const neu = {
+        ...daten,
+        name: wert('f-name'),
+        shortName: wert('f-shortName'),
+        claim: wert('f-claim'),
+        email: wert('f-email'),
+        location: wert('f-location'),
+        footerText: wert('f-footerText'),
+        kontakt: {
+          intro: $<HTMLTextAreaElement>('f-intro').value.split(/\n{2,}/).map((s) => s.trim()).filter(Boolean),
+          adresse: $<HTMLTextAreaElement>('f-adresse').value.split('\n').map((s) => s.trim()).filter(Boolean),
+          telefon: telefon.filter((t) => t.name && t.nummer),
+          bild: bild ?? '',
+          bildAlt: wert('f-bildAlt'),
+        },
+        social: {
+          facebook: wert('f-facebook'),
+          instagram: wert('f-instagram'),
+          tiktok: wert('f-tiktok'),
+          youtube: wert('f-youtube'),
+        },
+        impressum: {
+          ...(daten.impressum ?? {}),
+          verein: wert('f-i-verein'),
+          vertretenDurch: wert('f-i-vertretenDurch'),
+          strasse: wert('f-i-strasse'),
+          plzOrt: wert('f-i-plzOrt'),
+          register: wert('f-i-register'),
+        },
+      };
+
+      try {
+        const a = await api<{ sha: string }>('einstellungen/website', {
+          methode: 'PUT',
+          koerper: { daten: neu, sha },
+        });
+        sha = a.sha;
+        daten = neu;
+        alsGespeichertMarkieren();
+        status.textContent = '';
+        meldung(meldungen, 'ok', 'Gespeichert. In ein bis drei Minuten sind die Angaben aktualisiert.');
+        window.scrollTo({ top: 0 });
+      } catch (e) {
+        status.textContent = '';
+        const f = e as ApiFehler;
+        if (!feldFehlerZeigen(f.feld, f.message)) meldung(meldungen, 'fehler', f.message);
+      } finally {
+        knopf.disabled = false;
+      }
+    }
+
+    $('tel-neu').addEventListener('click', () => {
+      telefon.push({ name: '', nummer: '' });
+      telefonZeichnen();
+      alsGeaendertMarkieren();
+    });
+    $('speichern').addEventListener('click', speichern);
+    $('formular').addEventListener('input', alsGeaendertMarkieren);
+    speichernKuerzel(speichern);
+
+    laden();
+  </script>
+</AdminLayout>

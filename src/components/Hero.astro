@@ -1,14 +1,14 @@
 ---
 import { homepage } from '../lib/settings';
 
-const { heroKicker } = homepage;
+const { heroKicker, heroImage, heroImageAlt } = homepage;
 ---
 
 <section class="photo-hero" aria-label="Die Europa-Show-Tanzgarde auf der Bühne">
   <img
     class="photo-hero__img"
-    src="/uploads/ensemble-buehne.webp"
-    alt="Die gesamte Europa-Show-Tanzgarde auf der Bühne, in blau-roten Kostümen unter farbigem Bühnenlicht."
+    src={heroImage}
+    alt={heroImageAlt}
     fetchpriority="high"
     decoding="async"
   />

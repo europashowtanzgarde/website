@@ -1,8 +1,14 @@
 # CMS-Entscheidung
 
-Diese Datei dokumentiert, warum als Redaktionssystem **Sveltia CMS** gewählt
-wurde – geprüft gegen die Anforderungen des Vereins: Git-basiert, kostenlos,
-`/admin` im selben Projekt, für Cloudflare Pages geeignet und **für
+> **Stand August 2026: Die unten dokumentierte Wahl von Sveltia CMS wurde
+> revidiert.** Der Redaktionsbereich ist jetzt eine Eigenentwicklung.
+> Die Begründung steht am [Ende dieses Dokuments](#revision-august-2026-eigenentwicklung);
+> der ursprüngliche Vergleich bleibt erhalten, weil er die Ausgangslage und die
+> verworfenen Alternativen festhält.
+
+Diese Datei dokumentiert, warum als Redaktionssystem zunächst **Sveltia CMS**
+gewählt wurde – geprüft gegen die Anforderungen des Vereins: Git-basiert,
+kostenlos, `/admin` im selben Projekt, für Cloudflare Pages geeignet und **für
 nicht-technische Vereinsmitglieder** bedienbar.
 
 ## Anforderungen (Priorität)
@@ -80,3 +86,67 @@ deutsch** (siehe `public/admin/config.yml`). Sollte eine durchgehend deutsche
 Oberfläche zwingend nötig werden, kann dank Konfigurationskompatibilität auf
 **Decap CMS** (mit `locale: de`) gewechselt werden, ohne die Inhalte oder die
 Struktur anzufassen.
+
+---
+
+## Revision August 2026: Eigenentwicklung
+
+Die oben getroffene Wahl wurde revidiert. `/admin` ist jetzt eine
+**Eigenentwicklung** – dieselbe Option, die im Vergleich als „höchstes Wartungs-
+und Sicherheitsrisiko" verworfen worden war. Das war kein Kurswechsel aus Laune,
+sondern die Folge von drei Punkten, die sich bei der Umsetzung zeigten.
+
+### Was den Ausschlag gab
+
+**1. Der Anmeldeweg passte nicht zur Zielgruppe.** Sveltia meldet sich über
+GitHub an. Jedes Vorstandsmitglied hätte ein eigenes GitHub-Konto gebraucht, als
+Mitarbeiter am Repository eingetragen werden müssen und sich nach der
+Cloudflare-Anmeldung ein zweites Mal anmelden müssen. Für ehrenamtliche
+Vorstände ist das eine Hürde, an der ein Redaktionssystem scheitert – es wird
+dann schlicht nicht benutzt.
+
+**2. Der Zugangsschlüssel lag im Browser.** Sveltia legt den GitHub-Token im
+Speicher des Browsers ab; das ist bauartbedingt so. Bei der Eigenentwicklung
+bleibt er auf dem Server – der Browser sieht ihn nie. Zusätzlich ist
+serverseitig festgelegt, **welche Dateien** überhaupt geschrieben werden dürfen.
+Ohne diese Grenze könnte über ein Redaktionswerkzeug auch die Bau-Konfiguration
+verändert werden, und daraus wird schnell mehr als ein Redaktionsproblem.
+
+**3. Die Oberfläche war nur teilweise deutsch.** Die Bedienelemente von Sveltia
+gibt es nur auf Englisch und Japanisch (siehe Einschränkung oben). Bei einer
+Eigenentwicklung ist alles deutsch – Beschriftungen, Hinweise und vor allem die
+Fehlermeldungen.
+
+Dazu kam ein praktischer Punkt: Mehrere Seiten waren gar nicht redaktionell
+befüllbar (Galerie aus Dateinamen, Bilder und Chronik fest im Code). Diese
+Umbauten waren unabhängig vom gewählten System nötig – damit schrumpfte der
+Vorsprung einer fertigen Lösung erheblich.
+
+### Was der Preis bleibt
+
+Der ursprüngliche Einwand gilt unverändert: **Editor, Bild-Upload und
+Fehlerbehandlung sind ab jetzt Eigenpflege.** Es gibt keine Gemeinschaft, die
+Fehler meldet und behebt. Dem stehen gegenüber: wenige, verbreitete
+Abhängigkeiten (`jose`, `js-yaml`, `marked`, `turndown`) statt eines kompletten
+Fremdsystems, und Code, der genau das kann, was dieser Verein braucht.
+
+### Warum weiterhin Git und keine Datenbank
+
+Ebenfalls geprüft wurde, die veränderlichen Inhalte in Cloudflare R2 oder D1 zu
+legen. Dagegen sprach:
+
+- Die Website ist **statisch**. Inhalte aus einer Datenbank müssten entweder
+  beim Bauen gelesen werden – dann ist es derselbe Ablauf wie mit Git, nur ohne
+  dessen Vorteile – oder zur Laufzeit, was einen Umbau auf serverseitiges
+  Rendern bedeutet. Letzteres bricht die Bildverarbeitung: Die Galerie berechnet
+  ihr Raster aus Bildmaßen, die nur beim Bauen zur Verfügung stehen.
+- Der Entwickler könnte Inhalte **nicht mehr über GitHub bearbeiten** – eine
+  ausdrückliche Anforderung.
+- **Versehentlich Gelöschtes wäre endgültig weg.** Mit Git genügt ein
+  `git revert`.
+- Die Repository-Größe ist kein Gegenargument: rund 34 MB heute, mit der
+  Verkleinerung beim Hochladen etwa 10 MB Zuwachs pro Jahr. GitHub warnt ab 1 GB.
+
+Sollten später sehr viele große Medien dazukommen, ließe sich `public/uploads/`
+nachträglich nach R2 auslagern, ohne den Rest anzufassen. Die Galeriebilder
+müssten aus dem genannten Grund im Repository bleiben.

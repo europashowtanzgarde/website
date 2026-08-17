@@ -4,6 +4,9 @@ import PageIntro from '../components/PageIntro.astro';
 import SocialIcon from '../components/SocialIcon.astro';
 import { site } from '../lib/settings';
 
+// Anschrift, Telefonnummern, Einleitung und Bild standen früher fest im
+// Markup – bei einem Vorstandswechsel war dafür eine Code-Änderung nötig.
+const { kontakt } = site;
 ---
 
 <BaseLayout title="Kontakt" description="So erreichst du die Europa-Show-Tanzgarde aus Wassertrüdingen – per E-Mail oder über unsere Social-Media-Kanäle.">
@@ -12,26 +15,33 @@ import { site } from '../lib/settings';
   <section class="contact-stage" aria-label="Direkter Kontakt">
     <div class="wrap contact-stage__inner">
       <div class="contact-stage__copy">
-        <p>Du möchtest mehr über die Europa-Show-Tanzgarde erfahren, bei uns mittanzen oder uns für eure Veranstaltung buchen?</p>
-        <p>Komm bei einem Training vorbei, kontaktiere uns direkt über unsere Website, per Mail oder per Telefon. Wir freuen uns auf dich!</p>
+        {kontakt.intro.map((absatz) => <p>{absatz}</p>)}
 
         <div class="contact-details">
-          <section>
-            <h2>Adresse</h2>
-            <address>
-              Europa-Show-Tanzgarde Wassertrüdingen e.V.<br />
-              Neue Schulgasse 1<br />
-              91717 Wassertrüdingen
-            </address>
-          </section>
+          {kontakt.adresse.length > 0 && (
+            <section>
+              <h2>Adresse</h2>
+              <address>
+                {kontakt.adresse.map((zeile, i) => (
+                  <Fragment>{i > 0 && <br />}{zeile}</Fragment>
+                ))}
+              </address>
+            </section>
+          )}
           <section>
             <h2>E-Mail</h2>
-            <p>info@europashowtanzgarde.de</p>
+            <p>{site.email}</p>
           </section>
-          <section>
-            <h2>Telefon</h2>
-            <p>Luisa Geier: +49 151 23461278<br />Pauline Höver: +49 162 1807530</p>
-          </section>
+          {kontakt.telefon.length > 0 && (
+            <section>
+              <h2>Telefon</h2>
+              <p>
+                {kontakt.telefon.map((eintrag, i) => (
+                  <Fragment>{i > 0 && <br />}{eintrag.name}: {eintrag.nummer}</Fragment>
+                ))}
+              </p>
+            </section>
+          )}
           {site.social.instagram && (
             <section>
               <h2>Instagram</h2>
@@ -45,16 +55,20 @@ import { site } from '../lib/settings';
 
       </div>
 
-      <figure class="contact-stage__visual">
-        <img
-          src="/uploads/pauline-und-luisa.png"
-          alt="Zwei Vorstandsmitglieder der Europa-Show-Tanzgarde vor dem Kulturtreff in Wassertrüdingen."
-          width="721"
-          height="977"
-          loading="eager"
-          decoding="async"
-        />
-      </figure>
+      {kontakt.bild && (
+        <figure class="contact-stage__visual">
+          {/*
+            Ohne feste width/height: Die Maße passten nur zum ursprünglichen
+            Bild. Das Layout hängt ohnehin am 3:4-Rahmen im CSS.
+          */}
+          <img
+            src={kontakt.bild}
+            alt={kontakt.bildAlt}
+            loading="eager"
+            decoding="async"
+          />
+        </figure>
+      )}
 
     </div>
   </section>

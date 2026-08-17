@@ -74,7 +74,36 @@ export async function getGroups(): Promise<CollectionEntry<'groups'>[]> {
 
 // ---- Galerie --------------------------------------------------------------
 
-export async function getGalleryAlbums(): Promise<CollectionEntry<'gallery'>[]> {
-  const albums = await getCollection('gallery');
-  return albums.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+// ---- Anlass-Block & Chronik ------------------------------------------------
+
+/**
+ * Der Anlass-Block der Startseite. Es gibt genau einen; weitere Dateien im
+ * Ordner werden ignoriert.
+ */
+export async function getAnlass(): Promise<CollectionEntry<'anlass'>['data'] | undefined> {
+  const eintraege = await getCollection('anlass');
+  return eintraege[0]?.data;
+}
+
+/** Vereinschronik, älteste Jahre zuerst. */
+export async function getChronik(): Promise<CollectionEntry<'chronik'>['data'][]> {
+  const eintraege = await getCollection('chronik');
+  return eintraege
+    .map((e) => e.data)
+    .sort((a, b) => a.year.localeCompare(b.year, 'de'));
+}
+
+/**
+ * Die Bereiche der Galerie-Seite in ihrer Anzeigereihenfolge.
+ *
+ * Ein Bereich ohne Bilder wird ausgelassen – sonst erschiene auf der Seite eine
+ * Überschrift mit leerem Raster darunter, sobald der Vorstand einen Bereich
+ * leert.
+ */
+export async function getGalleryBereiche(): Promise<CollectionEntry<'gallery'>['data'][]> {
+  const bereiche = await getCollection('gallery');
+  return bereiche
+    .sort((a, b) => a.data.order - b.data.order || a.data.title.localeCompare(b.data.title, 'de'))
+    .map((bereich) => bereich.data)
+    .filter((bereich) => bereich.images.length > 0);
 }

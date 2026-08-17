@@ -1,0 +1,529 @@
+/*
+  Redaktionsbereich.
+  ------------------
+  Nutzt die Farben und Abstände der Website (tokens.css), damit sich der
+  Editor nicht wie ein Fremdkörper anfühlt.
+
+  Grundsatz für die Bedienung:
+    Listen   -> auf dem Handy Karten untereinander, auf großen Bildschirmen
+                ein Raster. Eine endlose Einzelspalte auf 27 Zoll ist
+                unübersichtlich.
+    Formulare -> IMMER einspaltig und in der Breite begrenzt. Lange
+                 Eingabezeilen sind schlecht lesbar, mehrspaltige Formulare
+                 erhöhen die Fehlerquote.
+*/
+
+.adm {
+  --adm-max: 62rem;
+  --adm-form-max: 40rem;
+  /* Höhe der klebenden Aktionsleiste; wird per JS an die Tastatur angepasst. */
+  --adm-leiste: 4.5rem;
+  min-height: 100dvh;
+  background: var(--surface-soft);
+  color: var(--text);
+}
+
+/* --- Kopf ---------------------------------------------------------------- */
+
+.adm-kopf {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--blue-700);
+  color: var(--text-on-color);
+}
+
+.adm-kopf__innen {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: var(--adm-max);
+  margin-inline: auto;
+  padding: var(--space-3) var(--space-4);
+}
+
+.adm-kopf__titel {
+  margin: 0;
+  font-size: var(--step-0);
+  font-weight: 800;
+  color: inherit;
+}
+
+.adm-kopf__zurueck {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  margin-inline-start: calc(var(--space-2) * -1);
+  border-radius: var(--radius-m);
+  color: inherit;
+  font-size: 1.4rem;
+  text-decoration: none;
+}
+
+.adm-kopf__zurueck:hover,
+.adm-kopf__zurueck:focus-visible {
+  background: rgb(255 255 255 / 0.15);
+}
+
+.adm-kopf__rechts {
+  margin-inline-start: auto;
+  font-size: var(--step--1);
+  color: var(--text-on-color-muted);
+}
+
+.adm-inhalt {
+  max-width: var(--adm-max);
+  margin-inline: auto;
+  padding: var(--space-5) var(--space-4) calc(var(--adm-leiste) + var(--space-6));
+}
+
+/* --- Startseite: Kacheln ------------------------------------------------- */
+
+.adm-kacheln {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr));
+  gap: var(--space-4);
+}
+
+.adm-kachel {
+  display: block;
+  min-height: 6.5rem;
+  padding: var(--space-4);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-m);
+  background: #fff;
+  color: inherit;
+  text-decoration: none;
+}
+
+.adm-kachel:hover,
+.adm-kachel:focus-visible {
+  border-color: var(--blue-500);
+  box-shadow: 0 0 0 2px var(--blue-200);
+}
+
+.adm-kachel__titel {
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+  font-weight: 750;
+  color: var(--blue-700);
+}
+
+.adm-kachel__text {
+  margin-top: var(--space-2);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+}
+
+/* --- Listen -------------------------------------------------------------- */
+
+.adm-liste {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 48rem) {
+  .adm-liste--raster {
+    grid-template-columns: repeat(auto-fill, minmax(min(20rem, 100%), 1fr));
+  }
+}
+
+.adm-eintrag {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-m);
+  background: #fff;
+}
+
+.adm-eintrag--vergangen {
+  background: var(--surface-soft-blue);
+  color: var(--text-muted);
+}
+
+.adm-eintrag__haupt {
+  flex: 1;
+  min-width: 0;
+}
+
+.adm-eintrag__titel {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.adm-eintrag__meta {
+  margin-top: 0.15rem;
+  font-size: var(--step--1);
+  color: var(--text-muted);
+}
+
+.adm-eintrag__aktionen {
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--space-2);
+}
+
+/* --- Formulare ----------------------------------------------------------- */
+
+.adm-form {
+  max-width: var(--adm-form-max);
+}
+
+.adm-feld {
+  margin-bottom: var(--space-5);
+}
+
+.adm-feld > label,
+.adm-feld__titel {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-weight: 700;
+}
+
+.adm-feld__hinweis {
+  margin-top: var(--space-2);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+}
+
+.adm-feld input[type='text'],
+.adm-feld input[type='date'],
+.adm-feld input[type='time'],
+.adm-feld input[type='number'],
+.adm-feld input[type='email'],
+.adm-feld input[type='url'],
+.adm-feld textarea,
+.adm-feld select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-m);
+  background: #fff;
+  color: inherit;
+  font: inherit;
+}
+
+.adm-feld textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+
+.adm-feld input:focus-visible,
+.adm-feld textarea:focus-visible,
+.adm-feld select:focus-visible {
+  outline: 2px solid var(--blue-500);
+  outline-offset: 1px;
+}
+
+.adm-feld.hat-fehler input,
+.adm-feld.hat-fehler textarea,
+.adm-feld.hat-fehler select,
+.adm-feld.hat-fehler .adm-editor {
+  border-color: var(--red-600);
+}
+
+.adm-feld__fehler {
+  margin-top: var(--space-2);
+  font-size: var(--step--1);
+  font-weight: 700;
+  color: var(--red-700);
+}
+
+.adm-schalter {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.adm-schalter input {
+  width: 1.4rem;
+  height: 1.4rem;
+  flex-shrink: 0;
+  accent-color: var(--blue-600);
+}
+
+/* --- Knöpfe -------------------------------------------------------------- */
+
+.adm-knopf {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4ch;
+  min-height: 44px;
+  padding: 0.55rem 1.1rem;
+  border: 1px solid var(--blue-700);
+  border-radius: var(--radius-m);
+  background: var(--blue-700);
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.adm-knopf:hover:not(:disabled) {
+  background: var(--blue-600);
+}
+
+.adm-knopf:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.adm-knopf--leise {
+  background: #fff;
+  color: var(--blue-700);
+}
+
+.adm-knopf--leise:hover:not(:disabled) {
+  background: var(--surface-soft-blue);
+}
+
+.adm-knopf--gefahr {
+  border-color: var(--red-600);
+  background: #fff;
+  color: var(--red-700);
+}
+
+.adm-knopf--gefahr:hover:not(:disabled) {
+  background: var(--red-600);
+  color: #fff;
+}
+
+.adm-knopf--klein {
+  min-height: 40px;
+  padding: 0.35rem 0.7rem;
+  font-size: var(--step--1);
+}
+
+/* Kleine, quadratische Schaltfläche (Sortieren, Entfernen). */
+.adm-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-m);
+  background: #fff;
+  color: var(--blue-700);
+  font: inherit;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.adm-icon:hover:not(:disabled) {
+  background: var(--surface-soft-blue);
+}
+
+.adm-icon:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* --- Aktionsleiste ------------------------------------------------------- */
+
+.adm-leiste {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--hairline-strong);
+  background: #fff;
+  /* Von JS gesetzt, wenn die Bildschirmtastatur offen ist. */
+  transform: translateY(calc(var(--adm-tastatur, 0px) * -1));
+}
+
+.adm-leiste__innen {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: var(--adm-max);
+  margin-inline: auto;
+}
+
+.adm-leiste__status {
+  margin-inline-start: auto;
+  font-size: var(--step--1);
+  color: var(--text-muted);
+}
+
+/* --- Meldungen ----------------------------------------------------------- */
+
+.adm-meldung {
+  margin-bottom: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid;
+  border-radius: var(--radius-m);
+  font-weight: 600;
+}
+
+.adm-meldung--fehler {
+  border-color: var(--red-600);
+  background: #fdf0f0;
+  color: var(--red-700);
+}
+
+.adm-meldung--ok {
+  border-color: var(--blue-500);
+  background: var(--surface-soft-blue);
+  color: var(--blue-700);
+}
+
+.adm-meldung--info {
+  border-color: var(--hairline-strong);
+  background: #fff;
+  color: var(--text-muted);
+}
+
+.adm-leer {
+  padding: var(--space-6);
+  border: 1px dashed var(--hairline-strong);
+  border-radius: var(--radius-m);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* --- Texteditor ---------------------------------------------------------- */
+
+.adm-editor-huelle {
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-m);
+  background: #fff;
+  overflow: hidden;
+}
+
+.adm-werkzeuge {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--hairline);
+  background: var(--surface-soft);
+}
+
+.adm-werkzeuge button {
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0 0.6rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-s, 6px);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--step--1);
+  cursor: pointer;
+}
+
+.adm-werkzeuge button:hover {
+  background: #fff;
+  border-color: var(--hairline-strong);
+}
+
+.adm-editor {
+  /* Wächst mit dem Inhalt statt zu scrollen – ein kleines Scrollfeld in einer
+     scrollenden Seite ist auf dem Handy kaum zu bedienen. */
+  min-height: 12rem;
+  padding: var(--space-4);
+  font-family: var(--font-body);
+  line-height: var(--leading-normal);
+}
+
+.adm-editor:focus-visible {
+  outline: 2px solid var(--blue-500);
+  outline-offset: -2px;
+}
+
+.adm-editor > * + * {
+  margin-top: 0.9em;
+}
+
+.adm-editor h2 { font-size: var(--step-1); }
+.adm-editor h3 { font-size: var(--step-0); font-weight: 750; }
+.adm-editor ul, .adm-editor ol { padding-inline-start: 1.4em; }
+
+/* --- Bilder -------------------------------------------------------------- */
+
+.adm-bild {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-3);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-m);
+  background: #fff;
+}
+
+.adm-bild + .adm-bild {
+  margin-top: var(--space-3);
+}
+
+.adm-bild__vorschau {
+  flex-shrink: 0;
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: var(--radius-m);
+  background: var(--surface-soft-blue);
+  object-fit: cover;
+}
+
+.adm-bild__felder {
+  flex: 1;
+  min-width: 0;
+}
+
+.adm-bild__reihe {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.adm-fortschritt {
+  margin-top: var(--space-3);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+}
+
+/* --- Sonstiges ----------------------------------------------------------- */
+
+.adm-abschnitt + .adm-abschnitt {
+  margin-top: var(--space-7);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--hairline-strong);
+}
+
+.adm-abschnitt__titel {
+  margin-bottom: var(--space-4);
+  font-family: var(--font-display);
+  font-size: var(--step-2);
+  color: var(--blue-700);
+}
+
+.adm-lade {
+  padding: var(--space-6);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adm-leiste { transition: none; }
+}
