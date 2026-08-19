@@ -15,11 +15,17 @@
       "91717 Wassertrüdingen"
     ],
     "telefon": [
-      { "name": "Luisa Geier", "nummer": "+49 151 23461278" },
-      { "name": "Pauline Höver", "nummer": "+49 162 1807530" }
+      {
+        "name": "Luisa Geier",
+        "nummer": "+49 151 23461278"
+      },
+      {
+        "name": "Pauline Höver",
+        "nummer": "+49 162 1807530"
+      }
     ],
     "bild": "/uploads/pauline-und-luisa.png",
-    "bildAlt": "Zwei Vorstandsmitglieder der Europa-Show-Tanzgarde vor dem Kulturtreff in Wassertrüdingen."
+    "bildAlt": "Vorstand - Kontakt"
   },
   "social": {
     "facebook": "https://www.facebook.com/europashowtanzgarde",
