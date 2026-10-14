@@ -1,7 +1,7 @@
 ---
 title: VDK Auftritt
-date: 2026-10-10
+date: '2026-10-10'
 location: Hesselberghalle Wassertrüdingen
-public: true
+public: false
 category: auftritt
 ---
